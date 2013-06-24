@@ -26,6 +26,9 @@
                       evil-numbers
                       evil-paredit
                       evil-nerd-commenter
+                      flymake-hlint
+                      haskell-mode
+                      flymake-haskell-multi
                       hlinum)
   "A list of packages to ensure are installed at launch.")
 
@@ -74,6 +77,20 @@
 (add-to-list 'auto-mode-alist '("\\.markdown\\'" . markdown-mode))
 (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
 
+;; Nrepl key bindings
+(global-set-key (kbd "C-;") 'nrepl-jump-back)
+(global-set-key (kbd  "C-:") 'nrepl-jump)
+
+;; Haskell
+(add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
+(add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
+(add-hook 'haskell-mode-hook 'flymake-haskell-multi-load)
+
+;; Flymake
+(global-set-key (kbd "C-c C-d") 'flymake-display-err-menu-for-current-line)
+(global-set-key (kbd "C-c C-n") 'flymake-goto-next-error)
+(global-set-key (kbd "C-c C-p") 'flymake-goto-next-error)
+
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
@@ -82,3 +99,10 @@
  '(font-lock-warning-face ((t (:inherit nil :foreground "red" :background nil))))
  '(linum-highlight-face ((t (:inherit default :background "color-238" :foreground "white"))))
  '(show-paren-match ((((class color) (background dark)) (:inherit nil :foreground "red")))))
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(flymake-gui-warnings-enabled nil)
+ '(haskell-program-name "ghci \"+.\""))
