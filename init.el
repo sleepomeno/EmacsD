@@ -87,9 +87,13 @@
 (add-hook 'haskell-mode-hook 'flymake-haskell-multi-load)
 
 ;; Flymake
-(global-set-key (kbd "C-c C-d") 'flymake-display-err-menu-for-current-line)
+(global-set-key (kbd "C-c d") 'flymake-display-err-menu-for-current-line)
 (global-set-key (kbd "C-c C-n") 'flymake-goto-next-error)
 (global-set-key (kbd "C-c C-p") 'flymake-goto-next-error)
+
+;; PATH
+(setenv "PATH" (concat (getenv "PATH") ":/home/greg/.cabal/bin"))
+
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -105,4 +109,12 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(flymake-gui-warnings-enabled nil)
- '(haskell-program-name "ghci \"+.\""))
+ '(haskell-hoogle-command "")
+ '(haskell-package-conf-file "/home/greg/.ghc/x86_64-linux-7.4.1/package.conf")
+ '(haskell-process-path-ghci "ghci")
+ '(haskell-process-prompt-restart-on-cabal-change nil)
+ '(haskell-process-suggest-language-pragmas nil)
+ '(haskell-program-name "ghci")
+ ;; '(haskell-process-type 'cabal-dev)
+ '(haskell-stylish-on-save t)
+ '(haskell-tags-on-save t))
