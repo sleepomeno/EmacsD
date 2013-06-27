@@ -29,7 +29,8 @@
                       flymake-hlint
                       haskell-mode
                       flymake-haskell-multi
-                      hlinum)
+                      hlinum
+                      ace-jump-mode)
   "A list of packages to ensure are installed at launch.")
 
 ;; Automaticaly install any missing packages
@@ -81,10 +82,57 @@
 (global-set-key (kbd "C-;") 'nrepl-jump-back)
 (global-set-key (kbd  "C-:") 'nrepl-jump)
 
+;; Global bindings
+(global-set-key (kbd "C-c SPC") 'ace-jump-mode)
+(global-set-key (kbd "C-c f") 'anything)
+(global-set-key (kbd "C-ä") 'delete-other-windows)
+(global-set-key (kbd "C-Ä") 'delete-window)
+(global-set-key (kbd "<C-S-iso-lefttab>") 'previous-buffer)
+(global-set-key (kbd "<C-tab>") 'next-buffer)
+(global-set-key (kbd "C-ö") 'keyboard-quit)
+(global-set-key (kbd "C-S-u") 'evil-scroll-up)
+(global-set-key (kbd "C-S-o") 'other-window)
+(global-set-key (kbd "ö") 'other-window)
+(global-set-key (kbd "M-l") 'forward-word)
+(global-set-key (kbd "M-h") 'backward-word)
+
+;; Paredit
+(global-set-key (kbd "C-M-h") 'paredit-backward)
+(global-set-key (kbd "C-M-l") 'paredit-forward)
+(global-set-key (kbd "C-c h") 'paredit-backward-slurp-sexp)
+(global-set-key (kbd "C-c j") 'paredit-backward-barf-sexp)
+(global-set-key (kbd "C-c k") 'paredit-forward-barf-sexp)
+(global-set-key (kbd "C-c l") 'paredit-forward-slurp-sexp)
+(global-set-key (kbd "C-M-j") 'paredit-splice-sexp-killing-forward)
+(global-set-key (kbd "C-M-k") 'paredit-splice-sexp-killing-backward)
+(global-set-key (kbd "C-c C-s") 'paredit-split-sexp)
+(global-set-key (kbd "C-c C-j") 'paredit-join-sexps)
+(global-set-key (kbd "C-c C-r") 'paredit-raise-sexp)
+;; (global-set-key (kbd "C-c s") 'paredit-open-bracket)
+(global-set-key (kbd "C-c c") 'paredit-open-curly)
+;; (global-set-key (kbd "C-c a") 'paredit-forward-down)
+;; (global-set-key (kbd "C-c A") 'paredit-forward-up)
+(fset 'enter-new-line
+      (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ([5 return] 0 "%d")) arg)))
+(global-set-key (kbd "C-#") 'enter-new-line)
+
+
+;; Org
+(add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
+(define-key global-map "\C-cl" 'org-store-link)
+(define-key global-map "\C-ca" 'org-agenda)
+(setq org-log-done t)
+
+(setq org-agenda-files (list "~/org/home.org"
+                             "~/org/uni.org"))
+
 ;; Haskell
 (add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
 (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
 (add-hook 'haskell-mode-hook 'flymake-haskell-multi-load)
+(defun haskell-hook ()
+  (define-key evil-normal-state-map (kbd "M-.") 'find-tag))
+(add-hook 'haskell-mode-hook 'haskell-hook)
 
 ;; Flymake
 (global-set-key (kbd "C-c d") 'flymake-display-err-menu-for-current-line)
@@ -113,8 +161,9 @@
  '(haskell-package-conf-file "/home/greg/.ghc/x86_64-linux-7.4.1/package.conf")
  '(haskell-process-path-ghci "ghci")
  '(haskell-process-prompt-restart-on-cabal-change nil)
- '(haskell-process-suggest-language-pragmas nil)
+ '(haskell-process-suggest-language-pragmas t)
  '(haskell-program-name "ghci")
- ;; '(haskell-process-type 'cabal-dev)
  '(haskell-stylish-on-save t)
- '(haskell-tags-on-save t))
+ '(haskell-tags-on-save t)
+ '(haskell-process-type 'cabal-dev)
+ '(inferior-haskell-web-docs-base "http://hackage.haskell.org/packages/archive/"))
