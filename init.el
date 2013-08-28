@@ -2,6 +2,18 @@
 (add-to-list 'package-archives
              '("marmalade" . "http://marmalade-repo.org/packages/") t)
 (package-initialize)
+(server-start)
+
+;; Captures, e.g. for Bookmarks
+(require 'org-protocol)
+(setq org-protocol-default-template-key "l")
+(setq org-capture-templates
+ '(("t" "Todo" entry (file+headline "~/org/notes.org" "Tasks")
+        "* TODO %?\n  %i\n  %a")
+   ("l" "Link" entry (file+olp "~/org/bookmarks.org" "Bookmarks")
+        "* %a\n %?\n %i")
+   ("j" "Journal" entry (file+datetree "~/org/notes.org")
+        "* %?\nEntered on %U\n  %i\n  %a")))
 
 (when (not package-archive-contents)
   (package-refresh-contents))
@@ -30,6 +42,8 @@
                       haskell-mode
                       flymake-haskell-multi
                       hlinum
+                      auto-complete
+                      ac-nrepl
                       ace-jump-mode)
   "A list of packages to ensure are installed at launch.")
 
@@ -37,6 +51,9 @@
 (dolist (p my-packages)
   (when (not (package-installed-p p))
     (package-install p)))
+
+;; Don't fire up another backtrace when an error happens in debug mode
+(setq eval-expression-debug-on-error nil)
 
 ;; Load the provided Clojure start kit configurations
 (load (concat user-emacs-directory "clojure-starter-kit.el"))
@@ -82,6 +99,21 @@
 (global-set-key (kbd "C-;") 'nrepl-jump-back)
 (global-set-key (kbd  "C-:") 'nrepl-jump)
 
+
+;; Ac-nrepl
+(require 'ac-nrepl)
+(add-hook 'nrepl-mode-hook 'ac-nrepl-setup)
+(add-hook 'nrepl-interaction-mode-hook 'ac-nrepl-setup)
+(eval-after-load "auto-complete"
+  '(add-to-list 'ac-modes 'nrepl-mode))
+(defun set-auto-complete-as-completion-at-point-function ()
+  (setq completion-at-point-functions '(auto-complete)))
+(add-hook 'auto-complete-mode-hook 'set-auto-complete-as-completion-at-point-function)
+(add-hook 'nrepl-mode-hook 'set-auto-complete-as-completion-at-point-function)
+(add-hook 'nrepl-interaction-mode-hook 'set-auto-complete-as-completion-at-point-function)
+(define-key nrepl-interaction-mode-map (kbd "C-c C-d") 'ac-nrepl-popup-doc)
+(global-auto-complete-mode t)
+
 ;; Global bindings
 (global-set-key (kbd "C-c SPC") 'ace-jump-mode)
 (global-set-key (kbd "C-c f") 'anything)
@@ -95,6 +127,7 @@
 (global-set-key (kbd "ö") 'other-window)
 (global-set-key (kbd "M-l") 'forward-word)
 (global-set-key (kbd "M-h") 'backward-word)
+(global-set-key (kbd "M-a") 'find-tag)
 
 ;; Paredit
 (global-set-key (kbd "C-M-h") 'paredit-backward)
@@ -112,30 +145,94 @@
 (global-set-key (kbd "C-c c") 'paredit-open-curly)
 ;; (global-set-key (kbd "C-c a") 'paredit-forward-down)
 ;; (global-set-key (kbd "C-c A") 'paredit-forward-up)
-(fset 'enter-new-line
-      (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ([5 return] 0 "%d")) arg)))
-(global-set-key (kbd "C-#") 'enter-new-line)
+;; (fset 'enter-new-line
+;;       (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ([5 return] 0 "%d")) arg)))
+;; (global-set-key (kbd "C-#") 'enter-new-line)
 
 
 ;; Org
 (add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
 (define-key global-map "\C-cl" 'org-store-link)
 (define-key global-map "\C-ca" 'org-agenda)
+
+   
 (setq org-log-done t)
 
 (setq org-agenda-files (list "~/org/home.org"
                              "~/org/uni.org"))
+(setq org-clock-persist 'history)
+(org-clock-persistence-insinuate)
+
+;; Org-drill, Org-learn, Org-annotate-file
+(load-file "~/.emacs.d/custom/org-drill.el")
+(load-file "~/.emacs.d/custom/org-learn.el")
+(load-file "~/.emacs.d/custom/org-annotate-file.el")
+(require 'org-annotate-file)
+(require 'org-drill)
+(require 'org-learn)
+(setq org-annotate-file-storage-file "~/org/annotated.org")
+(global-set-key (kbd "C-c d") '(lambda () (interactive) (org-annotate-file (current-buffer))))
+
+(setq org-return-follows-link t)
+
+;; Open pdfs mit envince
+(delete '("\\.pdf\\'" . default) org-file-apps)
+(add-to-list 'org-file-apps '("\\.pdf\\'" . "evince \"%s\""))
+(add-to-list 'org-file-apps '("\\.pdf::\\([0-9]+\\)\\'" . "evince \"%s\" -p %1"))
+
+;; Org-Mobile
+;; Set to the location of your Org files on your local system
+(setq org-directory "~/org")
+;; Set to the name of the file where new notes will be stored
+(setq org-mobile-inbox-for-pull "~/org/flagged.org")
+;; Set to <your Dropbox root directory>/MobileOrg.
+(setq org-mobile-directory "~/Dropbox/Apps/MobileOrg")
+
+;; Org-Babel
+(add-to-list 'org-babel-tangle-lang-exts '("clojure" . "clj"))
+
+(defvar org-babel-default-header-args:clojure 
+  '((:results . "silent")))
+
+(defun org-babel-execute:clojure (body params)
+  "Execute a block of Clojure code with Babel."
+  (nrepl-interactive-eval body))
+
+(add-hook 'org-src-mode-hook
+          '(lambda ()
+             (set (make-local-variable 'nrepl-buffer-ns) 
+                  (with-current-buffer 
+                      (overlay-buffer org-edit-src-overlay)
+                    nrepl-buffer-ns))))
+(setq org-src-fontify-natively t)
+(setq org-confirm-babel-evaluate nil)
+(setq org-src-window-setup 'current-window)
+(provide 'ob-clojure)
+(eval-after-load 'org
+       '(add-to-list 'org-structure-template-alist
+                    '("c" "#+begin_src clojure :tangle src/\n?\n#+end_src", "<src lang='clojure'>\n?\n</src>")))
+
+(load-file "~/.emacs.d/custom/ob-haskell.el")
+
 
 ;; Haskell
 (add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
 (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
 (add-hook 'haskell-mode-hook 'flymake-haskell-multi-load)
 (defun haskell-hook ()
-  (define-key evil-normal-state-map (kbd "M-.") 'find-tag))
+  (define-key evil-normal-state-map (kbd "M-.") 'find-tag)
+  (define-key haskell-mode-map (kbd "C-#") 'haskell-interactive-bring)
+  )
+(defun haskell-cabal-hook ()
+  (define-key haskell-cabal-mode-map (kbd "C-c C-c") 'haskell-process-cabal-build)
+  (define-key haskell-cabal-mode-map (kbd "C-c c") 'haskell-process-cabal)
+  (define-key haskell-cabal-mode-map (kbd "C-#") 'haskell-interactive-bring)
+  (define-key haskell-cabal-mode-map [?\C-c ?\C-z] 'haskell-interactive-switch))
+(add-hook 'haskell-cabal-mode-hook 'haskell-cabal-hook)
 (add-hook 'haskell-mode-hook 'haskell-hook)
 
 ;; Flymake
-(global-set-key (kbd "C-c d") 'flymake-display-err-menu-for-current-line)
+(global-set-key (kbd "C-c e") 'flymake-display-err-menu-for-current-line)
 (global-set-key (kbd "C-c C-n") 'flymake-goto-next-error)
 (global-set-key (kbd "C-c C-p") 'flymake-goto-next-error)
 
@@ -156,14 +253,21 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
+ '(custom-safe-themes (quote ("9f443833deb3412a34d2d2c912247349d4bd1b09e0f5eaba11a3ea7872892000" default)))
  '(flymake-gui-warnings-enabled nil)
  '(haskell-hoogle-command "")
  '(haskell-package-conf-file "/home/greg/.ghc/x86_64-linux-7.4.1/package.conf")
+ '(haskell-process-path-cabal-dev "/usr/bin/cabal-dev")
  '(haskell-process-path-ghci "ghci")
  '(haskell-process-prompt-restart-on-cabal-change nil)
  '(haskell-process-suggest-language-pragmas t)
- '(haskell-program-name "ghci")
+ '(haskell-process-type (quote cabal-dev))
+ '(haskell-program-name "cabal-dev ghci")
  '(haskell-stylish-on-save t)
  '(haskell-tags-on-save t)
- '(haskell-process-type 'cabal-dev)
- '(inferior-haskell-web-docs-base "http://hackage.haskell.org/packages/archive/"))
+ '(inferior-haskell-web-docs-base "http://hackage.haskell.org/packages/archive/")
+ '(org-agenda-files (quote ("~/org/bookmarks.org" "~/org/home.org")))
+ '(org-drill-optimal-factor-matrix (quote ((1 (2.1799999999999997 . 3.72) (2.5 . 4.0) (2.36 . 3.86) (2.6 . 4.14) (1.7000000000000002 . 3.44)))))
+ '(org-modules (quote (org-bbdb org-bibtex org-docview org-gnus org-info org-irc org-mhe org-rmail org-w3m org-drill)))
+ '(org-todo-keywords (quote ((sequence "TOIMPLEMENT" "IMPLEMENTED") (sequence "TODO" "DONE"))))
+ '(safe-local-variable-values (quote ((nrepl-buffer-ns . "darts180.core") (whitespace-line-column . 80) (lexical-binding . t)))))
