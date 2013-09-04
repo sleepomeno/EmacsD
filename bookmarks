@@ -4,9 +4,9 @@
 ;;; -*- End Of Bookmark File Format Version Stamp -*-
 (("org-capture-last-stored"
  (filename . "~/org/bookmarks.org")
- (front-context-string . "** [[http://www.")
- (rear-context-string . "ary:emacs:lisp:\n")
- (position . 9097))
+ (front-context-string . "** [[https://git")
+ (rear-context-string . "le:spreadsheet:\n")
+ (position . 10174))
 ("org-refile-last-stored"
  (filename . "~/org/home.org")
  (front-context-string . "** Haskell-Emacs")

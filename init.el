@@ -4,16 +4,6 @@
 (package-initialize)
 (server-start)
 
-;; Captures, e.g. for Bookmarks
-(require 'org-protocol)
-(setq org-protocol-default-template-key "l")
-(setq org-capture-templates
- '(("t" "Todo" entry (file+headline "~/org/notes.org" "Tasks")
-        "* TODO %?\n  %i\n  %a")
-   ("l" "Link" entry (file+olp "~/org/bookmarks.org" "Bookmarks")
-        "* %a\n %?\n %i")
-   ("j" "Journal" entry (file+datetree "~/org/notes.org")
-        "* %?\nEntered on %U\n  %i\n  %a")))
 
 (when (not package-archive-contents)
   (package-refresh-contents))
@@ -61,6 +51,12 @@
 ;; Evil
 (evil-mode 1)
 
+;; Always indent on newline
+(global-set-key (kbd "RET") 'newline-and-indent)
+
+;; Don't check spelling in every text-mode buffer
+(remove-hook 'text-mode-hook 'turn-on-flyspell)
+
 ;; Escape insert mode with jj
 (defun evil-insert-jj-for-normal-mode ()
   (interactive)
@@ -81,7 +77,8 @@
 (evil-leader/set-key
   "e" 'find-file
   "b" 'switch-to-buffer
-  "o" 'other-window
+  "o" 'org-iswitchb
+  "w" 'save-buffer
   "k" 'kill-buffer)
 
 ;; Evil-Nerd-Commenter
@@ -100,7 +97,7 @@
 (global-set-key (kbd  "C-:") 'nrepl-jump)
 
 
-;; Ac-nrepl
+;; Ac-nrepl (Auto-completion for nrepl)
 (require 'ac-nrepl)
 (add-hook 'nrepl-mode-hook 'ac-nrepl-setup)
 (add-hook 'nrepl-interaction-mode-hook 'ac-nrepl-setup)
@@ -112,11 +109,11 @@
 (add-hook 'nrepl-mode-hook 'set-auto-complete-as-completion-at-point-function)
 (add-hook 'nrepl-interaction-mode-hook 'set-auto-complete-as-completion-at-point-function)
 (define-key nrepl-interaction-mode-map (kbd "C-c C-d") 'ac-nrepl-popup-doc)
+
 (global-auto-complete-mode t)
 
 ;; Global bindings
 (global-set-key (kbd "C-c SPC") 'ace-jump-mode)
-(global-set-key (kbd "C-c f") 'anything)
 (global-set-key (kbd "C-ä") 'delete-other-windows)
 (global-set-key (kbd "C-Ä") 'delete-window)
 (global-set-key (kbd "<C-S-iso-lefttab>") 'previous-buffer)
@@ -125,7 +122,7 @@
 (global-set-key (kbd "C-S-u") 'evil-scroll-up)
 (global-set-key (kbd "C-S-o") 'other-window)
 (global-set-key (kbd "ö") 'other-window)
-(global-set-key (kbd "M-l") 'forward-word)
+;; (global-set-key (kbd "M-l") 'forward-word)
 (global-set-key (kbd "M-h") 'backward-word)
 (global-set-key (kbd "M-a") 'find-tag)
 
@@ -138,25 +135,59 @@
 (global-set-key (kbd "C-c l") 'paredit-forward-slurp-sexp)
 (global-set-key (kbd "C-M-j") 'paredit-splice-sexp-killing-forward)
 (global-set-key (kbd "C-M-k") 'paredit-splice-sexp-killing-backward)
-(global-set-key (kbd "C-c C-s") 'paredit-split-sexp)
+(global-set-key (kbd "C-c C-s") 'paredit-split-sexp )
 (global-set-key (kbd "C-c C-j") 'paredit-join-sexps)
 (global-set-key (kbd "C-c C-r") 'paredit-raise-sexp)
-;; (global-set-key (kbd "C-c s") 'paredit-open-bracket)
 (global-set-key (kbd "C-c c") 'paredit-open-curly)
-;; (global-set-key (kbd "C-c a") 'paredit-forward-down)
-;; (global-set-key (kbd "C-c A") 'paredit-forward-up)
-;; (fset 'enter-new-line
-;;       (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ([5 return] 0 "%d")) arg)))
-;; (global-set-key (kbd "C-#") 'enter-new-line)
-
+(global-set-key (kbd "C-s-l j") 'paredit-forward-down)
+(global-set-key (kbd "C-s-l k") 'paredit-forward-up)
+(global-set-key (kbd "C-s-h j") 'paredit-backward-down)
+(global-set-key (kbd "C-s-h k") 'paredit-backward-up)
+(global-set-key (kbd "C-c s") 'paredit-open-bracket)
 
 ;; Org
+
+;; Captures, e.g. for Bookmarks
+(require 'org-protocol)
+(setq org-protocol-default-template-key "l")
+(setq org-capture-templates
+ '(("t" "Todo" entry (file+headline "~/org/notes.org" "Tasks")
+        "* TODO %?\n  %i\n  %a")
+   ("l" "Link" entry (file+olp "~/org/bookmarks.org" "Bookmarks")
+        "* %a\n %?\n %i")
+   ("j" "Journal" entry (file+datetree "~/org/notes.org")
+        "* %?\nEntered on %U\n  %i\n  %a")))
+
+(load-file "~/.emacs.d/custom/org-caldav.el")
+(load-file "~/.emacs.d/custom/org-import-calendar.el")
+(load-file "~/.emacs.d/custom/org-drill.el")
+(load-file "~/.emacs.d/custom/org-learn.el")
+(load-file "~/.emacs.d/custom/org-annotate-file.el")
+
+(require 'org-caldav)
+(require 'org-annotate-file)
+(require 'org-drill)
+(require 'org-learn)
+
+(setq org-caldav-calendar-id "vpvsjgj9avredjnv58kt85lklo@group.calendar.google.com")
+(setq org-icalendar-timezone "Wien")
+(setq org-caldav-inbox "~/org/cal.org")
+(setq org-caldav-files (list "~/org/home.org"))
+(setq org-caldav-sync-changes-to-org 'title-and-timestamp)
+
+(require 'org-import-icalendar)
+(setq org-import-icalendar-filename "~/org/cal.org")
+
+(setq org-icalendar-include-todo 'all)
+(setq org-icalendar-store-UID t)
+
 (add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
-(define-key global-map "\C-cl" 'org-store-link)
+(define-key global-map "\C-co" 'org-store-link)
 (define-key global-map "\C-ca" 'org-agenda)
 
+
    
-(setq org-log-done t)
+(setq org-log-done 'time)
 
 (setq org-agenda-files (list "~/org/home.org"
                              "~/org/uni.org"))
@@ -164,14 +195,8 @@
 (org-clock-persistence-insinuate)
 
 ;; Org-drill, Org-learn, Org-annotate-file
-(load-file "~/.emacs.d/custom/org-drill.el")
-(load-file "~/.emacs.d/custom/org-learn.el")
-(load-file "~/.emacs.d/custom/org-annotate-file.el")
-(require 'org-annotate-file)
-(require 'org-drill)
-(require 'org-learn)
 (setq org-annotate-file-storage-file "~/org/annotated.org")
-(global-set-key (kbd "C-c d") '(lambda () (interactive) (org-annotate-file (current-buffer))))
+;; (global-set-key (kbd "C-c d") '(lambda () (interactive) (org-annotate-file (current-buffer))))
 
 (setq org-return-follows-link t)
 
@@ -266,8 +291,11 @@
  '(haskell-stylish-on-save t)
  '(haskell-tags-on-save t)
  '(inferior-haskell-web-docs-base "http://hackage.haskell.org/packages/archive/")
- '(org-agenda-files (quote ("~/org/bookmarks.org" "~/org/home.org")))
- '(org-drill-optimal-factor-matrix (quote ((1 (2.1799999999999997 . 3.72) (2.5 . 4.0) (2.36 . 3.86) (2.6 . 4.14) (1.7000000000000002 . 3.44)))))
+ '(org-M-RET-may-split-line (quote ((default))))
+ '(org-agenda-files (quote ("~/org/projects.org" "~/org/bookmarks.org" "~/org/home.org")))
+ '(org-drill-learn-fraction 0.45)
+ '(org-drill-optimal-factor-matrix (quote ((2 (1.96 . 2.264) (2.2800000000000002 . 2.417) (2.7 . 2.66) (2.2199999999999998 . 2.336) (2.1799999999999997 . 2.343) (1.56 . 2.074) (2.5 . 2.5) (1.7000000000000002 . 2.185) (2.6 . 2.579) (2.36 . 2.421) (2.46 . 2.497)) (1 (2.7 . 4.27) (2.1799999999999997 . 3.72) (2.5 . 4.0) (2.36 . 3.874) (2.6 . 4.126) (1.7000000000000002 . 3.44)))))
+ '(org-icalendar-exclude-tags (quote ("training")))
  '(org-modules (quote (org-bbdb org-bibtex org-docview org-gnus org-info org-irc org-mhe org-rmail org-w3m org-drill)))
- '(org-todo-keywords (quote ((sequence "TOIMPLEMENT" "IMPLEMENTED") (sequence "TODO" "DONE"))))
+ '(org-todo-keywords (quote ((sequence "TOREAD" "READ") (sequence "TODO" "DONE"))))
  '(safe-local-variable-values (quote ((nrepl-buffer-ns . "darts180.core") (whitespace-line-column . 80) (lexical-binding . t)))))
