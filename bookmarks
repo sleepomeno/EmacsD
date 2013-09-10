@@ -4,12 +4,12 @@
 ;;; -*- End Of Bookmark File Format Version Stamp -*-
 (("org-capture-last-stored"
  (filename . "~/org/bookmarks.org")
- (front-context-string . "** [[https://git")
- (rear-context-string . "le:spreadsheet:\n")
- (position . 10174))
+ (front-context-string . "** [[http://lear")
+ (rear-context-string . ":elisp:clojure:\n")
+ (position . 10478))
 ("org-refile-last-stored"
  (filename . "~/org/home.org")
- (front-context-string . "** Haskell-Emacs")
- (rear-context-string . ":END:\n\n\n* Emacs\n")
- (position . 1149))
+ (front-context-string . "***** Major\n    ")
+ (rear-context-string . "e92\n     :END: \n")
+ (position . 19884))
 )

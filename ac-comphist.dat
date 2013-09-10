@@ -1,4 +1,26 @@
-((("title-and-timestamp" .
+((("org-agenda-files" .
+   [1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0])
+  ("title-only" .
+   [0 0 0 0 0 0 0 0 1 0])
+  ("widen" .
+   [1 0 0 0 0])
+  ("org-set-property" .
+   [0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0])
+  ("point-min" .
+   [1 0 0 0 0 0 0 0 0])
+  ("goto-char" .
+   [1 0 0 0 0 0 0 0 0])
+  ("org-narrow-to-subtree" .
+   [0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0])
+  ("org-caldav-change-location" .
+   [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0])
+  ("defun" .
+   [1 0 0 0 0])
+  ("eventdata" .
+   [1 0 0 0 0 0 0 0 0])
+  ("nth" .
+   [1 0 0])
+  ("title-and-timestamp" .
    [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0])
   ("keyvalues" .
    [3 0 0 0 0 0 0 0 0])
@@ -47,7 +69,7 @@
   ("rrule" .
    [13 0 0 0 0])
   ("location" .
-   [6 0 0 0 0 0 0 0])
+   [8 0 0 0 0 0 0 0])
   ("interactive" .
    [1 0 0 0 0 0 0 0 0 0 0])
   ("current-buffer" .
@@ -133,6 +155,10 @@
   ("list" .
    [1 0 0 0])
   ("all" .
-   [1 0 0])
+   [2 0 0])
   ("paredit-backward" .
-   [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2])))
+   [0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2])
+  ("global-set-key" .
+   [1 0 0 0 0 0 0 0 0 0 0 0 0 0])
+  ("kbd" .
+   [1 0 0])))

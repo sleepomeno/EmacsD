@@ -622,15 +622,13 @@ which can only be synced to calendar. Ignoring." uid))
 	    (when (or (eq org-caldav-sync-changes-to-org 'title-only)
 		      (eq org-caldav-sync-changes-to-org 'title-and-timestamp))
 	      ;; Sync title
-	      (org-caldav-change-heading (nth 4 eventdata))
-        ;; gr change location
-        (org-caldav-change-location (nth 6 eventdata)))
+	      (org-caldav-change-heading (nth 4 eventdata)))
 	    (when (or (eq org-caldav-sync-changes-to-org 'timestamp-only)
 		      (eq org-caldav-sync-changes-to-org 'title-and-timestamp))
 	      ;; Sync timestamp
 	      (setq timesync
 		    (org-caldav-change-timestamp
-		     (apply 'org-caldav-create-time-range (butlast eventdata 3)))))
+		     (apply 'org-caldav-create-time-range (butlast eventdata 2)))))
 	    (when (eq org-caldav-sync-changes-to-org 'all)
 	      ;; Sync everything, so first remove the old one.
 	      (delete-region (org-entry-beginning-position)
@@ -667,13 +665,6 @@ which can only be synced to calendar. Ignoring." uid))
 	 (format "Event UID %s: Deleted from Org" (car cur)))
 	(push (list (car cur) 'deleted-in-cal 'removed-from-org)
 	      org-caldav-sync-result)))))
-
-;; gr 
-(defun org-caldav-change-location (location)
-  (org-narrow-to-subtree)
-  (goto-char (point-min))
-  (org-set-property "LOCATION" location)
-  (widen))
 
 (defun org-caldav-change-heading (newheading)
   "Change heading from Org item under point to NEWHEADING."
@@ -831,7 +822,7 @@ Do nothing if LEVEL is larger than `org-caldav-debug-level'."
 		      (point-min))))
 
 (defun org-caldav-insert-org-entry (start-d start-t end-d end-t
-					    summary description location uid)
+					    summary description uid)
   "Insert org block from given data at current position.
 START/END-D: Start/End date.  START/END-T: Start/End time.
 SUMMARY, DESCRIPTION, UID: obvious.
@@ -840,11 +831,10 @@ Returns MD5 from entry."
     (insert "* " summary "\n  ")
     (when (> (length description) 0)
       (insert description "\n  "))
-    (insert
-     (org-caldav-create-time-range start-d start-t end-d end-t))
+    ;; gr put time into TIME property
+    (let ((time-range (org-caldav-create-time-range start-d start-t end-d end-t)))
+      (org-set-property "TIME" time-range))
     (org-set-property "ID" (url-unhex-string uid))
-    ;; gr
-    (org-set-property "LOCATION" location)
     (insert "\n")
     (forward-line -1)
     (md5 (buffer-substring-no-properties
@@ -852,7 +842,7 @@ Returns MD5 from entry."
 	  (org-entry-end-position))))
 
 (defun org-caldav-create-time-range (start-d start-t end-d end-t)
-  "Create an Org timestamp range from START-D/T, END-D/T."
+  "Creeate an Org timestamp range from START-D/T, END-D/T."
   (with-temp-buffer
     (org-caldav-insert-org-time-stamp start-d start-t)
     (if (and end-d
@@ -1008,7 +998,7 @@ If COMPLEMENT is non-nil, return all item without errors."
 
 (defun org-caldav-convert-event ()
   "Convert icalendar event in current buffer.
-Returns a list '(start-d start-t end-d end-t summary description location)'
+Returns a list '(start-d start-t end-d end-t summary description)'
 which can be fed into `org-caldav-insert-org-entry'."
   (let ((decoded (decode-coding-region (point-min) (point-max) 'utf-8 t)))
     (erase-buffer)
@@ -1045,9 +1035,6 @@ which can be fed into `org-caldav-insert-org-entry'."
 	 (summary (icalendar--convert-string-for-import
 		   (or (icalendar--get-event-property e 'SUMMARY)
 		       "No Title")))
-   (loc (icalendar--convert-string-for-import
-         (or (icalendar--get-event-property e 'LOCATION)
-             "")))
 	 (description (icalendar--convert-string-for-import
 		       (or (icalendar--get-event-property e 'DESCRIPTION)
 			   "")))
@@ -1092,7 +1079,7 @@ which can be fed into `org-caldav-insert-org-entry'."
     ;; Return result
     (list start-d start-t
 	  (if end-t end-d end-1-d)
-	  end-t summary description loc)))
+	  end-t summary description)))
 
 ;; This is adapted from url-dav.el, written by Bill Perry.
 ;; This does more error checking on the headers.

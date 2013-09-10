@@ -17,6 +17,7 @@
                       clojure-mode
                       nrepl
                       rainbow-delimiters
+                      paredit
                       ;; Project navigation
                       projectile
                       ack-and-a-half
@@ -96,6 +97,11 @@
 (global-set-key (kbd "C-;") 'nrepl-jump-back)
 (global-set-key (kbd  "C-:") 'nrepl-jump)
 
+;; Org-caldav-sync bindings
+(define-key evil-normal-state-map (kbd "C-p") 'org-caldav-sync)
+;; Input settings (M-x insert-kbd-macro)
+(global-set-key (kbd "C-ü")
+   '(lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ([134217848 111 114 103 45 99 97 108 100 97 118 45 115 121 110 99 return 111 114 46 114 105 101 103 108 101 114 64 103 109 97 105 108 46 99 111 109 return 119 97 97 114 115 110 118 116 102 120 102 120 121 112 118 106 return] 0 "%d")) arg)))
 
 ;; Ac-nrepl (Auto-completion for nrepl)
 (require 'ac-nrepl)
@@ -122,9 +128,11 @@
 (global-set-key (kbd "C-S-u") 'evil-scroll-up)
 (global-set-key (kbd "C-S-o") 'other-window)
 (global-set-key (kbd "ö") 'other-window)
-;; (global-set-key (kbd "M-l") 'forward-word)
+(global-set-key (kbd "M-l") 'forward-word)
 (global-set-key (kbd "M-h") 'backward-word)
 (global-set-key (kbd "M-a") 'find-tag)
+(global-set-key (kbd "M-o") 'imenu)
+
 
 ;; Paredit
 (global-set-key (kbd "C-M-h") 'paredit-backward)
@@ -143,7 +151,9 @@
 (global-set-key (kbd "C-s-l k") 'paredit-forward-up)
 (global-set-key (kbd "C-s-h j") 'paredit-backward-down)
 (global-set-key (kbd "C-s-h k") 'paredit-backward-up)
-(global-set-key (kbd "C-c s") 'paredit-open-bracket)
+(global-set-key (kbd "C-c (") 'paredit-wrap-round)
+(global-set-key (kbd "C-c {") 'paredit-wrap-curly)
+(global-set-key (kbd "C-c [") 'paredit-wrap-square)
 
 ;; Org
 
@@ -169,27 +179,28 @@
 (require 'org-drill)
 (require 'org-learn)
 
+(setq org-goto-interface 'outline org-goto-max-level 10)
+
 (setq org-caldav-calendar-id "vpvsjgj9avredjnv58kt85lklo@group.calendar.google.com")
-(setq org-icalendar-timezone "Wien")
+(setq org-icalendar-timezone "UTC")
 (setq org-caldav-inbox "~/org/cal.org")
-(setq org-caldav-files (list "~/org/home.org"))
-(setq org-caldav-sync-changes-to-org 'title-and-timestamp)
+(setq org-caldav-files (list "~/org/home.org" "~/org/uni.org"))
+(setq org-caldav-sync-changes-to-org 'title-only)
 
-(require 'org-import-icalendar)
-(setq org-import-icalendar-filename "~/org/cal.org")
+;; Not needed for the time being
+;; (require 'org-import-icalendar)
+;; (setq org-import-icalendar-filename "~/org/cal.org")
 
-(setq org-icalendar-include-todo 'all)
+(setq org-icalendar-include-todo nil)
 (setq org-icalendar-store-UID t)
 
 (add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
-(define-key global-map "\C-co" 'org-store-link)
+(define-key global-map "\C-cL" 'org-store-link)
 (define-key global-map "\C-ca" 'org-agenda)
-
-
    
 (setq org-log-done 'time)
 
-(setq org-agenda-files (list "~/org/home.org"
+(setq org-agenda-files (list "~/org/test.org" "~/org/home.org"
                              "~/org/uni.org"))
 (setq org-clock-persist 'history)
 (org-clock-persistence-insinuate)
@@ -264,6 +275,30 @@
 ;; PATH
 (setenv "PATH" (concat (getenv "PATH") ":/home/greg/.cabal/bin"))
 
+(defun save-macro (name)                  
+  "save a macro. Take a name as argument
+     and save the last defined macro under 
+     this name at the end of your .emacs"
+  (interactive "SName of the macro :")  ; ask for the name of the macro    
+  (kmacro-name-last-macro name)         ; use this name for the macro    
+  (find-file user-init-file)            ; open ~/.emacs or other user init file 
+  (goto-char (point-max))               ; go to the end of the .emacs
+  (newline)                             ; insert a newline
+  (insert-kbd-macro name)               ; copy the macro 
+  (newline)                             ; insert a newline
+  (switch-to-buffer nil))               ; return to the initial buffer
+
+;; refile only within the current buffer
+(defun my/org-refile-within-current-buffer ()
+  "Move the entry at point to another heading in the current buffer."
+  (interactive)
+  (let ((org-refile-targets '((nil :maxlevel . 5))))
+    (org-refile)))
+
+(global-set-key (kbd "C-c C-S-w") 'my/org-refile-within-current-buffer)
+
+
+
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
@@ -294,8 +329,16 @@
  '(org-M-RET-may-split-line (quote ((default))))
  '(org-agenda-files (quote ("~/org/projects.org" "~/org/bookmarks.org" "~/org/home.org")))
  '(org-drill-learn-fraction 0.45)
- '(org-drill-optimal-factor-matrix (quote ((2 (1.96 . 2.264) (2.2800000000000002 . 2.417) (2.7 . 2.66) (2.2199999999999998 . 2.336) (2.1799999999999997 . 2.343) (1.56 . 2.074) (2.5 . 2.5) (1.7000000000000002 . 2.185) (2.6 . 2.579) (2.36 . 2.421) (2.46 . 2.497)) (1 (2.7 . 4.27) (2.1799999999999997 . 3.72) (2.5 . 4.0) (2.36 . 3.874) (2.6 . 4.126) (1.7000000000000002 . 3.44)))))
+ '(org-drill-optimal-factor-matrix (quote ((2 (1.8000000000000003 . 2.254) (1.96 . 2.264) (2.2800000000000002 . 2.417) (2.7 . 2.66) (2.2199999999999998 . 2.336) (2.1799999999999997 . 2.343) (1.56 . 2.074) (2.5 . 2.5) (1.7000000000000002 . 2.185) (2.6 . 2.579) (2.36 . 2.421) (2.46 . 2.497)) (1 (2.7 . 4.27) (2.1799999999999997 . 3.72) (2.5 . 4.0) (2.36 . 3.874) (2.6 . 4.126) (1.7000000000000002 . 3.44)))))
  '(org-icalendar-exclude-tags (quote ("training")))
+ '(org-icalendar-include-body nil)
  '(org-modules (quote (org-bbdb org-bibtex org-docview org-gnus org-info org-irc org-mhe org-rmail org-w3m org-drill)))
+ '(org-refile-targets (quote ((org-agenda-files :maxlevel . 2))))
  '(org-todo-keywords (quote ((sequence "TOREAD" "READ") (sequence "TODO" "DONE"))))
  '(safe-local-variable-values (quote ((nrepl-buffer-ns . "darts180.core") (whitespace-line-column . 80) (lexical-binding . t)))))
+
+
+
+(fset 'fla
+   (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ([134217848 111 114 103 45 99 97 108 100 97 118 45 115 121 110 99 return 111 114 46 114 105 101 103 108 101 114 64 103 109 97 105 108 46 99 111 109 return 119 97 97 114 115 110 118 116 102 120 102 120 121 112 118 106 return] 0 "%d")) arg)))
+
