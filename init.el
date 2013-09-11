@@ -80,6 +80,7 @@
   "b" 'switch-to-buffer
   "o" 'org-iswitchb
   "w" 'save-buffer
+  "l" 'ace-jump-line-mode
   "k" 'kill-buffer)
 
 ;; Evil-Nerd-Commenter
@@ -119,14 +120,14 @@
 (global-auto-complete-mode t)
 
 ;; Global bindings
-(global-set-key (kbd "C-c SPC") 'ace-jump-mode)
+(global-set-key (kbd "C-c SPC") 'ace-jump-line-mode)
 (global-set-key (kbd "C-ä") 'delete-other-windows)
 (global-set-key (kbd "C-Ä") 'delete-window)
-(global-set-key (kbd "<C-S-iso-lefttab>") 'previous-buffer)
-(global-set-key (kbd "<C-tab>") 'next-buffer)
+;; (global-set-key (kbd "<C-S-iso-lefttab>") 'previous-buffer)
+;; (global-set-key (kbd "<C-tab>") 'next-buffer)
 (global-set-key (kbd "C-ö") 'keyboard-quit)
 (global-set-key (kbd "C-S-u") 'evil-scroll-up)
-(global-set-key (kbd "C-S-o") 'other-window)
+(global-set-key (kbd "C-S-o") 'evil-execute-in-emacs-state)
 (global-set-key (kbd "ö") 'other-window)
 (global-set-key (kbd "M-l") 'forward-word)
 (global-set-key (kbd "M-h") 'backward-word)
@@ -146,7 +147,7 @@
 (global-set-key (kbd "C-c C-s") 'paredit-split-sexp )
 (global-set-key (kbd "C-c C-j") 'paredit-join-sexps)
 (global-set-key (kbd "C-c C-r") 'paredit-raise-sexp)
-(global-set-key (kbd "C-c c") 'paredit-open-curly)
+(global-set-key (kbd "C-c x") 'paredit-open-curly)
 (global-set-key (kbd "C-s-l j") 'paredit-forward-down)
 (global-set-key (kbd "C-s-l k") 'paredit-forward-up)
 (global-set-key (kbd "C-s-h j") 'paredit-backward-down)
@@ -161,12 +162,29 @@
 (require 'org-protocol)
 (setq org-protocol-default-template-key "l")
 (setq org-capture-templates
- '(("t" "Todo" entry (file+headline "~/org/notes.org" "Tasks")
-        "* TODO %?\n  %i\n  %a")
-   ("l" "Link" entry (file+olp "~/org/bookmarks.org" "Bookmarks")
+ '(("t" "Todo" entry (file+datetree "~/org/journal.org")
+        "* TODO %?")
+   ("b" "starting with b...")
+   ("bu" "Tobuy" entry (file+datetree "~/org/journal.org")
+        "* TOBUY %?")
+   ("bl" "TOBLOG" entry (file+olp "~/org/home.org" "Blog")
+        "* TOBLOG %^{Heading}\n\t%?")
+   ("l" "starting with l... ")
+   ("li" "Link" entry (file+olp "~/org/bookmarks.org" "Bookmarks")
         "* %a\n %?\n %i")
-   ("j" "Journal" entry (file+datetree "~/org/notes.org")
-        "* %?\nEntered on %U\n  %i\n  %a")))
+   ("lo" "TOLOOKAT" entry (file+datetree "~/org/journal.org")
+        "* TOLOOKAT %?")
+   ("lu" "TOLOOKAT from Browser" entry (file+datetree "~/org/journal.org")
+        "* TOLOOKAT %?\n\t%a")
+   ("p" "Project" entry (file+olp "~/org/projects.org" "Programming")
+        "* %^{Heading}\n\t%?")
+   ("r" "TOREAD" entry (file+olp "~/org/home.org" "Bücher")
+        "* TOREAD %^{Heading}\n\t%?")
+   ("y" "Journal prompted" item (file+datetree+prompt "~/org/journal.org")
+    "%?")
+   ("j" "Journal" item (file+datetree "~/org/journal.org")
+        "%?")))
+(define-key global-map "\C-cc" 'org-capture)
 
 (load-file "~/.emacs.d/custom/org-caldav.el")
 (load-file "~/.emacs.d/custom/org-import-calendar.el")
@@ -200,7 +218,7 @@
    
 (setq org-log-done 'time)
 
-(setq org-agenda-files (list "~/org/test.org" "~/org/home.org"
+(setq org-agenda-files (list "~/org/journal.org" "~/org/projects.org" "~/org/home.org"
                              "~/org/uni.org"))
 (setq org-clock-persist 'history)
 (org-clock-persistence-insinuate)
@@ -220,7 +238,7 @@
 ;; Set to the location of your Org files on your local system
 (setq org-directory "~/org")
 ;; Set to the name of the file where new notes will be stored
-(setq org-mobile-inbox-for-pull "~/org/flagged.org")
+(setq org-mobile-inbox-for-pull "~/org/notes.org")
 ;; Set to <your Dropbox root directory>/MobileOrg.
 (setq org-mobile-directory "~/Dropbox/Apps/MobileOrg")
 
@@ -297,6 +315,11 @@
 
 (global-set-key (kbd "C-c C-S-w") 'my/org-refile-within-current-buffer)
 
+;; Sometimes Org agenda just doesnt work
+(setq org-agenda-archives-mode nil)
+(setq org-agenda-skip-comment-trees nil)
+(setq org-agenda-skip-function nil)
+
 
 
 
@@ -326,15 +349,18 @@
  '(haskell-stylish-on-save t)
  '(haskell-tags-on-save t)
  '(inferior-haskell-web-docs-base "http://hackage.haskell.org/packages/archive/")
+ '(initial-buffer-choice "~/org/home.org")
  '(org-M-RET-may-split-line (quote ((default))))
  '(org-agenda-files (quote ("~/org/projects.org" "~/org/bookmarks.org" "~/org/home.org")))
  '(org-drill-learn-fraction 0.45)
- '(org-drill-optimal-factor-matrix (quote ((2 (1.8000000000000003 . 2.254) (1.96 . 2.264) (2.2800000000000002 . 2.417) (2.7 . 2.66) (2.2199999999999998 . 2.336) (2.1799999999999997 . 2.343) (1.56 . 2.074) (2.5 . 2.5) (1.7000000000000002 . 2.185) (2.6 . 2.579) (2.36 . 2.421) (2.46 . 2.497)) (1 (2.7 . 4.27) (2.1799999999999997 . 3.72) (2.5 . 4.0) (2.36 . 3.874) (2.6 . 4.126) (1.7000000000000002 . 3.44)))))
+ '(org-drill-optimal-factor-matrix (quote ((3 (2.7 . 2.682) (2.32 . 2.383) (2.1799999999999997 . 2.343) (2.04 . 2.211) (2.46 . 2.46)) (2 (1.8000000000000003 . 2.254) (1.96 . 2.264) (2.2800000000000002 . 2.417) (2.7 . 2.66) (2.2199999999999998 . 2.336) (2.1799999999999997 . 2.343) (1.56 . 2.116) (2.5 . 2.5) (1.7000000000000002 . 2.185) (2.6 . 2.579) (2.36 . 2.421) (2.46 . 2.497)) (1 (2.2199999999999998 . 3.752) (2.04 . 3.63) (2.7 . 4.27) (2.1799999999999997 . 3.72) (2.5 . 4.0) (2.36 . 3.874) (2.6 . 4.126) (1.7000000000000002 . 3.44)))))
  '(org-icalendar-exclude-tags (quote ("training")))
  '(org-icalendar-include-body nil)
+ '(org-icalendar-use-scheduled (quote nil))
  '(org-modules (quote (org-bbdb org-bibtex org-docview org-gnus org-info org-irc org-mhe org-rmail org-w3m org-drill)))
  '(org-refile-targets (quote ((org-agenda-files :maxlevel . 2))))
  '(org-todo-keywords (quote ((sequence "TOREAD" "READ") (sequence "TODO" "DONE"))))
+ '(org-use-speed-commands t)
  '(safe-local-variable-values (quote ((nrepl-buffer-ns . "darts180.core") (whitespace-line-column . 80) (lexical-binding . t)))))
 
 
