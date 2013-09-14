@@ -2,8 +2,6 @@
 (add-to-list 'package-archives
              '("marmalade" . "http://marmalade-repo.org/packages/") t)
 (package-initialize)
-(server-start)
-
 
 (when (not package-archive-contents)
   (package-refresh-contents))
@@ -21,7 +19,9 @@
                       ;; Project navigation
                       projectile
                       ack-and-a-half
+                      ido-better-flex
                       ;; Misc.
+                      magit
                       markdown-mode
                       twilight-theme
                       evil
@@ -88,6 +88,9 @@
   "ci" 'evilnc-comment-or-uncomment-lines
   "cl" 'evilnc-comment-or-uncomment-to-the-line
   )
+
+;; better ido
+;; (ido-better-flex/enable)
 
 ;; Markdown
 (add-to-list 'auto-mode-alist '("\\.text\\'" . markdown-mode))
@@ -157,6 +160,28 @@
 (global-set-key (kbd "C-c [") 'paredit-wrap-square)
 
 ;; Org
+(setq org-todo-keywords (quote ((sequence "TOREAD" "READ") (sequence "TODO" "DONE"))))
+(setq org-todo-keyword-faces
+      '(
+        ("UTODO"  . (:foreground "#b70101" :weight bold :slant italic))
+        ("UTOLEARN"  . (:foreground "#b70101" :weight bold :slant italic))
+        ("UTOIMPLEMENT"  . (:foreground "#b70101" :weight bold :slant italic))
+        ;; ("STARTED"  . (:foreground "#b70101" :weight bold))
+        ;; ("APPT"  . (:foreground "sienna" :weight bold))
+        ;; ("PROJ"  . (:foreground "blue" :weight bold))
+        ;; ("ZKTO"  . (:foreground "orange" :weight bold))
+        ;; ("WAITING"  . (:foreground "orange" :weight bold))
+        ;; ("DONE"  . (:foreground "forestgreen" :weight bold))
+        ;; ("DELEGATED"  . (:foreground "forestgreen" :weight bold))
+        ;; ("CANCELED"  . shadow)
+        ))
+
+(setq org-agenda-custom-commands
+      '(("u" todo "UTODO|UTOLEARN|UTOIMPLEMENT")
+        ("l" todo "TOLOOKAT")))
+
+(setq org-agenda-skip-deadline-if-done t)
+(setq org-agenda-skip-scheduled-if-done t)
 
 ;; Captures, e.g. for Bookmarks
 (require 'org-protocol)
@@ -176,6 +201,8 @@
         "* TOLOOKAT %?")
    ("lu" "TOLOOKAT from Browser" entry (file+datetree "~/org/journal.org")
         "* TOLOOKAT %?\n\t%a")
+   ("lt" "TODO from Browser" entry (file+datetree "~/org/journal.org")
+        "* TODO %?\n\t%a")
    ("p" "Project" entry (file+olp "~/org/projects.org" "Programming")
         "* %^{Heading}\n\t%?")
    ("r" "TOREAD" entry (file+olp "~/org/home.org" "Bücher")
@@ -190,10 +217,8 @@
 (load-file "~/.emacs.d/custom/org-import-calendar.el")
 (load-file "~/.emacs.d/custom/org-drill.el")
 (load-file "~/.emacs.d/custom/org-learn.el")
-(load-file "~/.emacs.d/custom/org-annotate-file.el")
 
 (require 'org-caldav)
-(require 'org-annotate-file)
 (require 'org-drill)
 (require 'org-learn)
 
@@ -205,10 +230,6 @@
 (setq org-caldav-files (list "~/org/home.org" "~/org/uni.org"))
 (setq org-caldav-sync-changes-to-org 'title-only)
 
-;; Not needed for the time being
-;; (require 'org-import-icalendar)
-;; (setq org-import-icalendar-filename "~/org/cal.org")
-
 (setq org-icalendar-include-todo nil)
 (setq org-icalendar-store-UID t)
 
@@ -218,7 +239,7 @@
    
 (setq org-log-done 'time)
 
-(setq org-agenda-files (list "~/org/journal.org" "~/org/projects.org" "~/org/home.org"
+(setq org-agenda-files (list "~/org/bookmarks.org" "~/org/journal.org" "~/org/projects.org" "~/org/home.org"
                              "~/org/uni.org"))
 (setq org-clock-persist 'history)
 (org-clock-persistence-insinuate)
@@ -320,6 +341,13 @@
 (setq org-agenda-skip-comment-trees nil)
 (setq org-agenda-skip-function nil)
 
+;; Org-attach should provide a link functionality
+(require 'org-attach)
+(org-add-link-type "att" 'org-attach-open-link)
+(defun org-attach-open-link (file)
+  (org-open-file (org-attach-expand file)))
+(set-variable 'org-attach-store-link-p t)
+
 
 
 
@@ -351,9 +379,9 @@
  '(inferior-haskell-web-docs-base "http://hackage.haskell.org/packages/archive/")
  '(initial-buffer-choice "~/org/home.org")
  '(org-M-RET-may-split-line (quote ((default))))
- '(org-agenda-files (quote ("~/org/projects.org" "~/org/bookmarks.org" "~/org/home.org")))
+ '(org-agenda-files (quote ("~/org/bookmarks.org" "~/org/uni.org" "~/org/journal.org" "~/org/projects.org" "~/org/home.org")))
  '(org-drill-learn-fraction 0.45)
- '(org-drill-optimal-factor-matrix (quote ((3 (2.7 . 2.682) (2.32 . 2.383) (2.1799999999999997 . 2.343) (2.04 . 2.211) (2.46 . 2.46)) (2 (1.8000000000000003 . 2.254) (1.96 . 2.264) (2.2800000000000002 . 2.417) (2.7 . 2.66) (2.2199999999999998 . 2.336) (2.1799999999999997 . 2.343) (1.56 . 2.116) (2.5 . 2.5) (1.7000000000000002 . 2.185) (2.6 . 2.579) (2.36 . 2.421) (2.46 . 2.497)) (1 (2.2199999999999998 . 3.752) (2.04 . 3.63) (2.7 . 4.27) (2.1799999999999997 . 3.72) (2.5 . 4.0) (2.36 . 3.874) (2.6 . 4.126) (1.7000000000000002 . 3.44)))))
+ '(org-drill-optimal-factor-matrix (quote ((3 (2.2800000000000002 . 2.436) (2.7 . 2.682) (2.32 . 2.383) (2.1799999999999997 . 2.343) (2.04 . 2.211) (2.46 . 2.46)) (2 (1.8000000000000003 . 2.254) (1.96 . 2.264) (2.2800000000000002 . 2.417) (2.7 . 2.66) (2.2199999999999998 . 2.336) (2.1799999999999997 . 2.343) (1.56 . 2.116) (2.5 . 2.5) (1.7000000000000002 . 2.185) (2.6 . 2.579) (2.36 . 2.421) (2.46 . 2.497)) (1 (1.96 . 3.622) (2.2199999999999998 . 3.752) (2.04 . 3.63) (2.7 . 4.27) (2.1799999999999997 . 3.748) (2.5 . 4.0) (2.36 . 3.874) (2.6 . 4.126) (1.7000000000000002 . 3.496)))))
  '(org-icalendar-exclude-tags (quote ("training")))
  '(org-icalendar-include-body nil)
  '(org-icalendar-use-scheduled (quote nil))
@@ -361,10 +389,5 @@
  '(org-refile-targets (quote ((org-agenda-files :maxlevel . 2))))
  '(org-todo-keywords (quote ((sequence "TOREAD" "READ") (sequence "TODO" "DONE"))))
  '(org-use-speed-commands t)
+ '(projectile-use-native-indexing t)
  '(safe-local-variable-values (quote ((nrepl-buffer-ns . "darts180.core") (whitespace-line-column . 80) (lexical-binding . t)))))
-
-
-
-(fset 'fla
-   (lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ([134217848 111 114 103 45 99 97 108 100 97 118 45 115 121 110 99 return 111 114 46 114 105 101 103 108 101 114 64 103 109 97 105 108 46 99 111 109 return 119 97 97 114 115 110 118 116 102 120 102 120 121 112 118 106 return] 0 "%d")) arg)))
-

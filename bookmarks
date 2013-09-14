@@ -3,18 +3,18 @@
 ;;; nevertheless, you probably don't want to edit it.
 ;;; -*- End Of Bookmark File Format Version Stamp -*-
 (("org-capture-last-stored-marker"
- (filename . "~/org/uni.org")
- (front-context-string . "** iasdf\n   asdf")
- (rear-context-string . "d863b\n   :END: \n")
- (position . 979))
-("org-capture-last-stored"
  (filename . "~/org/home.org")
- (front-context-string . "** TOBLOG org-ca")
- (rear-context-string . " homoiconity...\n")
- (position . 22830))
+ (front-context-string . "*** [[http://org")
+ (rear-context-string . "edde\n    :END:\n\n")
+ (position . 21762))
+("org-capture-last-stored"
+ (filename . "~/org/journal.org")
+ (front-context-string . "**** TODO conver")
+ (rear-context-string . "20:34] =>  0:18\n")
+ (position . 1374))
 ("org-refile-last-stored"
  (filename . "~/org/home.org")
- (front-context-string . "** Wichtige Tage")
- (rear-context-string . "9-11 Mit 17:00>\n")
- (position . 30500))
+ (front-context-string . "*** wegen scheiß")
+ (rear-context-string . "ate bookmarks]]\n")
+ (position . 23236))
 )
