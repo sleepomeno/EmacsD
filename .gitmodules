@@ -1,0 +1,6 @@
+[submodule "custom/use-package"]
+	path = custom/use-package
+	url = https://github.com/jwiegley/use-package.git
+[submodule "custom/org-dotemacs"]
+	path = custom/org-dotemacs
+	url = https://github.com/vapniks/org-dotemacs.git
