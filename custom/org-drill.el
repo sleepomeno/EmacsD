@@ -587,16 +587,17 @@ CMD is bound, or nil if it is not bound to a key."
     (apply 'org-map-entries func
            (concat "+" org-drill-question-tag
                    (if (and (stringp org-drill-match)
-                            (not (member '(?+ ?- ?|) (elt org-drill-match 0))))
-                       "+" "")
-                   (or org-drill-match ""))
+                            ;; gr comparison of first character
+                            (not (let ((first-char (elt org-drill-match 0))) (or (char-equal ?+ first-char) (char-equal ?- first-char) (char-equal ?| first-char)))) ) "+" "")
+                    (or org-drill-match "")   )
+           
            (case org-drill-scope
              (file nil)
              (file-no-restriction 'file)
              (directory
               (directory-files (file-name-directory (buffer-file-name))
                                t "\\.org$"))
-             (t org-drill-scope))
+             (t org-drill-scope)))
            skip)))
 
 

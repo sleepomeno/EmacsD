@@ -8,10 +8,10 @@
  (rear-context-string . "edde\n    :END:\n\n")
  (position . 21762))
 ("org-capture-last-stored"
- (filename . "~/org/home.org")
- (front-context-string . "** TOBLOG Ist Be")
- (rear-context-string . "[#B] org-attach\n")
- (position . 37271))
+ (filename . "~/org/bookmarks.org")
+ (front-context-string . "** [[https://git")
+ (rear-context-string . "       :beamer:\n")
+ (position . 15784))
 ("org-refile-last-stored"
  (filename . "~/org/home.org")
  (front-context-string . "*** wegen scheiß")

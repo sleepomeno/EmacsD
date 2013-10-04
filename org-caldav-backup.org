@@ -1,0 +1,7 @@
+* Heuristic Optimization Techniques
+  :PROPERTIES:
+  :LOCATION: Seminarraum 186
+  :ID:       5f19db47-bcb5-4dcc-bc24-4c14dcd1b1bc
+  :END:
+  <2013-10-01 Mit 13:00 +1w>
+
