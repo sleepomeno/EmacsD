@@ -453,6 +453,17 @@
     :init (progn
             (setq org-latex-create-formula-image-program 'dvipng)
             (setq org-latex-pdf-process '("pdflatex -interaction nonstopmode -output-directory %o %f""pdflatex -interaction nonstopmode -output-directory %o %f" "bibtex %b" "pdflatex -interaction nonstopmode -output-directory %o %f"))
+            (add-to-list 'org-latex-classes
+                         '("termpaper"
+                           "\\documentclass{article}
+                 [NO-DEFAULT-PACKAGES]
+                 [NO-PACKAGES]"
+                           ("\\section{%s}" . "\\section*{%s}")
+                           ("\\subsection{%s}" . "\\subsection*{%s}")
+                           ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                           ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                           ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))
+                         )
             ))
   
 #+end_src
