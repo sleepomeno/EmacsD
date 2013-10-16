@@ -40,7 +40,7 @@
                                        evil evil-leader evil-numbers evil-paredit evil-nerd-commenter
                                        ;; Misc.
                                        ack-and-a-half auto-complete markdown-mode twilight-theme
-                                       ac-nrepl ace-jump-mode
+                                       ac-nrepl ace-jump-mode ess
                                        ;; Haskell
                                        flymake-hlint haskell-mode flymake-haskell-multi hlinum
                                        )
@@ -200,6 +200,13 @@
 #+begin_src emacs-lisp
   (use-package ace-jump-mode
     :bind ("C-c SPC" . ace-jump-line-mode))
+#+end_src
+** Forth
+#+begin_src emacs-lisp 
+  ;; (load (conc))
+  (load (concat user-emacs-directory "custom/gforth.el"))
+  (autoload 'forth-mode "gforth.el")
+  (setq auto-mode-alist (cons '("\\.fs\\'" . forth-mode) auto-mode-alist))
 #+end_src
 ** Paredit
 *** Key bindings
@@ -383,7 +390,24 @@
        (eval-after-load 'org
               '(add-to-list 'org-structure-template-alist
                            '("x" "#+begin_src emacs-lisp \n?\n#+end_src", "<src lang='emacs-lisp'>\n?\n</src>")))
+       
      #+end_src
+**** R
+     #+begin_src emacs-lisp 
+       (eval-after-load 'org
+         (progn
+           '(add-to-list 'org-structure-template-alist
+                         '("r"  "#+begin_src R :results silent :session sess1\n?\n#+end_src", "<src lang='R'>\n?\n</src>"))
+           '(org-babel-do-load-languages
+             'org-babel-load-languages
+             '((emacs-lisp . t)
+               (R . t)))
+           ))
+     #+end_src
+           
+#+begin_src emacs-lisp 
+  (require 'ess)
+#+end_src
 **** Clojure
      #+begin_src emacs-lisp 
        (add-to-list 'org-babel-tangle-lang-exts '("clojure" . "clj"))
@@ -446,7 +470,8 @@
       (setq haskell-process-path-ghci "ghci")
       (setq haskell-process-prompt-restart-on-cabal-change nil)
       (setq haskell-process-suggest-language-pragmas nil)
-      (setq haskell-process-type (quote cabal-dev))
+      (setq haskell-process-type (quote ghci))
+      (setq haskell-process-args-ghci '("-package-conf" "cabal-dev/packages-7.4.1.conf" "-i../dist/build/autogen" "-idist/build/autogen" "-XOverloadedStrings"))
       (setq haskell-program-name "cabal-dev ghci")
       (setq haskell-stylish-on-save t)
       (setq haskell-tags-on-save nil)

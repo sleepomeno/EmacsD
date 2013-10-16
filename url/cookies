@@ -5,8 +5,8 @@
  'nil)
 (setq url-cookie-secure-storage
  '(("www.google.com"
-  [url-cookie "AGAPS" "1:dtYwvj8OscfpB9SJVzlp46qnrWLiuAvG:kyN6Ddj4yEcsgXi7" "02-Oct-2015 22:29:24.00 GMT" "/calendar/dav/" "www.google.com" t]
-  [url-cookie "HttpOnly" nil "02-Oct-2015 22:29:24.00 GMT" "/calendar/dav/" "www.google.com" t]))
+  [url-cookie "HttpOnly" nil "15-Oct-2015 11:13:09.00 GMT" "/calendar/dav/" "www.google.com" t]
+  [url-cookie "AGAPS" "1:FrypZOLq0GEml52V14KZm7nRI1mDGYFy:KnwVuniz6Yr22MYf" "15-Oct-2015 11:13:09.00 GMT" "/calendar/dav/" "www.google.com" t]))
 )
 
 ;; Local Variables:

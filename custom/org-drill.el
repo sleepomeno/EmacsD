@@ -6,6 +6,7 @@
 ;;; Repository at http://bitbucket.org/eeeickythump/org-drill/
 ;;;
 ;;;
+
 ;;; Synopsis
 ;;; ========
 ;;;
@@ -598,7 +599,7 @@ CMD is bound, or nil if it is not bound to a key."
               (directory-files (file-name-directory (buffer-file-name))
                                t "\\.org$"))
              (t org-drill-scope)))
-           skip)))
+           skip))
 
 
 (defmacro with-hidden-cloze-text (&rest body)

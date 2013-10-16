@@ -5,3 +5,43 @@
   :END:
   <2013-10-01 Mit 13:00 +1w>
 
+* Tennis Wien
+  :PROPERTIES:
+  :ID:       s26ac5tnhtifb370f055meki60@google.com
+  :LOCATION: 
+  :END:
+  <2013-10-12 Sam>--<2013-10-16 Mit>
+
+* Seminar aus Algorithmik
+  :PROPERTIES:
+  :LOCATION: Besprechungsraum 186 (Favoritenstrasse 9, Stiege 2, 5.Stock)
+  :ID:       4abad98f-fd9d-4fc5-a36c-f77561778c4c
+  :END:
+<2013-10-09 Mit 16:00>
+
+* Business Intelligence
+  :PROPERTIES:
+  :LOCATION: HS 17 Friedrich Hartmann
+  :ID:       4e7f5c0f-50c1-4fad-ab35-8b2031d4c174
+  :END:
+  <2013-10-10 Don 8:00 +1w>--<2013-10-10 Don 11:00 +1w>
+
+* Web Application Engineering
+  :PROPERTIES:
+  :LOCATION: HS 8 Heinz Parkus
+  :ID:       2d9197ef-eda1-4a5e-a388-a91f174737b0
+  :END:
+  <2013-10-10 Don 17:30 +1w>
+
+* Effiziente Programme
+  :PROPERTIES:
+  :ID:       c9852317-30e3-4dfc-afc1-477beff02e59
+  :END:
+<2013-10-12 Sam 14:00 +1w>
+
+* Stackbasierte Sprachen
+  :PROPERTIES:
+  :ID:       c29b0520-5bcd-4f47-bcc6-fbe71a738d2f
+  :END:
+  <2013-10-11 Fre 15:45>
+
