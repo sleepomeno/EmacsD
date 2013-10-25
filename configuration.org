@@ -6,7 +6,7 @@
   (setq user-full-name "Gregor Riegler"
         user-mail-address "gregor.riegler@gmail.com")
 #+END_SRC
-
+   
 ** Load-Path
    #+begin_src emacs-lisp 
      (add-to-list 'load-path (concat user-emacs-directory "custom"))
@@ -42,7 +42,7 @@
                                        ack-and-a-half auto-complete markdown-mode twilight-theme
                                        ac-nrepl ace-jump-mode ess
                                        ;; Haskell
-                                       flymake-hlint haskell-mode flymake-haskell-multi hlinum
+                                       flymake-hlint haskell-mode flymake-haskell-multi hlinum flymake-cursor
                                        )
        "A list of packages to ensure are installed at launch.")
    #+end_src
@@ -479,10 +479,10 @@
       (setq haskell-package-conf-file "/home/greg/.ghc/x86_64-linux-7.4.1/package.conf")
       (setq haskell-process-path-cabal-dev "/usr/bin/cabal-dev")
       (setq haskell-process-path-ghci "ghci")
-      (setq haskell-process-prompt-restart-on-cabal-change nil)
+      (setq haskell-process-prompt-restart-on-cabal-change t)
       (setq haskell-process-suggest-language-pragmas nil)
       (setq haskell-process-type (quote ghci))
-      (setq haskell-process-args-ghci '("-package-conf" "cabal-dev/packages-7.4.1.conf" "-i../dist/build/autogen" "-idist/build/autogen" "-XOverloadedStrings"))
+      (setq haskell-process-args-ghci '("-package-conf" "cabal-dev/packages-7.4.1.conf" "-i../dist/build/autogen" "-idist/build/autogen" "-isrc" "-i../src" "-XOverloadedStrings"))
       (setq haskell-program-name "cabal-dev ghci")
       (setq haskell-stylish-on-save t)
       (setq haskell-tags-on-save nil)
@@ -518,6 +518,8 @@
    #+end_src
 *** Flymake
     #+begin_src emacs-lisp 
+      (eval-after-load 'flymake '(require 'flymake-cursor))
+      (setq flymake-cursor-number-of-errors-to-display nil)
       (setq flymake-gui-warnings-enabled nil)
       (global-set-key (kbd "C-c e") 'flymake-display-err-menu-for-current-line)
       (global-set-key (kbd "C-c C-n") 'flymake-goto-next-error)
