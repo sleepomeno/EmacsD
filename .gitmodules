@@ -4,3 +4,6 @@
 [submodule "custom/org-dotemacs"]
 	path = custom/org-dotemacs
 	url = https://github.com/vapniks/org-dotemacs.git
+[submodule "custom/org-mode"]
+	path = custom/org-mode
+	url = git://orgmode.org/org-mode.git

@@ -1,6 +1,9 @@
 (require 'package)
 (add-to-list 'package-archives
              '("marmalade" . "http://marmalade-repo.org/packages/") t)
+
+(add-to-list 'load-path "/home/greg/.emacs.d/custom/org-mode/lisp")
+(require 'org)
 (package-initialize)
 
 (when (not package-archive-contents)
@@ -12,9 +15,9 @@
                       starter-kit-js
                       starter-kit-lisp
                       ;; Clojure & friends
-                      clojure-mode
-                      nrepl
+                      cider
                       rainbow-delimiters
+                      ac-nrepl
                       paredit
                       ;; Project navigation
                       projectile
@@ -25,6 +28,7 @@
                       markdown-mode
                       twilight-theme
                       evil
+                      evil-matchit
                       evil-leader
                       evil-numbers
                       evil-paredit
@@ -34,7 +38,6 @@
                       flymake-haskell-multi
                       hlinum
                       auto-complete
-                      ac-nrepl
                       ace-jump-mode)
   "A list of packages to ensure are installed at launch.")
 
@@ -43,7 +46,7 @@
   (when (not (package-installed-p p))
     (package-install p)))
 
- (load-file "~/.emacs.d/custom/org-dotemacs/org-dotemacs.el")
+(load-file "~/.emacs.d/custom/org-dotemacs/org-dotemacs.el")
 (setq org-dotemacs-default-file (concat user-emacs-directory "configuration.org"))
 (org-dotemacs-load-default)
 
@@ -65,4 +68,6 @@
  '(org-drill-learn-fraction 0.45)
  '(org-drill-optimal-factor-matrix (quote ((4 (2.7 . 2.682) (2.8000000000000003 . 2.766) (2.32 . 2.383) (1.9999999999999998 . 2.174)) (3 (2.3200000000000003 . 2.29) (1.9400000000000002 . 2.014) (2.56 . 2.576) (2.1399999999999997 . 2.305) (2.36 . 2.36) (1.8000000000000003 . 2.254) (2.6 . 2.579) (2.2800000000000002 . 2.436) (2.7 . 2.66) (2.32 . 2.383) (2.1799999999999997 . 2.343) (2.04 . 2.211) (2.46 . 2.46)) (2 (2.08 . 2.08) (1.8 . 1.879) (2.04 . 2.268) (1.8199999999999998 . 2.192) (2.06 . 2.335) (2.22 . 2.22) (1.8000000000000003 . 2.254) (1.96 . 2.264) (2.2800000000000002 . 2.249) (2.7 . 2.66) (2.2199999999999998 . 2.336) (2.1799999999999997 . 2.343) (1.56 . 2.116) (2.5 . 2.5) (1.7000000000000002 . 2.185) (2.6 . 2.579) (2.36 . 2.421) (2.46 . 2.498)) (1 (2.2800000000000002 . 3.866) (2.46 . 3.996) (1.8199999999999998 . 3.508) (1.96 . 3.622) (2.2199999999999998 . 3.752) (2.04 . 3.63) (2.7 . 4.256) (2.1799999999999997 . 3.874) (2.5 . 4.0) (2.36 . 3.874) (2.6 . 4.126) (1.7000000000000002 . 3.496)))))
  '(org-latex-with-hyperref nil)
- '(safe-local-variable-values (quote ((org-latex-with-hyperref) (eval setq org-latex-with-hyperref nil) (eval org-latex-with-hyperref nil) (nrepl-buffer-ns . "project.core") (nrepl-buffer-ns . "darts180.core") (whitespace-line-column . 80) (lexical-binding . t)))))
+ '(safe-local-variable-values (quote ((org-latex-with-hyperref) (eval setq org-latex-with-hyperref nil) (eval org-latex-with-hyperref nil) 
+;;(nrepl-buffer-ns . "project.core") (nrepl-buffer-ns . "darts180.core")
+(whitespace-line-column . 80) (lexical-binding . t)))))
