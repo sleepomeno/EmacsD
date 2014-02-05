@@ -25,19 +25,23 @@
                       ido-better-flex
                       ;; Misc.
                       markdown-mode
+                      graphviz-dot-mode
                       twilight-theme
+                      auto-complete
+                      ace-jump-mode
+                      ;; Evil
                       evil
                       evil-matchit
                       evil-leader
                       evil-numbers
                       evil-paredit
                       evil-nerd-commenter
+                      ;; Haskell
+                      flymake flymake-cursor
                       flymake-hlint
                       haskell-mode
                       flymake-haskell-multi
-                      hlinum
-                      auto-complete
-                      ace-jump-mode)
+                      hlinum)
   "A list of packages to ensure are installed at launch.")
 
 ;; Automaticaly install any missing packages

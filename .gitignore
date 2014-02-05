@@ -1,6 +1,11 @@
+ac-comphist.dat
+org-clock-save.el
+projectile-bookmarks.eld
 .smex-items
 backups
 elpa
 places
 auto-save-list
 tramp
+session*
+#*

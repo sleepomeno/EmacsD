@@ -31,56 +31,60 @@
   ;; (require 'cask "/home/greg/.cask/cask.el")
   ;; (cask-initialize)
 #+end_src
-
-** Package-Archives
-   Is done in init.el anyway?!
-   
-
-   #+begin_src emacs-lisp 
-     ;; (require 'package)
-     ;; (add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/") t)
-     ;; (package-initialize)
-     
-     ;; (when (not package-archive-contents)
-     ;;   (package-refresh-contents))
-     
-     ;; ;; Add in your own as you wish:
-     ;; (defvar my-packages '(starter-kit starter-kit-bindings
-     ;;                                   starter-kit-js starter-kit-lisp
-     ;;                                   ;; Clojure & friends
-     ;;                                   clojure-mode rainbow-delimiters paredit
-     ;;                                   ;; Project navigation
-     ;;                                   projectile magit
-     ;;                                   ;; Evil
-     ;;                                   evil evil-leader evil-numbers evil-paredit evil-nerd-commenter
-     ;;                                   ;; Misc.
-     ;;                                   ack-and-a-half auto-complete markdown-mode twilight-theme
-     ;;                                   ace-jump-mode ess
-     ;;                                   ;; Haskell
-     ;;                                   flymake-hlint haskell-mode flymake-haskell-multi hlinum flymake-cursor
-     ;;                                   )
-     ;;   "A list of packages to ensure are installed at launch.")
-   #+end_src
-   
-   Automaticaly install any missing packages
-   
-   #+begin_src emacs-lisp 
-     ;; (dolist (p my-packages)
-     ;;   (when (not (package-installed-p p))
-     ;;     (package-install p)))
-   #+end_src
-
 ** Use-package
    #+begin_src emacs-lisp 
      (require 'use-package)
      (require 'bind-key)
    #+end_src
+** Clojure
+*** Load the provided Clojure start kit configurations
+    #+begin_src emacs-lisp 
+      (load (concat user-emacs-directory "clojure-starter-kit.el"))
+    #+end_src
 
-** Load the provided Clojure start kit configurations
-   #+begin_src emacs-lisp 
-     (load (concat user-emacs-directory "clojure-starter-kit.el"))
-   #+end_src
+*** Cider
+#+BEGIN_SRC emacs-lisp
+(require 'cider)
+(require 'ob-clojure)
 
+(setq nrepl-hide-special-buffers t
+      cider-repl-pop-to-buffer-on-connect nil
+      cider-popup-stacktraces nil
+      cider-repl-popup-stacktraces t)
+
+     ;; Use cider as the clojure execution backend
+     (setq org-babel-clojure-backend 'cider) ;
+     
+     ;; Let's have pretty source code blocks
+     (setq org-edit-src-content-indentation 0
+           org-src-tab-acts-natively t
+           org-src-fontify-natively t
+           org-confirm-babel-evaluate nil)
+     
+    (eval-after-load 'org
+           '(add-to-list 'org-structure-template-alist
+                        '("c" "#+begin_src clojure :tangle src/\n?\n#+end_src", "<src lang='clojure'>\n?\n</src>")))
+#+END_SRC 
+
+integration with ac-nrepl
+     #+begin_src emacs-lisp 
+
+     (use-package ac-nrepl
+       :init (progn
+               (add-hook 'cider-repl-mode-hook 'ac-nrepl-setup)
+               (add-hook 'cider-mode-hook 'ac-nrepl-setup)
+               (eval-after-load "auto-complete"
+                 '(add-to-list 'ac-modes 'cider-repl-mode))
+     (defun set-auto-complete-as-completion-at-point-function ()
+       (setq completion-at-point-functions '(auto-complete)))
+     (add-hook 'auto-complete-mode-hook 'set-auto-complete-as-completion-at-point-function)
+     
+     (add-hook 'cider-repl-mode-hook 'set-auto-complete-as-completion-at-point-function)
+     (add-hook 'cider-mode-hook 'set-auto-complete-as-completion-at-point-function)
+     (eval-after-load "cider"
+       '(define-key cider-mode-map (kbd "C-c C-d") 'ac-nrepl-popup-doc))
+               ))     
+     #+end_src
 ** Miscellaneous
 *** Set initial buffer
     #+begin_src emacs-lisp 
@@ -128,7 +132,8 @@
 
 *** Global-auto-complete-mode
     #+begin_src emacs-lisp 
-      (global-auto-complete-mode t)
+    (require 'auto-complete)
+    (global-auto-complete-mode t)
     #+end_src
 
 *** Open pdfs mit envince
@@ -190,50 +195,58 @@
                        "cl" 'evilnc-comment-or-uncomment-to-the-line)
       
     #+end_src
+*** Evil match-it
+    #+begin_src emacs-lisp 
+    (require 'evil-matchit)
+    (global-evil-matchit-mode 1)
+    #+end_src
 *** Other
     #+begin_src emacs-lisp 
       (global-set-key (kbd "C-S-u") 'evil-scroll-up)
       (global-set-key (kbd "C-S-o") 'evil-execute-in-emacs-state)
     #+end_src
-** Ace-Jump
-#+begin_src emacs-lisp
-  (use-package ace-jump-mode
-    :bind ("C-c SPC" . ace-jump-line-mode))
-#+end_src
 ** Forth
 #+begin_src emacs-lisp 
-  ;; (load (conc))
   (load (concat user-emacs-directory "custom/gforth.el"))
   (autoload 'forth-mode "gforth.el")
   (setq auto-mode-alist (cons '("\\.fs\\'" . forth-mode) auto-mode-alist))
 #+end_src
+** Octorgopress
+#+begin_src emacs-lisp 
+(load (concat user-emacs-directory "custom/octorgopress.el"))
+#+end_src
 ** Paredit
 *** Key bindings
     #+begin_src emacs-lisp 
-      (use-package paredit
-              ;;     :commands paredit-mode
-                   :init
-                   (progn
-                     (global-set-key (kbd "C-M-h") 'paredit-backward)
-                     (global-set-key (kbd "C-M-l") 'paredit-forward)
-                     (global-set-key (kbd "C-c h") 'paredit-backward-slurp-sexp)
-                     (global-set-key (kbd "C-c j") 'paredit-backward-barf-sexp)
-                     (global-set-key (kbd "C-c k") 'paredit-forward-barf-sexp)
-                     (global-set-key (kbd "C-c l") 'paredit-forward-slurp-sexp)
-                     (global-set-key (kbd "C-M-j") 'paredit-splice-sexp-killing-forward)
-                     (global-set-key (kbd "C-M-k") 'paredit-splice-sexp-killing-backward)
-                     (global-set-key (kbd "C-c C-s") 'paredit-split-sexp )
-                     (global-set-key (kbd "C-c C-j") 'paredit-join-sexps)
-                     (global-set-key (kbd "C-c C-r") 'paredit-raise-sexp)
-                     (global-set-key (kbd "C-c x") 'paredit-open-curly)
-                     (global-set-key (kbd "C-s-l j") 'paredit-forward-down)
-                     (global-set-key (kbd "C-s-l k") 'paredit-forward-up)
-                     (global-set-key (kbd "C-s-h j") 'paredit-backward-down)
-                     (global-set-key (kbd "C-s-h k") 'paredit-backward-up)
-                     (global-set-key (kbd "C-c (") 'paredit-wrap-round)
-                     (global-set-key (kbd "C-c {") 'paredit-wrap-curly)
-                     (global-set-key (kbd "C-c [") 'paredit-wrap-square)
-                     ))
+    (use-package paredit
+      ;;     :commands paredit-mode
+      :init
+      (progn
+        (global-set-key (kbd "C-M-h") 'paredit-backward)
+        (global-set-key (kbd "C-M-l") 'paredit-forward)
+        (global-set-key (kbd "C-c h") 'paredit-backward-slurp-sexp)
+        (global-set-key (kbd "C-c j") 'paredit-backward-barf-sexp)
+        (global-set-key (kbd "C-c k") 'paredit-forward-barf-sexp)
+        (global-set-key (kbd "C-c l") 'paredit-forward-slurp-sexp)
+        (global-set-key (kbd "C-M-j") 'paredit-splice-sexp-killing-forward)
+        (global-set-key (kbd "C-M-k") 'paredit-splice-sexp-killing-backward)
+        (global-set-key (kbd "C-c C-s") 'paredit-split-sexp )
+        (global-set-key (kbd "C-c C-j") 'paredit-join-sexps)
+        (global-set-key (kbd "C-c C-r") 'paredit-raise-sexp)
+        (global-set-key (kbd "C-c x") 'paredit-open-curly)
+        (global-set-key (kbd "C-s-l j") 'paredit-forward-down)
+        (global-set-key (kbd "C-s-l k") 'paredit-forward-up)
+        (global-set-key (kbd "C-s-h j") 'paredit-backward-down)
+        (global-set-key (kbd "C-s-h k") 'paredit-backward-up)
+        (global-set-key (kbd "C-c (") 'paredit-wrap-round)
+        (global-set-key (kbd "C-c {") 'paredit-wrap-curly)
+        (global-set-key (kbd "C-c [") 'paredit-wrap-square)
+        ))
+    #+end_src
+** Gnuplot
+    #+begin_src emacs-lisp 
+    (require 'gnuplot)
+    (global-set-key (kbd "C-M-g") 'org-plot/gnuplot)
     #+end_src
 ** Org
 *** Org-directory
@@ -288,9 +301,9 @@
                                     "* %a\n %?\n %i")
                                    ("lb" "TOBLOG from Browser" entry (file+olp "~/org/home.org" "Blog")
                                     "* TOBLOG %?\n\t%a")
-                                   ("lo" "TOLOOKAT" entry (file+datetree "~/org/journal.org")
+                                   ("lo" "TOLOOKAT" entry (file+olp "~/org/home.org" "Tolookats")
                                     "* TOLOOKAT %?")
-                                   ("lu" "TOLOOKAT from Browser" entry (file+datetree "~/org/journal.org")
+                                   ("lu" "TOLOOKAT from Browser" entry (file+olp "~/org/home.org" "Tolookats")
                                     "* TOLOOKAT %?\n\t%a")
                                    ("lt" "TODO from Browser" entry (file+datetree "~/org/journal.org")
                                     "* TODO %?\n\t%a")
@@ -306,14 +319,20 @@
     #+end_src
 *** Agenda
     #+begin_src emacs-lisp 
-      (setq org-agenda-files (list "~/org/cal.org" "~/org/bookmarks.org" "~/org/journal.org" "~/org/projects.org" "~/org/home.org" "~/org/uni.org"))
-      (setq org-agenda-custom-commands
-            '(("u" todo "UTODO|UTOLEARN|UTOIMPLEMENT")
-              ("l" todo "TOLOOKAT")
-              ("d" todo "TODO")))
-      
-      (setq org-agenda-skip-deadline-if-done t)
-      (setq org-agenda-skip-scheduled-if-done t)
+    (setq org-agenda-files (list "~/org/cal.org" "~/org/bookmarks.org" "~/org/journal.org" "~/org/projects.org" "~/org/home.org" "~/org/uni.org"))
+    (setq org-agenda-custom-commands
+          '(("u" todo "UTODO|UTOLEARN|UTOIMPLEMENT")
+            ("l" todo "TOLOOKAT")
+            ("d" todo "TODO")))
+    
+    (setq org-agenda-skip-deadline-if-done t)
+    (setq org-agenda-skip-scheduled-if-done t)
+    
+    (defun org-my-auto-exclude-function (tag)
+      (and (or (string= tag "keys") (string= tag "drill"))
+           (concat "-" tag)))
+    
+    (setq org-agenda-auto-exclude-function 'org-my-auto-exclude-function)
     #+end_src
 **** Sometimes Agenda doesn't work
      #+begin_src emacs-lisp 
@@ -323,25 +342,24 @@
      #+end_src
 *** Calendar
     #+begin_src emacs-lisp 
-      (load-file "~/.emacs.d/custom/org-caldav.el")
-      (load-file "~/.emacs.d/custom/org-import-calendar.el")
-      (use-package org-caldav
-                   :init (progn 
-                           (setq org-icalendar-exclude-tags (quote ("training")))
-                           (setq org-icalendar-include-body nil)
-                           (setq org-icalendar-use-scheduled (quote nil))
-                           (define-key evil-normal-state-map (kbd "C-p") 'org-caldav-sync)
-                           
-                           (global-set-key (kbd "C-ü")
-                                           '(lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ([134217848 111 114 103 45 99 97 108 100 97 118 45 115 121 110 99 return 111 114 46 114 105 101 103 108 101 114 64 103 109 97 105 108 46 99 111 109 return 119 97 97 114 115 110 118 116 102 120 102 120 121 112 118 106 return] 0 "%d")) arg)))
-                           (setq org-caldav-calendar-id "vpvsjgj9avredjnv58kt85lklo@group.calendar.google.com")
-                           (setq org-icalendar-timezone "UTC")
-                           (setq org-caldav-inbox "~/org/cal.org")
-                           (setq org-caldav-files (list "~/org/home.org" "~/org/uni.org"))
-                           (setq org-caldav-sync-changes-to-org 'title-only)
-                           (setq org-icalendar-include-todo nil)
-                           (setq org-icalendar-store-UID t)
-                           ))
+    (load-file "~/.emacs.d/custom/org-caldav.el")
+    (use-package org-caldav
+      :init (progn 
+              (setq org-icalendar-exclude-tags (quote ("training" "habit")))
+              (setq org-icalendar-include-body nil)
+              (setq org-icalendar-use-scheduled (quote nil))
+              (define-key evil-normal-state-map (kbd "C-p") 'org-caldav-sync)
+              
+              (global-set-key (kbd "C-ü")
+                              '(lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ([134217848 111 114 103 45 99 97 108 100 97 118 45 115 121 110 99 return 111 114 46 114 105 101 103 108 101 114 64 103 109 97 105 108 46 99 111 109 return 119 97 97 114 115 110 118 116 102 120 102 120 121 112 118 106 return] 0 "%d")) arg)))
+              (setq org-caldav-calendar-id "lm94as0bqk7f5f6kmluf0k655c@group.calendar.google.com")
+              (setq org-icalendar-timezone "Europe/Berlin")
+              (setq org-caldav-inbox "~/org/cal.org")
+              (setq org-caldav-files (list "~/org/home.org" "~/org/uni.org"))
+              (setq org-caldav-sync-changes-to-org 'title-only)
+              (setq org-icalendar-include-todo nil)
+              (setq org-icalendar-store-UID t)
+              ))
     #+end_src
 *** General
     #+begin_src emacs-lisp 
@@ -360,22 +378,38 @@
 
     #+RESULTS:
     : t
+*** Org-learn
+    #+begin_src emacs-lisp 
+    (load-file (concat user-emacs-directory "custom/org-mode/contrib/lisp/org-learn.el"))
+    (require 'org-learn)
+    #+end_src
+*** Org-freemind
+    #+begin_src emacs-lisp 
+    (require 'org-freemind)
+    (load-file (concat user-emacs-directory "custom/org-mode/contrib/lisp/ox-freemind.el"))
+    (require 'ox-freemind)
+    #+end_src
+*** Org-effectiveness
+    #+begin_src emacs-lisp 
+    (load-file (concat user-emacs-directory "custom/org-mode/contrib/lisp/org-effectiveness.el"))
+    (require 'org-effectiveness)
+    #+end_src
+*** Org-velocity
+    #+begin_src emacs-lisp 
+    (load-file (concat user-emacs-directory "custom/org-mode/contrib/lisp/org-velocity.el"))
+    (require 'org-velocity)
+    #+end_src
+*** Org-habit
+    #+begin_src emacs-lisp 
+    (require 'org-habit)
+    #+end_src
 
 *** Org-drill
     #+begin_src emacs-lisp 
-      (load-file "~/.emacs.d/custom/org-mode/contrib/lisp/org-drill.el")
-      (use-package org-drill
-        :init (progn (setq org-drill-learn-fraction 0.45)
-                     (setq org-drill-match "-nodrill")))
-    #+end_src
-*** Org-sudoku
-#+BEGIN_SRC emacs-lisp
-  (load-file "~/.emacs.d/custom/org-mode/contrib/lisp/org-sudoku.el")
-#+END_SRC
-*** Org-learn
-    #+begin_src emacs-lisp 
-      (load-file "~/.emacs.d/custom/org-mode/contrib/lisp/org-learn.el")
-      (require 'org-learn)
+    (load-file (concat user-emacs-directory "custom/org-mode/contrib/lisp/org-drill.el"))
+    (use-package org-drill
+      :init (progn (setq org-drill-learn-fraction 0.45)
+                   (setq org-drill-match "-nodrill")))
     #+end_src
 *** Org-mobile
     #+begin_src emacs-lisp 
@@ -390,22 +424,23 @@
     #+end_src
 **** Emacs-lisp
      #+begin_src emacs-lisp 
-       (eval-after-load 'org
-              '(add-to-list 'org-structure-template-alist
-                           '("x" "#+begin_src emacs-lisp \n?\n#+end_src", "<src lang='emacs-lisp'>\n?\n</src>")))
-       
+     (eval-after-load 'org
+       '(add-to-list 'org-structure-template-alist
+                     '("x" "#+begin_src emacs-lisp \n?\n#+end_src", "<src lang='emacs-lisp'>\n?\n</src>")))
+     
      #+end_src
 **** R
      #+begin_src emacs-lisp 
-       (eval-after-load 'org
-         (progn
-           '(add-to-list 'org-structure-template-alist
-                         '("r"  "#+begin_src R :results silent :session sess1\n?\n#+end_src", "<src lang='R'>\n?\n</src>"))
-           '(org-babel-do-load-languages
-             'org-babel-load-languages
-             '((emacs-lisp . t)
-               (R . t)))
-           ))
+     (eval-after-load 'org
+       (progn
+         '(add-to-list 'org-structure-template-alist
+                       '("r"  "#+begin_src R :results silent :session sess1\n?\n#+end_src", "<src lang='R'>\n?\n</src>"))
+         '(org-babel-do-load-languages
+           'org-babel-load-languages
+           '((emacs-lisp . t)
+             (R . t)
+             (gnuplot . t)
+             (dot . t)))))
      #+end_src
            
     #+begin_src emacs-lisp 
@@ -417,65 +452,10 @@
                   
                   (defvar org-babel-default-header-args:clojure 
                     '((:results . "silent")))
-            ;;       
-            ;;       (defun org-babel-execute:clojure (body params)
-            ;;         "Execute a block of Clojure code with Babel."
-            ;;         (nrepl-interactive-eval body))
-            ;;       
-            ;;       (add-hook 'org-src-mode-hook
-            ;;                 '(lambda ()
-            ;;                    (set (make-local-variable 'nrepl-buffer-ns) 
-            ;;                         (with-current-buffer 
-            ;;                             (overlay-buffer org-edit-src-overlay)
-            ;;                           nrepl-buffer-ns))))
-     #+end_src
-***** Cider
-#+BEGIN_SRC emacs-lisp
-(require 'cider)
-(require 'ob-clojure)
-
-(setq nrepl-hide-special-buffers t
-      cider-repl-pop-to-buffer-on-connect nil
-      cider-popup-stacktraces nil
-      cider-repl-popup-stacktraces t)
-
-     ;; Use cider as the clojure execution backend
-     (setq org-babel-clojure-backend 'cider) ;
-     
-     ;; Let's have pretty source code blocks
-     (setq org-edit-src-content-indentation 0
-           org-src-tab-acts-natively t
-           org-src-fontify-natively t
-           org-confirm-babel-evaluate nil)
-     
-    (eval-after-load 'org
-           '(add-to-list 'org-structure-template-alist
-                        '("c" "#+begin_src clojure :tangle src/\n?\n#+end_src", "<src lang='clojure'>\n?\n</src>")))
-#+END_SRC 
-
-integration with ac-nrepl
-     #+begin_src emacs-lisp 
-     (require 'auto-complete)
-
-     (use-package ac-nrepl
-       :init (progn
-               (add-hook 'cider-repl-mode-hook 'ac-nrepl-setup)
-               (add-hook 'cider-mode-hook 'ac-nrepl-setup)
-               (eval-after-load "auto-complete"
-                 '(add-to-list 'ac-modes 'cider-repl-mode))
-     (defun set-auto-complete-as-completion-at-point-function ()
-       (setq completion-at-point-functions '(auto-complete)))
-     (add-hook 'auto-complete-mode-hook 'set-auto-complete-as-completion-at-point-function)
-     
-     (add-hook 'cider-repl-mode-hook 'set-auto-complete-as-completion-at-point-function)
-     (add-hook 'cider-mode-hook 'set-auto-complete-as-completion-at-point-function)
-     (eval-after-load "cider"
-       '(define-key cider-mode-map (kbd "C-c C-d") 'ac-nrepl-popup-doc))
-               ))     
      #+end_src
 **** Haskell
      #+begin_src emacs-lisp 
-       (load-file "~/.emacs.d/custom/ob-haskell.el")
+     (load-file "~/.emacs.d/custom/ob-haskell.el")
      #+end_src
 *** Org-attach
     #+begin_src emacs-lisp 
@@ -512,7 +492,8 @@ integration with ac-nrepl
 #+end_src
 **** Beamer
 #+begin_src emacs-lisp 
-  (use-package ox-beamer)
+(use-package ox-beamer)
+(setq org-beamer-outline-frame-options "")
 #+end_src
 ** Haskell
 *** Settings

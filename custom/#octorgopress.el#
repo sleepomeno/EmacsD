@@ -172,7 +172,7 @@ Octopress/Jekyll style"
   (let* ((date (format-time-string "%Y-%m-%d"))
          (title-no-spaces (replace-regexp-in-string " +" "-" title))
          (dirname (file-name-as-directory dir))
-         (filename (format (concat dirname "%s.org") title-no-spaces)))
+         (filename (format (concat dirname "%s-%s.org") date title-no-spaces)))
     (find-file filename)
     (rename-buffer title)
     (org-export-insert-default-template 'octopress)
