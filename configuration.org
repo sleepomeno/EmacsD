@@ -213,7 +213,7 @@ integration with ac-nrepl
 #+end_src
 ** Octorgopress
 #+begin_src emacs-lisp 
-(load (concat user-emacs-directory "custom/octorgopress.el"))
+(load (concat user-emacs-directory "custom/octorgopress/octorgopress.el"))
 #+end_src
 ** Paredit
 *** Key bindings

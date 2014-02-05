@@ -10,3 +10,6 @@
 [submodule "org-mode"]
 	path = org-mode
 	url = https://github.com/sleepomeno/custom-org-mode
+[submodule "custom/octorgopress"]
+	path = custom/octorgopress
+	url = https://github.com/sleepomeno/octorgopress.git
