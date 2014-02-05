@@ -1,15 +1,0 @@
-;; Emacs-W3 HTTP cookies file
-;; Automatically generated file!!! DO NOT EDIT!!!
-
-(setq url-cookie-storage
- 'nil)
-(setq url-cookie-secure-storage
- '(("www.google.com"
-  [url-cookie "AGAPS" "1:7AdWB_rsqxz9ulqLUTT3JaxEGZ8jRNgo:_CM3T-heSATZhoeg" "11-Jan-2016 15:40:53.00 GMT" "/calendar/dav/" "www.google.com" t]
-  [url-cookie "HttpOnly" nil "11-Jan-2016 15:40:53.00 GMT" "/calendar/dav/" "www.google.com" t]))
-)
-
-;; Local Variables:
-;; version-control: never
-;; no-byte-compile: t
-;; End:
