@@ -7,3 +7,6 @@
 [submodule "custom/org-mode"]
 	path = custom/org-mode
 	url = git://orgmode.org/org-mode.git
+[submodule "org-mode"]
+	path = org-mode
+	url = https://github.com/sleepomeno/custom-org-mode
