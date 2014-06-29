@@ -6,7 +6,13 @@
   (setq user-full-name "Gregor Riegler"
         user-mail-address "gregor.riegler@gmail.com")
 #+END_SRC
-   
+
+** Ido
+#+begin_src emacs-lisp 
+(setq ido-enable-prefix t
+      ido-enable-flex-matching t)
+#+end_src
+
 ** Load-Path
    #+begin_src emacs-lisp 
      (add-to-list 'load-path (concat user-emacs-directory "custom"))
@@ -26,10 +32,9 @@
             (t
              (error "no process at point!")))))
 #+end_src
-** Cask
+** Dired
 #+begin_src emacs-lisp 
-  ;; (require 'cask "/home/greg/.cask/cask.el")
-  ;; (cask-initialize)
+(require 'dired-details+)
 #+end_src
 ** Use-package
    #+begin_src emacs-lisp 
@@ -62,11 +67,11 @@
            org-confirm-babel-evaluate nil)
      
     (eval-after-load 'org
-           '(add-to-list 'org-structure-template-alist
-                        '("c" "#+begin_src clojure :tangle src/\n?\n#+end_src", "<src lang='clojure'>\n?\n</src>")))
+      '(progn (add-to-list 'org-structure-template-alist '("k" "#+BEGIN_SRC haskell :results silent\n?\n#+END_SRC" "<src lang='haskell'>\n?\n</src>")) (add-to-list 'org-structure-template-alist
+                           '("c" "#+begin_src clojure :tangle src/\n?\n#+end_src", "<src lang='clojure'>\n?\n</src>"))))
 #+END_SRC 
 
-integration with ac-nrepl
+**** integration with ac-nrepl
      #+begin_src emacs-lisp 
 
      (use-package ac-nrepl
@@ -106,9 +111,9 @@ integration with ac-nrepl
    #+end_src
 *** Key bindings
 #+begin_src emacs-lisp 
-  (global-set-key (kbd "M-l") 'forward-word)
-  (global-set-key (kbd "M-h") 'backward-word)
-  (global-set-key (kbd "M-a") 'find-tag)
+;; (global-set-key (kbd "M-l") 'forward-word)
+;; (global-set-key (kbd "M-h") 'backward-word)
+;; (global-set-key (kbd "M-a") 'find-tag)
 #+end_src
 **** Always indent on newline
 
@@ -125,9 +130,11 @@ integration with ac-nrepl
 
 *** Markdown
     #+begin_src emacs-lisp 
-      (add-to-list 'auto-mode-alist '("\\.text\\'" . markdown-mode))
-      (add-to-list 'auto-mode-alist '("\\.markdown\\'" . markdown-mode))
-      (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
+    (add-to-list 'auto-mode-alist '("\\.text\\'" . markdown-mode))
+    (add-to-list 'auto-mode-alist '("\\.markdown\\'" . markdown-mode))
+    (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
+    (add-to-list 'auto-mode-alist '("README\\.md\\'" . gfm-mode))
+    (setq markdown-open-command "google-chrome")
     #+end_src
 
 *** Global-auto-complete-mode
@@ -145,76 +152,64 @@ integration with ac-nrepl
 ** Evil
 *** Activate Evil
     #+begin_src emacs-lisp 
-      (use-package evil
-                   :config (progn
-                             (evil-mode 1))
-                   :init
+    (use-package evil
+      :config (progn
+                (evil-mode 1))
+      :init
+      (progn
+        (define-key evil-insert-state-map "j"
+          '(lambda ()
+             (interactive)
+             (insert "j")
+             (let ((event (read-event nil)))
+               (if (= event ?j)
                    (progn
-                    (define-key evil-insert-state-map "j"
-                      '(lambda ()
-                         (interactive)
-                         (insert "j")
-                         (let ((event (read-event nil)))
-                           (if (= event ?j)
-                               (progn
-                                 (backward-delete-char 1)
-                                 (evil-normal-state))
-                             (push event unread-command-events)))))
-                    (global-set-key (kbd "C-S-u") 'evil-scroll-up)
-                    (global-set-key (kbd "C-S-o") 'evil-execute-in-emacs-state)))
+                     (backward-delete-char 1)
+                     (evil-normal-state))
+                 (push event unread-command-events)))))
+        (define-key evil-motion-state-map (kbd "C-S-u") 'evil-scroll-up)
+        (define-key evil-motion-state-map (kbd "SPC") nil)
+        (setq evil-want-C-w-in-emacs-state t
+              evilnc-hotkey-comment-operator "##")
+        (define-key evil-motion-state-map (kbd "C-S-o") 'evil-execute-in-emacs-state)))
     #+end_src
-*** Escape insert mode with jj
-   #+begin_src emacs-lisp 
-     ;; (defun evil-insert-jj-for-normal-mode ()
-     ;;   (interactive)
-     ;;   (insert "j")
-     ;;   (let ((event (read-event nil)))
-     ;;     (if (= event ?j)
-     ;;       (progn
-     ;;         (backward-delete-char 1)
-     ;;         (evil-normal-state))
-     ;;       (push event unread-command-events))))
-     
-     ;; (define-key evil-insert-state-map "j" 'evil-insert-jj-for-normal-mode)
-   #+end_src
 *** Evil-Leader
     #+begin_src emacs-lisp 
-      (global-evil-leader-mode)
-                     (evil-leader/set-leader ",")
-      
-                     (evil-leader/set-key
-                       "e" 'find-file
-                       "b" 'switch-to-buffer
-                       "o" 'org-iswitchb
-                       "w" 'save-buffer
-                       "l" 'ace-jump-line-mode
-                       "k" 'kill-buffer)
-      
-                     (evil-leader/set-key
-                       "ci" 'evilnc-comment-or-uncomment-lines
-                       "cl" 'evilnc-comment-or-uncomment-to-the-line)
-      
+    (global-evil-leader-mode)
+    (evil-leader/set-leader "<SPC>")
+    
+    (evil-leader/set-key
+      "e" 'find-file
+      "f" 'find-function
+      "b" 'switch-to-buffer
+      "h" '(lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ([246 32 98 return 246] 0 "%d")) arg))
+      "w" 'save-buffer
+      "l" 'ace-jump-line-mode
+      "ci" 'evilnc-comment-or-uncomment-lines
+      "cl" 'evilnc-comment-or-uncomment-to-the-line
+      "x" 'smex
+      "d" 'ido-dired
+      "k" 'kill-buffer)
+    
+    
     #+end_src
 *** Evil match-it
     #+begin_src emacs-lisp 
     (require 'evil-matchit)
     (global-evil-matchit-mode 1)
     #+end_src
-*** Other
-    #+begin_src emacs-lisp 
-      (global-set-key (kbd "C-S-u") 'evil-scroll-up)
-      (global-set-key (kbd "C-S-o") 'evil-execute-in-emacs-state)
-    #+end_src
 ** Forth
-#+begin_src emacs-lisp 
-  (load (concat user-emacs-directory "custom/gforth.el"))
-  (autoload 'forth-mode "gforth.el")
-  (setq auto-mode-alist (cons '("\\.fs\\'" . forth-mode) auto-mode-alist))
-#+end_src
+    #+begin_src emacs-lisp 
+    (load (concat user-emacs-directory "custom/gforth.el"))
+    (autoload 'forth-mode "gforth.el")
+    (setq auto-mode-alist (cons '("\\.fs\\'" . forth-mode) auto-mode-alist))
+    ;; need to run run-forth in your forth file buffer
+    #+end_src
 ** Octorgopress
-#+begin_src emacs-lisp 
-(load (concat user-emacs-directory "custom/octorgopress/octorgopress.el"))
-#+end_src
+    #+begin_src emacs-lisp 
+    (add-to-list 'org-export-backends 'md)
+    (load (concat user-emacs-directory "custom/octorgopress/octorgopress.el"))
+    #+end_src
 ** Paredit
 *** Key bindings
     #+begin_src emacs-lisp 
@@ -234,14 +229,23 @@ integration with ac-nrepl
         (global-set-key (kbd "C-c C-j") 'paredit-join-sexps)
         (global-set-key (kbd "C-c C-r") 'paredit-raise-sexp)
         (global-set-key (kbd "C-c x") 'paredit-open-curly)
-        (global-set-key (kbd "C-s-l j") 'paredit-forward-down)
-        (global-set-key (kbd "C-s-l k") 'paredit-forward-up)
-        (global-set-key (kbd "C-s-h j") 'paredit-backward-down)
-        (global-set-key (kbd "C-s-h k") 'paredit-backward-up)
+        (global-set-key (kbd "C-M-s-l ") 'paredit-forward-down)
+        (global-set-key (kbd "M-l") 'paredit-forward-up)
+        (global-set-key (kbd "C-M-s-h ") 'paredit-backward-down)
+        (global-set-key (kbd "M-h") 'paredit-backward-up)
         (global-set-key (kbd "C-c (") 'paredit-wrap-round)
         (global-set-key (kbd "C-c {") 'paredit-wrap-curly)
         (global-set-key (kbd "C-c [") 'paredit-wrap-square)
         ))
+    
+    ;; idea: wenn point am ende der zeile ist ad-do-it zweimal machen
+    (defadvice paredit-forward (around evil-paredit-forward)
+      (let ((insert-state (evil-insert-state-p)))
+        (if (not insert-state) (evil-insert-state))
+        ad-do-it
+        ))
+    
+    (ad-activate 'paredit-forward)
     #+end_src
 ** Gnuplot
     #+begin_src emacs-lisp 
@@ -283,39 +287,39 @@ integration with ac-nrepl
     #+end_src
 *** Captures
     #+begin_src emacs-lisp 
-      (use-package org-protocol
-                   :init (progn
-                           (setq org-protocol-default-template-key "l")
-                           (setq org-capture-templates
-                                 '(("t" "Todo" entry (file+datetree "~/org/journal.org")
-                                    "* TODO %?")
-                                   ("w" "TOTWEET" entry (file+datetree "~/org/journal.org")
-                                    "* TOTWEET %?")
-                                   ("b" "starting with b...")
-                                   ("bu" "Tobuy" entry (file+datetree "~/org/journal.org")
-                                    "* TOBUY %?")
-                                   ("bl" "TOBLOG" entry (file+olp "~/org/home.org" "Blog")
-                                    "* TOBLOG %^{Heading}\n\t%?")
-                                   ("l" "starting with l... ")
-                                   ("li" "Link" entry (file+olp "~/org/bookmarks.org" "Bookmarks")
-                                    "* %a\n %?\n %i")
-                                   ("lb" "TOBLOG from Browser" entry (file+olp "~/org/home.org" "Blog")
-                                    "* TOBLOG %?\n\t%a")
-                                   ("lo" "TOLOOKAT" entry (file+olp "~/org/home.org" "Tolookats")
-                                    "* TOLOOKAT %?")
-                                   ("lu" "TOLOOKAT from Browser" entry (file+olp "~/org/home.org" "Tolookats")
-                                    "* TOLOOKAT %?\n\t%a")
-                                   ("lt" "TODO from Browser" entry (file+datetree "~/org/journal.org")
-                                    "* TODO %?\n\t%a")
-                                   ("p" "Project" entry (file+olp "~/org/projects.org" "Programming")
-                                    "* %^{Heading}\n\t%?")
-                                   ("r" "TOREAD" entry (file+olp "~/org/home.org" "Bücher")
-                                    "* TOREAD %^{Heading}\n\t%?")
-                                   ("y" "Journal prompted" item (file+datetree+prompt "~/org/journal.org")
-                                    "%?")
-                                   ("j" "Journal" item (file+datetree "~/org/journal.org")
-                                    "%?")))
-                           (define-key global-map "\C-cc" 'org-capture)))
+    (use-package org-protocol
+                 :init (progn
+                         (setq org-protocol-default-template-key "l")
+                         (setq org-capture-templates
+                               '(("t" "Todo" entry (file+olp "~/org/home.org" "Tasks")
+                                  "* TODO %?")
+                                 ("w" "TOTWEET" entry (file+olp "~/org/home.org" "Tasks")
+                                  "* TOTWEET %?")
+                                 ("b" "starting with b...")
+                                 ("bu" "Tobuy" entry (file+olp "~/org/home.org" "Tasks")
+                                  "* TOBUY %?")
+                                 ("bl" "TOBLOG" entry (file+olp "~/org/home.org" "Blog")
+                                  "* TOBLOG %^{Heading}\n\t%?")
+                                 ("l" "starting with l... ")
+                                 ("li" "Link" entry (file+olp "~/org/bookmarks.org" "Bookmarks")
+                                  "* %a\n %?\n %i")
+                                 ("lb" "TOBLOG from Browser" entry (file+olp "~/org/home.org" "Blog")
+                                  "* TOBLOG %?\n\t%a")
+                                 ("lo" "TOLOOKAT" entry (file+olp "~/org/home.org" "Tasks")
+                                  "* TOLOOKAT %?")
+                                 ("lu" "TOLOOKAT from Browser" entry (file+olp "~/org/home.org" "Tasks")
+                                  "* TOLOOKAT %?\n\t%a")
+                                 ("lt" "TODO from Browser" entry (file+olp "~/org/home.org" "Tasks")
+                                  "* TODO %?\n\t%a")
+                                 ("p" "Project" entry (file+olp "~/org/projects.org" "Programming")
+                                  "* %^{Heading}\n\t%?")
+                                 ("r" "TOREAD" entry (file+olp "~/org/home.org" "Bücher")
+                                  "* TOREAD %^{Heading}\n\t%?")
+                                 ("y" "Journal prompted" item (file+datetree+prompt "~/org/journal.org")
+                                  "%?")
+                                 ("j" "Journal" item (file+datetree "~/org/journal.org")
+                                  "%?")))
+                         (define-key global-map "\C-cc" 'org-capture)))
     #+end_src
 *** Agenda
     #+begin_src emacs-lisp 
@@ -359,36 +363,44 @@ integration with ac-nrepl
               (setq org-caldav-sync-changes-to-org 'title-only)
               (setq org-icalendar-include-todo nil)
               (setq org-icalendar-store-UID t)
+        
+              (global-set-key (kbd "C-c b")
+                              '(lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ([246 32 98 return 246] 0 "%d")) arg)))
               ))
+         
     #+end_src
 *** General
     #+begin_src emacs-lisp 
-      (setq org-refile-targets (quote ((org-agenda-files :maxlevel . 2))))
-      (setq org-M-RET-may-split-line (quote ((default))))
-      (setq org-goto-interface 'outline org-goto-max-level 10)
-      (add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
-      (global-set-key "\C-cL" 'org-store-link)
-      (global-set-key "\C-ca" 'org-agenda)
-      (global-set-key (kbd "M-o") 'imenu)
-      (setq org-log-done 'time)
-      (setq org-clock-persist 'history)
-      (org-clock-persistence-insinuate)
-      (setq org-return-follows-link t)
+    (setq org-refile-targets (quote ((org-agenda-files :maxlevel . 2))))
+    (setq org-M-RET-may-split-line nil)
+    (setq org-goto-interface 'outline org-goto-max-level 10)
+    (add-to-list 'auto-mode-alist '("\\.org$" . org-mode))
+    (global-set-key "\C-cL" 'org-store-link)
+    (global-set-key "\C-ca" 'org-agenda)
+
+    (global-set-key (kbd "M-o") 'imenu)
+
+    (setq org-log-done 'time)
+    (setq org-clock-persist 'history)
+    (org-clock-persistence-insinuate)
+    (setq org-return-follows-link t)
     #+end_src
 
-    #+RESULTS:
-    : t
+*** Export
+#+begin_src emacs-lisp 
+(setq org-export-with-toc nil)
+#+end_src
 *** Org-learn
     #+begin_src emacs-lisp 
     (load-file (concat user-emacs-directory "custom/org-mode/contrib/lisp/org-learn.el"))
     (require 'org-learn)
     #+end_src
 *** Org-freemind
-    #+begin_src emacs-lisp 
-    (require 'org-freemind)
-    (load-file (concat user-emacs-directory "custom/org-mode/contrib/lisp/ox-freemind.el"))
-    (require 'ox-freemind)
-    #+end_src
+    # #+begin_src emacs-lisp 
+    # (require 'org-freemind)
+    # (load-file (concat user-emacs-directory "custom/org-mode/contrib/lisp/ox-freemind.el"))
+    # (require 'ox-freemind)
+    # #+end_src
 *** Org-effectiveness
     #+begin_src emacs-lisp 
     (load-file (concat user-emacs-directory "custom/org-mode/contrib/lisp/org-effectiveness.el"))
@@ -439,7 +451,9 @@ integration with ac-nrepl
            'org-babel-load-languages
            '((emacs-lisp . t)
              (R . t)
+             (haskell . t)
              (gnuplot . t)
+             (C . t)
              (dot . t)))))
      #+end_src
            
@@ -456,6 +470,7 @@ integration with ac-nrepl
 **** Haskell
      #+begin_src emacs-lisp 
      (load-file "~/.emacs.d/custom/ob-haskell.el")
+     (require 'ob-haskell)
      #+end_src
 *** Org-attach
     #+begin_src emacs-lisp 
@@ -498,19 +513,23 @@ integration with ac-nrepl
 ** Haskell
 *** Settings
     #+begin_src emacs-lisp 
-      (setq haskell-hoogle-command nil) 
-      ;; (setq haskell-hoogle-command "hoogle")
-      (setq haskell-package-conf-file "/home/greg/.ghc/x86_64-linux-7.4.1/package.conf")
-      (setq haskell-process-path-cabal-dev "/usr/bin/cabal-dev")
-      (setq haskell-process-path-ghci "ghci")
-      (setq haskell-process-prompt-restart-on-cabal-change t)
-      (setq haskell-process-suggest-language-pragmas nil)
-      (setq haskell-process-type (quote ghci))
-      (setq haskell-process-args-ghci '("-package-conf" "cabal-dev/packages-7.4.1.conf" "-i../dist/build/autogen" "-idist/build/autogen" "-isrc" "-i../src" "-XOverloadedStrings"))
-      (setq haskell-program-name "cabal-dev ghci")
-      (setq haskell-stylish-on-save t)
-      (setq haskell-tags-on-save nil)
-      (setq inferior-haskell-web-docs-base "http://hackage.haskell.org/packages/archive/")
+    (setq haskell-hoogle-command nil) 
+    ;; (setq haskell-hoogle-command "hoogle")
+    ;; (setq haskell-package-conf-file "/home/greg/.ghc/x86_64-linux-7.4.1/package.conf")
+    (setq haskell-package-conf-file nil)
+    (setq haskell-process-path-cabal-dev "/home/greg/.cabal/bin/cabal")
+    (setq haskell-process-path-ghci "ghci")
+    (setq haskell-process-suggest-remove-import-lines t)
+    (setq haskell-process-prompt-restart-on-cabal-change t)
+    (setq haskell-process-suggest-language-pragmas nil)
+    (setq haskell-process-type (quote ghci))
+    (setq haskell-process-args-ghci '("-package-conf" ".cabal-sandbox/x86_64-linux-ghc-7.8.2-packages.conf.d" "-i../dist/build/autogen" "-idist/build/autogen" "-isrc" "-i../src" "-XOverloadedStrings" "-XBangPatterns"))
+    (setq haskell-program-name "cabal repl")
+    (setq haskell-stylish-on-save t)
+    (setq haskell-process-log t)
+    (setq haskell-tags-on-save t)
+    (setq inferior-haskell-web-docs-base "http://hackage.haskell.org/packages/archive/")
+    (setq ghc-core-program-args '("-O0" "-dsuppress-all"))
     #+end_src
 *** Hooks
    #+begin_src emacs-lisp 
@@ -540,6 +559,29 @@ integration with ac-nrepl
      (add-hook 'haskell-cabal-mode-hook 'haskell-cabal-hook)
      (add-hook 'haskell-mode-hook 'haskell-hook)
    #+end_src
+*** Aligments
+#+BEGIN_SRC emacs-lisp
+    (add-to-list 'align-rules-list
+                 '(haskell-types
+                   (regexp . "\\(\\s-+\\)\\(::\\|∷\\)\\s-+")
+                   (modes quote (haskell-mode literate-haskell-mode))))
+    (add-to-list 'align-rules-list
+                 '(haskell-assignment
+                   (regexp . "\\(\\s-+\\)=\\s-+")
+                   (modes quote (haskell-mode literate-haskell-mode))))
+    (add-to-list 'align-rules-list
+                 '(haskell-arrows
+                   (regexp . "\\(\\s-+\\)\\(->\\|→\\)\\s-+")
+                   (modes quote (haskell-mode literate-haskell-mode))))
+    (add-to-list 'align-rules-list
+                 '(haskell-left-arrows
+                   (regexp . "\\(\\s-+\\)\\(<-\\|←\\)\\s-+")
+                   (modes quote (haskell-mode literate-haskell-mode))))
+#+END_SRC
+*** Imports
+#+BEGIN_SRC emacs-lisp
+(define-key haskell-mode-map [f8] 'haskell-navigate-imports)
+#+END_SRC
 *** Flymake
     #+begin_src emacs-lisp 
       (eval-after-load 'flymake '(require 'flymake-cursor))
