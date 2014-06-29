@@ -1,11 +1,10 @@
 ;;; ob-haskell.el --- org-babel functions for haskell evaluation
 
-;; Copyright (C) 2009, 2010  Free Software Foundation, Inc.
+;; Copyright (C) 2009-2014 Free Software Foundation, Inc.
 
 ;; Author: Eric Schulte
 ;; Keywords: literate programming, reproducible research
 ;; Homepage: http://orgmode.org
-;; Version: 7.4
 
 ;; This file is part of GNU Emacs.
 
@@ -41,7 +40,6 @@
 
 ;;; Code:
 (require 'ob)
-(require 'ob-comint)
 (require 'comint)
 (eval-when-compile (require 'cl))
 
@@ -51,9 +49,11 @@
 (declare-function inferior-haskell-load-file
 		  "ext:inf-haskell" (&optional reload))
 
+(defvar org-babel-tangle-lang-exts)
 (add-to-list 'org-babel-tangle-lang-exts '("haskell" . "hs"))
 
-(defvar org-babel-default-header-args:haskell '())
+(defvar org-babel-default-header-args:haskell
+  '((:padlines . "no")))
 
 (defvar org-babel-haskell-lhs2tex-command "lhs2tex")
 
@@ -79,11 +79,12 @@
                    (cdr (member org-babel-haskell-eoe
                                 (reverse (mapcar #'org-babel-trim raw)))))))
     (org-babel-reassemble-table
-     (cond 
-      ((equal result-type 'output)
-       (mapconcat #'identity (reverse (cdr results)) "\n"))
-      ((equal result-type 'value)
-       (org-babel-haskell-table-or-string (car results))))
+     (let ((result
+            (case result-type
+              (output (mapconcat #'identity (reverse (cdr results)) "\n"))
+              (value (car results)))))
+       (org-babel-result-cond (cdr (assoc :result-params params))
+	 result (org-babel-haskell-table-or-string result)))
      (org-babel-pick-name (cdr (assoc :colname-names params))
 			  (cdr (assoc :colname-names params)))
      (org-babel-pick-name (cdr (assoc :rowname-names params))
@@ -125,12 +126,12 @@ then create one.  Return the initialized session."
       (current-buffer))))
 
 (defun org-babel-variable-assignments:haskell (params)
-  "Return list of haskell statements assigning the block's variables"
+  "Return list of haskell statements assigning the block's variables."
   (mapcar (lambda (pair)
 	    (format "let %s = %s"
 		    (car pair)
 		    (org-babel-haskell-var-to-haskell (cdr pair))))
-   (mapcar #'cdr (org-babel-get-header params :var))))
+	  (mapcar #'cdr (org-babel-get-header params :var))))
 
 (defun org-babel-haskell-table-or-string (results)
   "Convert RESULTS to an Emacs-lisp table or string.
@@ -147,6 +148,10 @@ specifying a variable of the same value."
     (format "%S" var)))
 
 (defvar org-src-preserve-indentation)
+(defvar org-export-copy-to-kill-ring)
+(declare-function org-export-to-file "ox"
+		  (backend file
+			   &optional async subtreep visible-only body-only ext-plist))
 (defun org-babel-haskell-export-to-lhs (&optional arg)
   "Export to a .lhs file with all haskell code blocks escaped.
 When called with a prefix argument the resulting
@@ -190,8 +195,12 @@ constructs (header arguments, no-web syntax etc...) are ignored."
         (indent-code-rigidly (match-beginning 0) (match-end 0) indentation)))
     (save-excursion
       ;; export to latex w/org and save as .lhs
-      (find-file tmp-org-file) (funcall 'org-export-as-latex nil)
-      (kill-buffer)
+      (require 'ox-latex)
+      (find-file tmp-org-file)
+      ;; Ensure we do not clutter kill ring with incomplete results.
+      (let (org-export-copy-to-kill-ring)
+	(org-export-to-file 'latex tmp-tex-file))
+      (kill-buffer nil)
       (delete-file tmp-org-file)
       (find-file tmp-tex-file)
       (goto-char (point-min)) (forward-line 2)
@@ -201,7 +210,7 @@ constructs (header arguments, no-web syntax etc...) are ignored."
         (replace-match (save-match-data (org-remove-indentation (match-string 0)))
                        t t))
       (setq contents (buffer-string))
-      (save-buffer) (kill-buffer))
+      (save-buffer) (kill-buffer nil))
     (delete-file tmp-tex-file)
     ;; save org exported latex to a .lhs file
     (with-temp-file lhs-file (insert contents))
@@ -212,6 +221,6 @@ constructs (header arguments, no-web syntax etc...) are ignored."
 
 (provide 'ob-haskell)
 
-;; arch-tag: b53f75f3-ba1a-4b05-82d9-a2a0d4e70804
+
 
 ;;; ob-haskell.el ends here
