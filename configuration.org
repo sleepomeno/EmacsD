@@ -7,6 +7,11 @@
         user-mail-address "gregor.riegler@gmail.com")
 #+END_SRC
 
+** Encryption
+   #+BEGIN_SRC emacs-lisp
+   (require 'epa-file)
+   (epa-file-enable)
+   #+END_SRC
 ** Ido
 #+begin_src emacs-lisp 
 (setq ido-enable-prefix t
@@ -315,15 +320,15 @@
                                   "* %^{Heading}\n\t%?")
                                  ("r" "TOREAD" entry (file+olp "~/org/home.org" "Bücher")
                                   "* TOREAD %^{Heading}\n\t%?")
-                                 ("y" "Journal prompted" item (file+datetree+prompt "~/org/journal.org")
+                                 ("y" "Journal prompted" item (file+datetree+prompt "~/org/journal.org.gpg")
                                   "%?")
-                                 ("j" "Journal" item (file+datetree "~/org/journal.org")
+                                 ("j" "Journal" item (file+datetree "~/org/journal.org.gpg")
                                   "%?")))
                          (define-key global-map "\C-cc" 'org-capture)))
     #+end_src
 *** Agenda
     #+begin_src emacs-lisp 
-    (setq org-agenda-files (list "~/org/cal.org" "~/org/bookmarks.org" "~/org/journal.org" "~/org/projects.org" "~/org/home.org" "~/org/uni.org"))
+    (setq org-agenda-files (list "~/org/cal.org" "~/org/bookmarks.org" "~/org/journal.org.gpg" "~/org/projects.org" "~/org/home.org" "~/org/uni.org"))
     (setq org-agenda-custom-commands
           '(("u" todo "UTODO|UTOLEARN|UTOIMPLEMENT")
             ("l" todo "TOLOOKAT")
