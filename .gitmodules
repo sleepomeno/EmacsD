@@ -13,3 +13,6 @@
 [submodule "custom/octorgopress"]
 	path = custom/octorgopress
 	url = https://github.com/sleepomeno/octorgopress.git
+[submodule "custom/haskell-mode"]
+	path = custom/haskell-mode
+	url = https://github.com/sleepomeno/haskell-mode.git

@@ -516,6 +516,11 @@
 (setq org-beamer-outline-frame-options "")
 #+end_src
 ** Haskell
+*** Loading
+#+BEGIN_SRC emacs-lisp
+       (add-to-list 'load-path (concat user-emacs-directory "custom/haskell-mode"))
+       (load "haskell-mode-autoloads.el")
+#+END_SRC
 *** Settings
     #+begin_src emacs-lisp 
     (setq haskell-hoogle-command nil) 
@@ -525,44 +530,50 @@
     (setq haskell-process-path-cabal-dev "/home/greg/.cabal/bin/cabal")
     (setq haskell-process-path-ghci "ghci")
     (setq haskell-process-suggest-remove-import-lines t)
+    (setq haskell-process-suggest-hoogle-imports t)
+    (setq haskell-process-auto-import-loaded-modules t)
     (setq haskell-process-prompt-restart-on-cabal-change t)
     (setq haskell-process-suggest-language-pragmas nil)
-    (setq haskell-process-type (quote ghci))
+    (setq haskell-process-type (quote cabal-repl))
     (setq haskell-process-args-ghci '("-package-conf" ".cabal-sandbox/x86_64-linux-ghc-7.8.2-packages.conf.d" "-i../dist/build/autogen" "-idist/build/autogen" "-isrc" "-i../src" "-XOverloadedStrings" "-XBangPatterns"))
     (setq haskell-program-name "cabal repl")
-    (setq haskell-stylish-on-save t)
+    (setq haskell-stylish-on-save nil)
     (setq haskell-process-log t)
-    (setq haskell-tags-on-save t)
+    (setq haskell-tags-on-save nil)
     (setq inferior-haskell-web-docs-base "http://hackage.haskell.org/packages/archive/")
     (setq ghc-core-program-args '("-O0" "-dsuppress-all"))
     #+end_src
 *** Hooks
    #+begin_src emacs-lisp 
-     (eval-after-load "haskell-mode"
-       '(progn
-         (define-key haskell-mode-map (kbd "C-x C-d") nil)
-         (define-key haskell-mode-map "\C-ch" 'haskell-hoogle)
-         (define-key haskell-mode-map (kbd "C-c C-z") 'haskell-interactive-switch)
-         (define-key haskell-mode-map (kbd "C-c C-l") 'haskell-process-load-file)
-         (define-key haskell-mode-map (kbd "C-c C-b") 'haskell-interactive-switch)
-         (define-key haskell-mode-map (kbd "C-c C-t") 'haskell-process-do-type)
-         (define-key haskell-mode-map (kbd "C-c C-i") 'haskell-process-do-info)
-         (define-key haskell-mode-map (kbd "C-c M-.") nil)
-         (define-key haskell-mode-map (kbd "C-c C-d") nil)))
-     (add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
-     (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
-     (add-hook 'haskell-mode-hook 'flymake-haskell-multi-load)
-     (defun haskell-hook ()
-       (define-key evil-normal-state-map (kbd "M-.") 'find-tag)
-       (define-key haskell-mode-map (kbd "C-#") 'haskell-interactive-bring)
-       )
-     (defun haskell-cabal-hook ()
-       (define-key haskell-cabal-mode-map (kbd "C-c C-c") 'haskell-process-cabal-build)
-       (define-key haskell-cabal-mode-map (kbd "C-c c") 'haskell-process-cabal)
-       (define-key haskell-cabal-mode-map (kbd "C-#") 'haskell-interactive-bring)
-       (define-key haskell-cabal-mode-map [?\C-c ?\C-z] 'haskell-interactive-switch))
-     (add-hook 'haskell-cabal-mode-hook 'haskell-cabal-hook)
-     (add-hook 'haskell-mode-hook 'haskell-hook)
+   
+          (eval-after-load "haskell-mode"
+            '(progn
+              (define-key haskell-mode-map (kbd "C-x C-d") nil)
+   (define-key haskell-mode-map (kbd "C-,") 'haskell-move-nested-left)
+       (define-key haskell-mode-map (kbd "C-.") 'haskell-move-nested-right)
+              (define-key haskell-mode-map "\C-ch" 'haskell-hoogle)
+              (define-key haskell-mode-map (kbd "C-c C-z") 'haskell-interactive-switch)
+              (define-key haskell-mode-map (kbd "C-c C-l") 'haskell-process-load-file)
+              (define-key haskell-mode-map (kbd "C-c C-b") 'haskell-interactive-switch)
+              (define-key haskell-mode-map (kbd "C-c C-t") 'haskell-process-do-type)
+              (define-key haskell-mode-map (kbd "C-c C-i") 'haskell-process-do-info)
+              (define-key haskell-mode-map (kbd "SPC") 'haskell-mode-contextual-space)
+              (define-key haskell-mode-map (kbd "C-c M-.") 'haskell-mode-jump-to-def-or-tag)
+              (define-key haskell-mode-map (kbd "C-c C-d") nil)))
+          (add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
+          (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
+          (add-hook 'haskell-mode-hook 'flymake-haskell-multi-load)
+          (defun haskell-hook ()
+            (define-key evil-normal-state-map (kbd "M-.") 'haskell-mode-jump-to-def-or-tag)
+            (define-key haskell-mode-map (kbd "C-#") 'haskell-interactive-bring)
+            )
+          (defun haskell-cabal-hook ()
+            (define-key haskell-cabal-mode-map (kbd "C-c C-c") 'haskell-process-cabal-build)
+            (define-key haskell-cabal-mode-map (kbd "C-c c") 'haskell-process-cabal)
+            (define-key haskell-cabal-mode-map (kbd "C-#") 'haskell-interactive-bring)
+            (define-key haskell-cabal-mode-map [?\C-c ?\C-z] 'haskell-interactive-switch))
+          (add-hook 'haskell-cabal-mode-hook 'haskell-cabal-hook)
+          (add-hook 'haskell-mode-hook 'haskell-hook)
    #+end_src
 *** Aligments
 #+BEGIN_SRC emacs-lisp
