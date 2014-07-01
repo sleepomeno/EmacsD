@@ -39,7 +39,7 @@
                       ;; Haskell
                       flymake flymake-cursor
                       flymake-hlint
-                      haskell-mode
+                      ;; haskell-mode
                       flymake-haskell-multi
                       hlinum)
   "A list of packages to ensure are installed at launch.")
