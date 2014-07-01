@@ -10,3 +10,5 @@ tramp
 session*
 #*
 url/cookies
+/#*#
+*.bak
