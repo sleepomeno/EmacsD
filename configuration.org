@@ -14,8 +14,18 @@
    #+END_SRC
 ** Ido
 #+begin_src emacs-lisp 
-(setq ido-enable-prefix t
-      ido-enable-flex-matching t)
+(require 'flx-ido)
+(ido-mode 1)
+(ido-everywhere 1)
+(flx-ido-mode 1)
+;; disable ido faces to see flx highlights.
+
+(setq ido-enable-flex-matching t)
+(setq ido-use-faces nil)
+(setq gc-cons-threshold 20000000)
+
+;; (setq ido-enable-prefix t
+;;       ido-enable-flex-matching t)
 #+end_src
 
 ** Load-Path

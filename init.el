@@ -36,7 +36,7 @@
                       evil-numbers
                       evil-paredit
                       evil-nerd-commenter
-                      ;; Haskell
+                      flx-ido
                       flymake flymake-cursor
                       flymake-hlint
                       ;; haskell-mode
