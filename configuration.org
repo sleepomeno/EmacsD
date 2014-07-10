@@ -301,64 +301,64 @@
               ))
     #+end_src
 *** Captures
-    #+begin_src emacs-lisp 
-    (use-package org-protocol
-                 :init (progn
-                         (setq org-protocol-default-template-key "l")
-                         (setq org-capture-templates
-                               '(("t" "Todo" entry (file+olp "~/org/home.org" "Tasks")
-                                  "* TODO %?")
-                                 ("w" "TOTWEET" entry (file+olp "~/org/home.org" "Tasks")
-                                  "* TOTWEET %?")
-                                 ("b" "starting with b...")
-                                 ("bu" "Tobuy" entry (file+olp "~/org/home.org" "Tasks")
-                                  "* TOBUY %?")
-                                 ("bl" "TOBLOG" entry (file+olp "~/org/home.org" "Blog")
-                                  "* TOBLOG %^{Heading}\n\t%?")
-                                 ("l" "starting with l... ")
-                                 ("li" "Link" entry (file+olp "~/org/bookmarks.org" "Bookmarks")
-                                  "* %a\n %?\n %i")
-                                 ("lb" "TOBLOG from Browser" entry (file+olp "~/org/home.org" "Blog")
-                                  "* TOBLOG %?\n\t%a")
-                                 ("lo" "TOLOOKAT" entry (file+olp "~/org/home.org" "Tasks")
-                                  "* TOLOOKAT %?")
-                                 ("lu" "TOLOOKAT from Browser" entry (file+olp "~/org/home.org" "Tasks")
-                                  "* TOLOOKAT %?\n\t%a")
-                                 ("lt" "TODO from Browser" entry (file+olp "~/org/home.org" "Tasks")
-                                  "* TODO %?\n\t%a")
-                                 ("p" "Project" entry (file+olp "~/org/projects.org" "Programming")
-                                  "* %^{Heading}\n\t%?")
-                                 ("r" "TOREAD" entry (file+olp "~/org/home.org" "Bücher")
-                                  "* TOREAD %^{Heading}\n\t%?")
-                                 ("y" "Journal prompted" item (file+datetree+prompt "~/org/journal.org.gpg")
-                                  "%?")
-                                 ("j" "Journal" item (file+datetree "~/org/journal.org.gpg")
-                                  "%?")))
-                         (define-key global-map "\C-cc" 'org-capture)))
-    #+end_src
+#+begin_src emacs-lisp 
+(use-package org-protocol
+             :init (progn
+                     (setq org-protocol-default-template-key "l")
+                     (setq org-capture-templates
+                           '(("t" "Todo" entry (file+olp "~/org/home.org" "Tasks")
+                              "* TODO %?")
+                             ;; ("w" "TOTWEET" entry (file+olp "~/org/home.org" "Tasks")
+                             ;;  "* TOTWEET %?")
+                             ;; ("b" "starting with b...")
+                             ;; ("bu" "Tobuy" entry (file+olp "~/org/home.org" "Tasks")
+                             ;;  "* TOBUY %?")
+                             ("l" "TOBLOG" entry (file+olp "~/org/home.org" "Blog")
+                              "* TOBLOG %^{Heading}\n\t%?")
+                             ;; ("l" "starting with l... ")
+                             ("i" "Link" entry (file+olp "~/org/bookmarks.org" "Bookmarks")
+                              "* %a\n %?\n %i")
+                             ("b" "TOBLOG from Browser" entry (file+olp "~/org/home.org" "Blog")
+                              "* TOBLOG %?\n\t%a")
+                             ("o" "TOLOOKAT" entry (file+olp "~/org/home.org" "Tasks")
+                              "* TOLOOKAT %?")
+                             ("u" "TOLOOKAT from Browser" entry (file+olp "~/org/home.org" "Tasks")
+                              "* TOLOOKAT %?\n\t%a")
+                             ("t" "TODO from Browser" entry (file+olp "~/org/home.org" "Tasks")
+                              "* TODO %?\n\t%a")
+                             ("p" "Project" entry (file+olp "~/org/projects.org" "Programming")
+                              "* %^{Heading}\n\t%?")
+                             ("r" "TOREAD" entry (file+olp "~/org/home.org" "Bücher")
+                              "* TOREAD %^{Heading}\n\t%?")
+                             ("y" "Journal prompted" item (file+datetree+prompt "~/org/journal.org.gpg")
+                              "%?")
+                             ("j" "Journal" item (file+datetree "~/org/journal.org.gpg")
+                              "%?")))
+                     (define-key global-map "\C-cc" 'org-capture)))
+#+end_src
 *** Agenda
-    #+begin_src emacs-lisp 
-    (setq org-agenda-files (list "~/org/cal.org" "~/org/bookmarks.org" "~/org/journal.org.gpg" "~/org/projects.org" "~/org/home.org" "~/org/uni.org"))
-    (setq org-agenda-custom-commands
-          '(("u" todo "UTODO|UTOLEARN|UTOIMPLEMENT")
-            ("l" todo "TOLOOKAT")
-            ("d" todo "TODO")))
-    
-    (setq org-agenda-skip-deadline-if-done t)
-    (setq org-agenda-skip-scheduled-if-done t)
-    
-    (defun org-my-auto-exclude-function (tag)
-      (and (or (string= tag "keys") (string= tag "drill"))
-           (concat "-" tag)))
-    
-    (setq org-agenda-auto-exclude-function 'org-my-auto-exclude-function)
-    #+end_src
+#+begin_src emacs-lisp 
+(setq org-agenda-files (list "~/org/cal.org" "~/org/bookmarks.org" "~/org/journal.org.gpg" "~/org/projects.org" "~/org/home.org" "~/org/uni.org"))
+(setq org-agenda-custom-commands
+      '(("u" todo "UTODO|UTOLEARN|UTOIMPLEMENT")
+        ("l" todo "TOLOOKAT")
+        ("d" todo "TODO")))
+
+(setq org-agenda-skip-deadline-if-done t)
+(setq org-agenda-skip-scheduled-if-done t)
+
+(defun org-my-auto-exclude-function (tag)
+  (and (or (string= tag "keys") (string= tag "drill"))
+       (concat "-" tag)))
+
+(setq org-agenda-auto-exclude-function 'org-my-auto-exclude-function)
+#+end_src
 **** Sometimes Agenda doesn't work
-     #+begin_src emacs-lisp 
-       (setq org-agenda-archives-mode nil)
-       (setq org-agenda-skip-comment-trees nil)
-       (setq org-agenda-skip-function nil)
-     #+end_src
+    #+begin_src emacs-lisp 
+      (setq org-agenda-archives-mode nil)
+      (setq org-agenda-skip-comment-trees nil)
+      (setq org-agenda-skip-function nil)
+    #+end_src
 *** Calendar
     #+begin_src emacs-lisp 
     (load-file "~/.emacs.d/custom/org-caldav.el")
