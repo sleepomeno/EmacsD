@@ -227,41 +227,41 @@
     #+end_src
 ** Paredit
 *** Key bindings
-    #+begin_src emacs-lisp 
-    (use-package paredit
-      ;;     :commands paredit-mode
-      :init
-      (progn
-        (global-set-key (kbd "C-M-h") 'paredit-backward)
-        (global-set-key (kbd "C-M-l") 'paredit-forward)
-        (global-set-key (kbd "C-c h") 'paredit-backward-slurp-sexp)
-        (global-set-key (kbd "C-c j") 'paredit-backward-barf-sexp)
-        (global-set-key (kbd "C-c k") 'paredit-forward-barf-sexp)
-        (global-set-key (kbd "C-c l") 'paredit-forward-slurp-sexp)
-        (global-set-key (kbd "C-M-j") 'paredit-splice-sexp-killing-forward)
-        (global-set-key (kbd "C-M-k") 'paredit-splice-sexp-killing-backward)
-        (global-set-key (kbd "C-c C-s") 'paredit-split-sexp )
-        (global-set-key (kbd "C-c C-j") 'paredit-join-sexps)
-        (global-set-key (kbd "C-c C-r") 'paredit-raise-sexp)
-        (global-set-key (kbd "C-c x") 'paredit-open-curly)
-        (global-set-key (kbd "C-M-s-l ") 'paredit-forward-down)
-        (global-set-key (kbd "M-l") 'paredit-forward-up)
-        (global-set-key (kbd "C-M-s-h ") 'paredit-backward-down)
-        (global-set-key (kbd "M-h") 'paredit-backward-up)
-        (global-set-key (kbd "C-c (") 'paredit-wrap-round)
-        (global-set-key (kbd "C-c {") 'paredit-wrap-curly)
-        (global-set-key (kbd "C-c [") 'paredit-wrap-square)
-        ))
-    
-    ;; idea: wenn point am ende der zeile ist ad-do-it zweimal machen
-    (defadvice paredit-forward (around evil-paredit-forward)
-      (let ((insert-state (evil-insert-state-p)))
-        (if (not insert-state) (evil-insert-state))
-        ad-do-it
-        ))
-    
-    (ad-activate 'paredit-forward)
-    #+end_src
+#+begin_src emacs-lisp 
+(use-package paredit
+  ;;     :commands paredit-mode
+  :init
+  (progn
+    (global-set-key (kbd "C-M-h") 'paredit-backward)
+    (global-set-key (kbd "C-M-l") 'paredit-forward)
+    (global-set-key (kbd "C-c h") 'paredit-backward-slurp-sexp)
+    (global-set-key (kbd "C-c j") 'paredit-backward-barf-sexp)
+    (global-set-key (kbd "C-c k") 'paredit-forward-barf-sexp)
+    (global-set-key (kbd "C-c l") 'paredit-forward-slurp-sexp)
+    (global-set-key (kbd "C-M-j") 'paredit-splice-sexp-killing-forward)
+    (global-set-key (kbd "C-M-k") 'paredit-splice-sexp-killing-backward)
+    (global-set-key (kbd "C-c C-s") 'paredit-split-sexp )
+    (global-set-key (kbd "C-c C-j") 'paredit-join-sexps)
+    (global-set-key (kbd "C-c C-r") 'paredit-raise-sexp)
+    (global-set-key (kbd "C-c x") 'paredit-open-curly)
+    (global-set-key (kbd "C-M-s-l ") 'paredit-forward-down)
+    (global-set-key (kbd "M-l") 'paredit-forward-up)
+    (global-set-key (kbd "C-M-s-h ") 'paredit-backward-down)
+    (global-set-key (kbd "M-h") 'paredit-backward-up)
+    (global-set-key (kbd "C-c (") 'paredit-wrap-round)
+    (global-set-key (kbd "C-c {") 'paredit-wrap-curly)
+    (global-set-key (kbd "C-c [") 'paredit-wrap-square)
+    ))
+
+;; idea: wenn point am ende der zeile ist ad-do-it zweimal machen
+(defadvice paredit-forward (around evil-paredit-forward)
+  (let ((insert-state (evil-insert-state-p)))
+    (if (not insert-state) (evil-insert-state))
+    ad-do-it
+    ))
+
+(ad-activate 'paredit-forward)
+#+end_src
 ** Gnuplot
     #+begin_src emacs-lisp 
     (require 'gnuplot)
