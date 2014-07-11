@@ -347,9 +347,12 @@
 (setq org-agenda-skip-deadline-if-done t)
 (setq org-agenda-skip-scheduled-if-done t)
 
+;; (defun org-my-auto-exclude-function (tag)
+;;   (and (or (string= tag "keys") (string= tag "drill"))
+;;        (concat "-" tag)))
+
 (defun org-my-auto-exclude-function (tag)
-  (and (or (string= tag "keys") (string= tag "drill"))
-       (concat "-" tag)))
+  (and (string= tag "keys") (concat "-" tag)))
 
 (setq org-agenda-auto-exclude-function 'org-my-auto-exclude-function)
 #+end_src
