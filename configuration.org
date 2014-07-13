@@ -3,10 +3,20 @@
 ** Personal Information  
    
 #+BEGIN_SRC emacs-lisp
-  (setq user-full-name "Gregor Riegler"
-        user-mail-address "gregor.riegler@gmail.com")
+(setq user-full-name "Gregor Riegler"
+      message-signature nil
+      user-mail-address "gregor.riegler@gmail.com")
 #+END_SRC
 
+** Util
+#+BEGIN_SRC emacs-lisp
+(defun string/starts-with (s begins)
+  "Return non-nil if string S starts with BEGINS."
+  (cond ((>= (length s) (length begins))
+         (string-equal (substring s 0 (length begins)) begins))
+        (t nil)))
+
+#+END_SRC
 ** Encryption
    #+BEGIN_SRC emacs-lisp
    (require 'epa-file)
@@ -51,6 +61,148 @@
 #+begin_src emacs-lisp 
 (require 'dired-details+)
 #+end_src
+** mu4e
+   #+BEGIN_SRC emacs-lisp
+         ;; taken and adapted from http://www.brool.com/index.php/using-mu4e
+            
+         
+         (defun email () 
+           (interactive)
+           (when (not (featurep 'mu4e))
+             (add-to-list 'load-path "/usr/local/share/emacs/site-lisp/mu4e/")
+          
+             (require 'mu4e)
+             (require 'org-mu4e)
+          
+             (setq mu4e-update-mail-and-index t)
+             ;; defaults
+          
+             (setq mu4e-maildir "~/Maildir")
+             (setq mu4e-drafts-folder "/[Gmail].Entw&APw-rfe")
+             (setq mu4e-sent-folder   "/[Gmail].Gesendet")
+             (setq mu4e-trash-folder  "/[Gmail].Papierkorb")
+          
+             ;; don't save message to Sent Messages, Gmail/IMAP takes care of this
+             (setq mu4e-update-interval 300 mu4e-sent-messages-behavior 'delete)
+          
+             ;; setup some handy shortcuts
+             ;; you can quickly switch to your Inbox -- press ``ji''
+             ;; then, when you want archive some messages, move them to
+             ;; the 'All Mail' folder by pressing ``ma''.
+         
+             (setq mu4e-attachment-dir  "~/Downloads")
+          
+             (setq mu4e-maildir-shortcuts
+                   '( ("/INBOX"               . ?i)
+                      ("/[Gmail].Wichtig"   . ?!)
+                      ("/[Gmail].Markiert"   . ?m)
+                      ("/[Gmail].Papierkorb"   . ?p)
+                      ("/[Gmail].Spam"   . ?s)
+                      ("/[Gmail].Alle Nachrichten"    . ?a)))
+         
+             (setq mu4e-bookmarks '(
+          ("maildir:\"/INBOX\" date:7d..now AND NOT maildir:\"/[Gmail].Spam\"" "INBOX without Spam last 7" ?i)
+          ("maildir:\"/INBOX\" AND NOT maildir:\"/[Gmail].Spam\"" "INBOX without Spam" ?j)
+          ;; ("flag:unread AND NOT flag:trashed" "Unread messages" 117)
+          ;; ("date:today..now" "Today's messages" 116)
+          ;; ("date:7d..now" "Last 7 days" 119)
+         ))
+          
+             ;; allow for updating mail using 'U' in the main view:
+             ;; I have this running in the background anyway
+             (setq mu4e-get-mail-command "offlineimap")
+          
+             ;; sending mail -- replace USERNAME with your gmail username
+             ;; also, make sure the gnutls command line utils are installed
+             ;; package 'gnutls-bin' in Debian/Ubuntu
+          
+             (require 'smtpmail)
+          
+              ;; alternatively, for emacs-24 you can use:
+              (setq message-send-mail-function 'smtpmail-send-it
+                    smtpmail-stream-type 'starttls
+                    smtpmail-default-smtp-server "smtp.gmail.com"
+                    smtpmail-smtp-server "smtp.gmail.com"
+                    smtpmail-smtp-service 587)
+          
+          
+              ;; don't include message signature
+              (setq mu4e-compose-signature-auto-include nil)
+         
+              ;; set date format (does not overwrite the settings for some reaso)
+              ;; (setq mu4e-headers-date-format "%d.%m.%y")
+              
+             ;; don't keep message buffers around
+             (setq message-kill-buffer-on-exit t)
+          
+             ;; show images
+             (setq mu4e-show-images t)
+          
+             ;; use imagemagick, if available
+             (when (fboundp 'imagemagick-register-types)
+               (imagemagick-register-types))
+          
+             ;;; message view action
+             (defun mu4e-msgv-action-view-in-browser (msg)
+               "View the body of the message in a web browser."
+               (interactive)
+               (let ((html (mu4e-msg-field (mu4e-message-at-point t) :body-html))
+                     (tmpfile (format "%s/%d.html" temporary-file-directory (random))))
+                 (unless html (error "No html part for this message"))
+                 (with-temp-file tmpfile
+                   (insert
+                    "<html>"
+                    "<head><meta http-equiv=\"content-type\""
+                    "content=\"text/html;charset=UTF-8\">"
+                    html))
+                 (browse-url (concat "file://" tmpfile))))
+          
+             (add-to-list 'mu4e-view-actions
+                          '("View in browser" . mu4e-msgv-action-view-in-browser) t)
+          
+             ;; convert org mode to HTML automatically
+             (setq org-mu4e-convert-to-html t)
+          
+             ;; need this to convert some e-mails properly
+             ;; (setq mu4e-html2text-command "html2text -utf8 -style pretty -width 72")
+             (setq mu4e-html2text-command "w3m -cols 72 -dump -T text/html")
+         )
+           (mu4e)
+      )
+          
+         (defalias 'org-mail 'org-mu4e-compose-org-mode)
+   (email)
+            
+   #+END_SRC
+** Sauron
+
+#+BEGIN_SRC emacs-lisp
+(require 'sauron)
+(global-set-key (kbd "C-c s") 'sauron-toggle-hide-show)
+(setq sauron-dBus-cookie t)
+(setq sauron-max-line-length nil)
+(setq sauron-hide-mode-line t)
+(setq sauron-separate-frame nil)
+(sauron-start-hidden)
+(setq sauron-watch-nicks '("hvr" "edwardk"))
+(add-hook 'sauron-event-added-functions
+  (lambda (origin prio msg &optional props)
+    (if (string/starts-with msg "Mail")
+      (shell-command (concat "notify-send -i " "/usr/share/icons/gnome/48x48/emblems/emblem-mail.png '" msg "'")))))
+#+END_SRC
+** Erc
+#+BEGIN_SRC emacs-lisp
+(require 'erc)
+(setq erc-autojoin-channels-alist '(("freenode.net" "#emacs" "#haskell")))
+(setq erc-hide-list '("JOIN" "PART" "QUIT" "NICK"))
+(setq erc-track-exclude-types '("JOIN" "NICK" "PART" "QUIT" "MODE" "324" "329" "332" "333" "353" "477"))
+(setq erc-auto-discard-away t)
+(setq erc-modules (quote (autoaway autojoin button completion fill irccontrols list match menu move-to-prompt netsplit networks noncommands notifications readonly ring scrolltobottom stamp track)))
+(setq erc-fill-function 'erc-fill-static)
+
+;; (Erc :server "irc.freenode.net" :port 6667 :nick "sleepomeno")
+
+#+END_SRC
 ** Use-package
    #+begin_src emacs-lisp 
      (require 'use-package)
@@ -165,6 +317,27 @@
       (add-to-list 'org-file-apps '("\\.pdf::\\([0-9]+\\)\\'" . "evince \"%s\" -p %1"))
     #+end_src
 ** Evil
+*** Evil-Leader
+    #+begin_src emacs-lisp 
+    (global-evil-leader-mode)
+    (evil-leader/set-leader "<SPC>")
+    
+    (evil-leader/set-key
+      "e" 'find-file
+      "m" 'email
+      "f" 'find-function
+      "b" 'switch-to-buffer
+      "h" '(lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ([246 32 98 return 246] 0 "%d")) arg))
+      "w" 'save-buffer
+      "l" 'ace-jump-line-mode
+      "ci" 'evilnc-comment-or-uncomment-lines
+      "cl" 'evilnc-comment-or-uncomment-to-the-line
+      "x" 'smex
+      "d" 'ido-dired
+      "k" 'kill-buffer)
+    
+    
+    #+end_src
 *** Activate Evil
     #+begin_src emacs-lisp 
     (use-package evil
@@ -184,29 +357,10 @@
                  (push event unread-command-events)))))
         (define-key evil-motion-state-map (kbd "C-S-u") 'evil-scroll-up)
         (define-key evil-motion-state-map (kbd "SPC") nil)
+        (setq evil-emacs-state-modes (append evil-emacs-state-modes '(mu4e-main-mode mu4e-headers-mode mu4e-view-mode)))
         (setq evil-want-C-w-in-emacs-state t
               evilnc-hotkey-comment-operator "##")
         (define-key evil-motion-state-map (kbd "C-S-o") 'evil-execute-in-emacs-state)))
-    #+end_src
-*** Evil-Leader
-    #+begin_src emacs-lisp 
-    (global-evil-leader-mode)
-    (evil-leader/set-leader "<SPC>")
-    
-    (evil-leader/set-key
-      "e" 'find-file
-      "f" 'find-function
-      "b" 'switch-to-buffer
-      "h" '(lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ([246 32 98 return 246] 0 "%d")) arg))
-      "w" 'save-buffer
-      "l" 'ace-jump-line-mode
-      "ci" 'evilnc-comment-or-uncomment-lines
-      "cl" 'evilnc-comment-or-uncomment-to-the-line
-      "x" 'smex
-      "d" 'ido-dired
-      "k" 'kill-buffer)
-    
-    
     #+end_src
 *** Evil match-it
     #+begin_src emacs-lisp 
@@ -272,6 +426,12 @@
     #+begin_src emacs-lisp 
       (setq org-directory "~/org")
     #+end_src
+*** Org clocking
+[[info:org#Resolving%20idle%20time][info:org#Resolving idle time]]
+#+BEGIN_SRC emacs-lisp
+;;; Cu Cu Cu Cc Cx Ci 
+(setq org-clock-continuously nil)
+#+END_SRC
 *** Refiling
     #+begin_src emacs-lisp 
       (defun my/org-refile-within-current-buffer ()
@@ -338,7 +498,7 @@
 #+end_src
 *** Agenda
 #+begin_src emacs-lisp 
-(setq org-agenda-files (list "~/org/cal.org" "~/org/bookmarks.org" "~/org/journal.org.gpg" "~/org/projects.org" "~/org/home.org" "~/org/uni.org"))
+(setq org-agenda-files (list "~/org/cal.org" "~/org/bookmarks.org" "~/org/journal.org.gpg" "~/org/projects.org" "~/org/home.org" "~/org/uni.org" "~/org/french.org"))
 (setq org-agenda-custom-commands
       '(("u" todo "UTODO|UTOLEARN|UTOIMPLEMENT")
         ("l" todo "TOLOOKAT")
@@ -430,9 +590,10 @@
     (require 'org-velocity)
     #+end_src
 *** Org-habit
-    #+begin_src emacs-lisp 
-    (require 'org-habit)
-    #+end_src
+#+begin_src emacs-lisp 
+(require 'org-habit)
+(setq org-habit-show-habits-only-for-today nil)
+#+end_src
 
 *** Org-drill
     #+begin_src emacs-lisp 
@@ -443,8 +604,10 @@
     #+end_src
 *** Org-mobile
     #+begin_src emacs-lisp 
-      (setq org-mobile-inbox-for-pull "~/org/notes.org")
-      (setq org-mobile-directory "~/Dropbox/Apps/MobileOrg")
+    (add-hook 'after-init-hook 'org-mobile-pull)
+    (add-hook 'kill-emacs-hook 'org-mobile-push)
+    (setq org-mobile-inbox-for-pull "~/org/notes.org")
+    (setq org-mobile-directory "~/Dropbox/Apps/MobileOrg")
     #+end_src
 *** Org-Babel
     #+begin_src emacs-lisp 
@@ -590,22 +753,23 @@
    #+end_src
 *** Aligments
 #+BEGIN_SRC emacs-lisp
-    (add-to-list 'align-rules-list
-                 '(haskell-types
-                   (regexp . "\\(\\s-+\\)\\(::\\|∷\\)\\s-+")
-                   (modes quote (haskell-mode literate-haskell-mode))))
-    (add-to-list 'align-rules-list
-                 '(haskell-assignment
-                   (regexp . "\\(\\s-+\\)=\\s-+")
-                   (modes quote (haskell-mode literate-haskell-mode))))
-    (add-to-list 'align-rules-list
-                 '(haskell-arrows
-                   (regexp . "\\(\\s-+\\)\\(->\\|→\\)\\s-+")
-                   (modes quote (haskell-mode literate-haskell-mode))))
-    (add-to-list 'align-rules-list
-                 '(haskell-left-arrows
-                   (regexp . "\\(\\s-+\\)\\(<-\\|←\\)\\s-+")
-                   (modes quote (haskell-mode literate-haskell-mode))))
+(eval-after-load "align" (progn
+(add-to-list 'align-rules-list
+             '(haskell-types
+               (regexp . "\\(\\s-+\\)\\(::\\|∷\\)\\s-+")
+               (modes quote (haskell-mode literate-haskell-mode))))
+(add-to-list 'align-rules-list
+             '(haskell-assignment
+               (regexp . "\\(\\s-+\\)=\\s-+")
+               (modes quote (haskell-mode literate-haskell-mode))))
+(add-to-list 'align-rules-list
+             '(haskell-arrows
+               (regexp . "\\(\\s-+\\)\\(->\\|→\\)\\s-+")
+               (modes quote (haskell-mode literate-haskell-mode))))
+(add-to-list 'align-rules-list
+             '(haskell-left-arrows
+               (regexp . "\\(\\s-+\\)\\(<-\\|←\\)\\s-+")
+               (modes quote (haskell-mode literate-haskell-mode))))))
 #+END_SRC
 *** Imports
 #+BEGIN_SRC emacs-lisp
