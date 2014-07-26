@@ -22,6 +22,10 @@
    (require 'epa-file)
    (epa-file-enable)
    #+END_SRC
+** winner
+#+BEGIN_SRC emacs-lisp
+(winner-mode 1)
+#+END_SRC
 ** Ido
 #+begin_src emacs-lisp 
 (require 'flx-ido)
