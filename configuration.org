@@ -203,6 +203,7 @@
 ** Erc
 #+BEGIN_SRC emacs-lisp
 (require 'erc)
+(load-file (concat user-emacs-directory "custom/erc-scrolltobottom-patch.el"))
 (setq erc-autojoin-channels-alist '(("freenode.net" "#emacs" "#haskell")))
 (setq erc-hide-list '("JOIN" "PART" "QUIT" "NICK"))
 (setq erc-track-exclude-types '("JOIN" "NICK" "PART" "QUIT" "MODE" "324" "329" "332" "333" "353" "477"))
