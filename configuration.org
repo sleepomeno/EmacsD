@@ -183,7 +183,8 @@
 #+BEGIN_SRC emacs-lisp
 (require 'sauron)
 (global-set-key (kbd "C-c s") 'sauron-toggle-hide-show)
-(setq sauron-dBus-cookie t)
+(setq sauron-dbus-cookie t)
+;; (sr-dbus-drop-cookie)
 (setq sauron-max-line-length nil)
 (setq sauron-hide-mode-line t)
 (setq sauron-separate-frame nil)
@@ -193,6 +194,11 @@
   (lambda (origin prio msg &optional props)
     (if (string/starts-with msg "Mail")
       (shell-command (concat "notify-send -i " "/usr/share/icons/gnome/48x48/emblems/emblem-mail.png '" msg "'")))))
+#+END_SRC
+** Drag-Stuff
+#+BEGIN_SRC emacs-lisp
+(require 'drag-stuff)
+;; (drag-stuff-mode t)
 #+END_SRC
 ** Erc
 #+BEGIN_SRC emacs-lisp
@@ -362,6 +368,7 @@
         (define-key evil-motion-state-map (kbd "C-S-u") 'evil-scroll-up)
         (define-key evil-motion-state-map (kbd "SPC") nil)
         (setq evil-emacs-state-modes (append evil-emacs-state-modes '(mu4e-main-mode mu4e-headers-mode mu4e-view-mode)))
+        (evil-set-initial-state 'git-commit-mode 'insert)
         (setq evil-want-C-w-in-emacs-state t
               evilnc-hotkey-comment-operator "##")
         (define-key evil-motion-state-map (kbd "C-S-o") 'evil-execute-in-emacs-state)))
