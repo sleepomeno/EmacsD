@@ -3,7 +3,7 @@
 # put the path to your Inbox folder here
 CHECKDIR="/home/$LOGNAME/Maildir/INBOX"
 
-#echo "\ncalled" >> /home/greg/called
+# echo "\ncalled" >> /home/greg/called
 
 sauronmsg () {
     DBUS_COOKIE="/home/$LOGNAME/.sauron-dbus"
