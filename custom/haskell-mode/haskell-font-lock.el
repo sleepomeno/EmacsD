@@ -87,9 +87,9 @@
 
 ;;; Code:
 
+(require 'cl-lib)
 (require 'haskell-mode)
 (require 'font-lock)
-(with-no-warnings (require 'cl))
 
 (defcustom haskell-font-lock-symbols nil
   "Display \\ and -> and such using symbols in fonts.
@@ -166,22 +166,56 @@ This is the case if the \".\" is part of a \"forall <tvar> . <type>\"."
     (re-search-backward "\\<forall\\>[^.\"]*\\="
                         (line-beginning-position) t)))
 
-;; Use new vars for the font-lock faces.  The indirection allows people to
-;; use different faces than in other modes, as before.
-(defvar haskell-keyword-face 'font-lock-keyword-face)
-(defvar haskell-constructor-face 'font-lock-type-face)
+(defface haskell-keyword-face
+  '((t :inherit font-lock-keyword-face))
+  "Face used to highlight Haskell keywords."
+  :group 'haskell)
+
+(defface haskell-constructor-face
+  '((t :inherit font-lock-type-face))
+  "Face used to highlight Haskell constructors."
+  :group 'haskell)
+
 ;; This used to be `font-lock-variable-name-face' but it doesn't result in
 ;; a highlighting that's consistent with other modes (it's mostly used
 ;; for function defintions).
-(defvar haskell-definition-face 'font-lock-function-name-face)
+(defface haskell-definition-face
+  '((t :inherit font-lock-function-name-face))
+  "Face used to highlight Haskell definitions."
+  :group 'haskell)
+
 ;; This is probably just wrong, but it used to use
 ;; `font-lock-function-name-face' with a result that was not consistent with
 ;; other major modes, so I just exchanged with `haskell-definition-face'.
-(defvar haskell-operator-face 'font-lock-variable-name-face)
-(defvar haskell-default-face nil)
-(defvar haskell-literate-comment-face 'font-lock-doc-face
+(defface haskell-operator-face
+  '((t :inherit font-lock-variable-name-face))
+  "Face used to highlight Haskell operators."
+  :group 'haskell)
+
+(defface haskell-pragma-face
+  '((t :inherit font-lock-comment-face))
+  "Face used to highlight Haskell pragmas."
+  :group 'haskell)
+
+(defface haskell-default-face
+  '((t :inherit default))
+  "Face used to highlight ordinary Haskell code."
+  :group 'haskell)
+
+(defface haskell-literate-comment-face
+  '((t :inherit font-lock-doc-face))
   "Face with which to fontify literate comments.
-Set to `default' to avoid fontification of them.")
+Inherit from `default' to avoid fontification of them."
+  :group 'haskell)
+
+;; These variables exist only for backward compatibility.
+(defvar haskell-keyword-face 'haskell-keyword-face)
+(defvar haskell-constructor-face 'haskell-constructor-face)
+(defvar haskell-definition-face 'haskell-definition-face)
+(defvar haskell-operator-face 'haskell-operator-face)
+(defvar haskell-pragma-face 'haskell-pragma-face)
+(defvar haskell-default-face 'haskell-default-face)
+(defvar haskell-literate-comment-face 'haskell-literate-comment-face)
 
 (defconst haskell-emacs21-features (string-match "[[:alpha:]]" "x")
   "Non-nil if we have regexp char classes.
@@ -202,9 +236,7 @@ Regexp match data 0 points to the chars."
          sym-data)
     (if (or (memq (char-syntax (or (char-before start) ?\ )) syntaxes)
             (memq (char-syntax (or (char-after end) ?\ )) syntaxes)
-            (memq (get-text-property start 'face)
-                  '(font-lock-doc-face font-lock-string-face
-                                       font-lock-comment-face))
+            (or (elt (syntax-ppss) 3) (elt (syntax-ppss) 4))
             (and (consp (setq sym-data (cdr (assoc (match-string 0) alist))))
                  (let ((pred (cadr sym-data)))
                    (setq sym-data (car sym-data))
@@ -237,6 +269,26 @@ Regexp match data 0 points to the chars."
               ;; expressions is only evaluated if the text has currently
               ;; no face.  So force evaluation by using `keep'.
               keep)))))))
+
+(defun haskell-font-lock-find-pragma (end)
+  (catch 'haskell-font-lock-find-pragma
+    (while (search-forward "{-#" end t)
+      (let* ((begin (match-beginning 0))
+             (ppss (save-excursion (syntax-ppss begin))))
+        ;; We're interested only when it's not in a string or a comment.
+        (unless (or (nth 3 ppss)
+                    (nth 4 ppss))
+          ;; Find the end of the pragma.
+          (let ((end (scan-lists begin 1 0)))
+            ;; Match data contains only the opening {-#, update it to cover the
+            ;; whole pragma.
+            (set-match-data (list begin end))
+            ;; Move to the end so we don't start the next scan from inside the
+            ;; pragma we just found.
+            (goto-char end)
+            (throw 'haskell-font-lock-find-pragma t)))))
+    ;; Found no pragma.
+    nil))
 
 ;; The font lock regular expressions.
 (defun haskell-font-lock-keywords-create (literate)
@@ -301,7 +353,7 @@ Returns keywords suitable for `font-lock-keywords'."
 
          ;; Top-level declarations
          (topdecl-var
-          (concat line-prefix "\\(" varid "\\)\\s-*"
+          (concat line-prefix "\\(" varid "\\(?:\\s-*,\\s-*" varid "\\)*" "\\)\\s-*"
                   ;; optionally allow for a single newline after identifier
                   ;; NOTE: not supported for bird-style .lhs files
                   (if (eq literate 'bird) nil "\\([\n]\\s-+\\)?")
@@ -336,56 +388,58 @@ Returns keywords suitable for `font-lock-keywords'."
             ;; the occurrence of the bug.
             ,@(haskell-font-lock-symbols-keywords)
 
-            (,reservedid 1 (symbol-value 'haskell-keyword-face))
-            (,reservedsym 1 (symbol-value 'haskell-operator-face))
+            (,reservedid 1 haskell-keyword-face)
+            (,reservedsym 1 haskell-operator-face)
             ;; Special case for `as', `hiding', `safe' and `qualified', which are
             ;; keywords in import statements but are not otherwise reserved.
             ("\\<import[ \t]+\\(?:\\(safe\\>\\)[ \t]*\\)?\\(?:\\(qualified\\>\\)[ \t]*\\)?[^ \t\n()]+[ \t]*\\(?:\\(\\<as\\>\\)[ \t]*[^ \t\n()]+[ \t]*\\)?\\(\\<hiding\\>\\)?"
-             (1 (symbol-value 'haskell-keyword-face) nil lax)
-             (2 (symbol-value 'haskell-keyword-face) nil lax)
-             (3 (symbol-value 'haskell-keyword-face) nil lax)
-             (4 (symbol-value 'haskell-keyword-face) nil lax))
+             (1 haskell-keyword-face nil lax)
+             (2 haskell-keyword-face nil lax)
+             (3 haskell-keyword-face nil lax)
+             (4 haskell-keyword-face nil lax))
 
-            (,reservedsym 1 (symbol-value 'haskell-operator-face))
+            (,reservedsym 1 haskell-operator-face)
             ;; Special case for `foreign import'
             ;; keywords in foreign import statements but are not otherwise reserved.
             ("\\<\\(foreign\\)[ \t]+\\(import\\)[ \t]+\\(?:\\(ccall\\|stdcall\\|cplusplus\\|jvm\\|dotnet\\)[ \t]+\\)?\\(?:\\(safe\\|unsafe\\|interruptible\\)[ \t]+\\)?"
-             (1 (symbol-value 'haskell-keyword-face) nil lax)
-             (2 (symbol-value 'haskell-keyword-face) nil lax)
-             (3 (symbol-value 'haskell-keyword-face) nil lax)
-             (4 (symbol-value 'haskell-keyword-face) nil lax))
+             (1 haskell-keyword-face nil lax)
+             (2 haskell-keyword-face nil lax)
+             (3 haskell-keyword-face nil lax)
+             (4 haskell-keyword-face nil lax))
 
-            (,reservedsym 1 (symbol-value 'haskell-operator-face))
+            (,reservedsym 1 haskell-operator-face)
             ;; Special case for `foreign export'
             ;; keywords in foreign export statements but are not otherwise reserved.
             ("\\<\\(foreign\\)[ \t]+\\(export\\)[ \t]+\\(?:\\(ccall\\|stdcall\\|cplusplus\\|jvm\\|dotnet\\)[ \t]+\\)?"
-             (1 (symbol-value 'haskell-keyword-face) nil lax)
-             (2 (symbol-value 'haskell-keyword-face) nil lax)
-             (3 (symbol-value 'haskell-keyword-face) nil lax))
+             (1 haskell-keyword-face nil lax)
+             (2 haskell-keyword-face nil lax)
+             (3 haskell-keyword-face nil lax))
 
             ;; Toplevel Declarations.
             ;; Place them *before* generic id-and-op highlighting.
-            (,topdecl-var  (1 (symbol-value 'haskell-definition-face)))
-            (,topdecl-var2 (2 (symbol-value 'haskell-definition-face)))
-            (,topdecl-sym  (2 (symbol-value 'haskell-definition-face)))
-            (,topdecl-sym2 (1 (symbol-value 'haskell-definition-face)))
+            (,topdecl-var  (1 haskell-definition-face))
+            (,topdecl-var2 (2 haskell-definition-face))
+            (,topdecl-sym  (2 haskell-definition-face))
+            (,topdecl-sym2 (1 haskell-definition-face))
 
             ;; These four are debatable...
-            ("(\\(,*\\|->\\))" 0 (symbol-value 'haskell-constructor-face))
-            ("\\[\\]" 0 (symbol-value 'haskell-constructor-face))
+            ("(\\(,*\\|->\\))" 0 haskell-constructor-face)
+            ("\\[\\]" 0 haskell-constructor-face)
             ;; Expensive.
-            (,qvarid 0 (symbol-value 'haskell-default-face))
-            (,qconid 0 (symbol-value 'haskell-constructor-face))
-            (,(concat "\`" varid "\`") 0 (symbol-value 'haskell-operator-face))
+            (,qvarid 0 haskell-default-face)
+            (,qconid 0 haskell-constructor-face)
+            (,(concat "\`" varid "\`") 0 haskell-operator-face)
             ;; Expensive.
-            (,conid 0 (symbol-value 'haskell-constructor-face))
+            (,conid 0 haskell-constructor-face)
 
             ;; Very expensive.
             (,sym 0 (if (eq (char-after (match-beginning 0)) ?:)
                         haskell-constructor-face
-                      haskell-operator-face))))
+                      haskell-operator-face))
+
+            (haskell-font-lock-find-pragma 0 haskell-pragma-face t)))
     (unless (boundp 'font-lock-syntactic-keywords)
-      (case literate
+      (cl-case literate
         (bird
          (setq keywords
                `(("^[^>\n].*$" 0 haskell-comment-face t)
@@ -512,22 +566,26 @@ that should be commented under LaTeX-style literate scripts."
    ;; requires extra work for each and every non-Haddock comment, so I only
    ;; go through the more expensive check if we've already seen a Haddock
    ;; comment in the buffer.
+   ;;
+   ;; And then there are also haddock section headers that start with
+   ;; any number of stars:
+   ;;   -- * ...
    ((and haskell-font-lock-haddock
          (save-excursion
            (goto-char (nth 8 state))
-           (or (looking-at "\\(-- \\|{-\\)[ \\t]*[|^]")
+           (or (looking-at "[{-]-[ \\t]*[|^*]")
                (and haskell-font-lock-seen-haddock
-                    (looking-at "-- ")
+                    (looking-at "--")
                     (let ((doc nil)
                           pos)
                       (while (and (not doc)
                                   (setq pos (line-beginning-position))
                                   (forward-comment -1)
                                   (eq (line-beginning-position 2) pos)
-                                  (looking-at "--\\( [|^]\\)?"))
+                                  (looking-at "--\\([ \\t]*[|^*]\\)?"))
                         (setq doc (match-beginning 1)))
                       doc)))))
-    (set (make-local-variable 'haskell-font-lock-seen-haddock) t)
+    (setq haskell-font-lock-seen-haddock t)
     font-lock-doc-face)
    (t font-lock-comment-face)))
 
@@ -546,14 +604,14 @@ that should be commented under LaTeX-style literate scripts."
 ;;;###autoload
 (defun haskell-font-lock-choose-keywords ()
   (let ((literate (if (boundp 'haskell-literate) haskell-literate)))
-    (case literate
+    (cl-case literate
       (bird haskell-font-lock-bird-literate-keywords)
       ((latex tex) haskell-font-lock-latex-literate-keywords)
       (t haskell-font-lock-keywords))))
 
 (defun haskell-font-lock-choose-syntactic-keywords ()
   (let ((literate (if (boundp 'haskell-literate) haskell-literate)))
-    (case literate
+    (cl-case literate
       (bird haskell-bird-syntactic-keywords)
       ((latex tex) haskell-latex-syntactic-keywords)
       (t haskell-basic-syntactic-keywords))))
@@ -635,12 +693,21 @@ Invokes `haskell-font-lock-hook' if not nil."
   "Turns off font locking in current buffer."
   (font-lock-mode -1))
 
+(defun haskell-fontify-as-mode (text mode)
+  "Fontify TEXT as MODE, returning the fontified text."
+  (with-temp-buffer
+    (funcall mode)
+    (insert text)
+    (if (fboundp 'font-lock-ensure)
+        (font-lock-ensure)
+      (with-no-warnings (font-lock-fontify-buffer)))
+    (buffer-substring (point-min) (point-max))))
+
 ;; Provide ourselves:
 
 (provide 'haskell-font-lock)
 
 ;; Local Variables:
-;; byte-compile-warnings: (not cl-functions)
 ;; tab-width: 8
 ;; End:
 

@@ -1,0 +1,21 @@
+* komplexitätstheorie
+  :PROPERTIES:
+  :ID:       gg7ffomoskr30lqk96pchnrn40@google.com
+  :LOCATION: Seminarraum 188, 4. Stock, Stiege 3, Grün
+  :END:
+  <2014-03-11 Die 11:00-12:00>
+
+* haskell
+  :PROPERTIES:
+  :ID:       g7horrikqtetsdla4mibe18f2s@google.com
+  :LOCATION: HS 14, Stiege 3, 3. Stock
+  :END:
+  <2014-03-10 Mon 16:00-17:00>
+
+* pervasive
+  :PROPERTIES:
+  :ID:       jkm0kn5b376kr6cpgblfhbd45c@google.com
+  :LOCATION: EI 10 Fritz Paschke HS
+  :END:
+  <2014-03-19 Mit 15:00-17:00>
+
