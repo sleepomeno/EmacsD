@@ -909,19 +909,10 @@
       (eval-after-load 'flymake '(require 'flymake-cursor))
       (setq flymake-cursor-number-of-errors-to-display nil)
       (setq flymake-gui-warnings-enabled nil)
-      (global-set-key (kbd "C-c e") 'flymake-display-err-menu-for-current-line)
-      (global-set-key (kbd "C-c C-n") 'flymake-goto-next-error)
-      (global-set-key (kbd "C-c C-p") 'flymake-goto-next-error)
+      (define-key haskell-mode-map  (kbd "C-c e") 'flymake-display-err-menu-for-current-line)
+      (define-key haskell-mode-map (kbd "C-c C-n") 'flymake-goto-next-error)
+      (define-key haskell-mode-map  (kbd "C-c C-p") 'flymake-goto-next-error)
     #+end_src
-** Projectile
-   #+begin_src emacs-lisp 
-     (setq projectile-use-native-indexing t)
-   #+end_src
-** Common Lisp
-   #+begin_src emacs-lisp 
-     (setq inferior-lisp-program "/usr/bin/clisp")
-   #+end_src
-** 
 ** Jabber
 #+BEGIN_SRC emacs-lisp
 (setq jabber-account-list  '(("sleepomeno@blah.im/emacs")))
@@ -930,3 +921,12 @@
 #+BEGIN_SRC emacs-lisp
 ;; (load-file (concat user-emacs-directory "custom/jabber-otr/jabber-otr.el"))
 #+END_SRC
+** Projectile
+   #+begin_src emacs-lisp 
+     (setq projectile-use-native-indexing t)
+   #+end_src
+** Common Lisp
+   #+begin_src emacs-lisp 
+     (setq inferior-lisp-program "/usr/bin/clisp")
+   #+end_src
+*** 
