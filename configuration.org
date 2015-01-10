@@ -922,3 +922,11 @@
      (setq inferior-lisp-program "/usr/bin/clisp")
    #+end_src
 ** 
+** Jabber
+#+BEGIN_SRC emacs-lisp
+(setq jabber-account-list  '(("sleepomeno@blah.im/emacs")))
+#+END_SRC
+** OTR
+#+BEGIN_SRC emacs-lisp
+;; (load-file (concat user-emacs-directory "custom/jabber-otr/jabber-otr.el"))
+#+END_SRC
