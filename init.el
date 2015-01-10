@@ -29,7 +29,6 @@
                       twilight-theme
                       auto-complete
                       ace-jump-mode
-                      sauron
                       drag-stuff
                       twittering-mode
                       ;; Evil
