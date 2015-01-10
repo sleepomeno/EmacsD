@@ -818,8 +818,11 @@
 ** Haskell
 *** Loading
 #+BEGIN_SRC emacs-lisp
-       (add-to-list 'load-path (concat user-emacs-directory "custom/haskell-mode"))
-       (load "haskell-mode-autoloads.el")
+(add-to-list 'load-path (concat user-emacs-directory "custom/haskell-mode"))
+(load "haskell-mode-autoloads.el")
+
+(require 'w3m-haddock)
+(add-hook 'w3m-display-hook 'w3m-haddock-display)
 #+END_SRC
 *** Settings
     #+begin_src emacs-lisp 
@@ -857,6 +860,7 @@
               (define-key haskell-mode-map (kbd "C-c C-z") 'haskell-interactive-switch)
               (define-key haskell-mode-map (kbd "C-c C-l") 'haskell-process-load-file)
               (define-key haskell-mode-map (kbd "C-c C-b") 'haskell-interactive-switch)
+              ;; (define-key haskell-mode-map (kbd "C-c C-d") 'haskell-w3m-open-haddock)
               (define-key haskell-mode-map (kbd "C-c C-d") 'inferior-haskell-find-haddock)
               (define-key haskell-mode-map (kbd "C-c C-t") 'haskell-process-do-type)
               (define-key haskell-mode-map (kbd "C-c C-i") 'haskell-process-do-info)
