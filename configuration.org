@@ -37,7 +37,17 @@
 
 #+END_SRC
 
-
+** Twitter
+#+BEGIN_SRC emacs-lisp
+(setq  twittering-icon-mode t)
+(setq twittering-timer-interval 300)         ; Update your timeline each 300 seconds (5 minutes)
+(setq twittering-url-show-status nil)        ; Keeps the echo area from showing all the http processes
+(setq twittering-use-master-password t)
+#+END_SRC
+** Shell
+#+BEGIN_SRC emacs-lisp
+(global-set-key [f1] 'shell)
+#+END_SRC
 ** Util
 #+BEGIN_SRC emacs-lisp
 (defun string/starts-with (s begins)
