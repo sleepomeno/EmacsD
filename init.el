@@ -30,6 +30,9 @@
                       auto-complete
                       ace-jump-mode
                       drag-stuff
+                      jabber
+                      js-comint
+                      js2-mode
                       twittering-mode
                       ;; Evil
                       evil
