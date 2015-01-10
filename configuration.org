@@ -409,12 +409,16 @@
     (setq evil-leader/in-all-states t) 
     (global-evil-leader-mode)
     (evil-leader/set-leader "<SPC>")
-    
+
     (evil-leader/set-key
-      "e" 'find-file
-      "s" 'sauron-toggle-hide-show
+
+      "ef" 'find-file
+      "sa" 'sauron-toggle-hide-show
+      "sh" 'shell
+      "es" 'start-erc
       "m" 'email
-      "f" 'find-function
+      "ff" 'find-function
+      "df" 'describe-function
       "<SPC>" 'switch-to-buffer
       ;; go back in current window
       "b" '(lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ([32 32 return] 0 "%d")) arg))
@@ -427,16 +431,18 @@
       "d" 'ido-dired
       "k" 'kill-buffer
       "l" 'ace-jump-line-mode
-      "i" 'erc-track-switch-buffer
+      "eb" 'erc-track-switch-buffer
+      "jc" 'jabber-connect
       ;; "h" 'evil-window-left
       ;; "h" 'evil-window-left
       ;; "l" 'evil-window-right
       ;; "k" 'evil-window-up
       ;; "j" 'evil-window-down
       )
-     
-    (evil-leader/set-key-for-mode 'haskell-mode "h" 'inferior-haskell-find-haddock)
-    (evil-leader/set-key-for-mode 'haskell-mode "a" 'haskell-cabal-visit-file)
+
+    (evil-leader/set-key-for-mode 'haskell-mode "fh" 'inferior-haskell-find-haddock)
+    (evil-leader/set-key-for-mode 'haskell-mode "ca" 'haskell-cabal-visit-file)
+    (evil-leader/set-key-for-mode 'haskell-mode "jd" 'haskell-mode-jump-to-def-or-tag)
     #+end_src
 *** Activate Evil
     #+begin_src emacs-lisp 
