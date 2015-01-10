@@ -16,3 +16,6 @@
 [submodule "custom/haskell-mode"]
 	path = custom/haskell-mode
 	url = https://github.com/sleepomeno/haskell-mode.git
+[submodule "custom/jabber-otr"]
+	path = custom/jabber-otr
+	url = https://github.com/legoscia/emacs-jabber-otr.git
