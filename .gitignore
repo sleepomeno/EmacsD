@@ -14,3 +14,5 @@ url/cookies
 *.bak
 /custom/emacs-w3m/*
 /eshell/history
+/skewer-cache/*.
+/skewer-cache/**/*

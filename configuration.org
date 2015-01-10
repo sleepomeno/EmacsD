@@ -76,6 +76,7 @@
 
 (setq ido-enable-flex-matching t)
 (setq ido-use-faces nil)
+(setq gc-cons-threshold 20000000)
 #+end_src
 ** js-commint
 #+BEGIN_SRC emacs-lisp
@@ -88,12 +89,16 @@
           (local-set-key "\C-c\C-b" 'js-send-buffer-and-go)
           (local-set-key "\C-cl" 'js-load-file-and-go)
           ))
+(add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
 #+END_SRC
-(setq gc-cons-threshold 20000000)
-
-;; (setq ido-enable-prefix t
-;;       ido-enable-flex-matching t)
-#+end_src
+** manage js-mode
+#+BEGIN_SRC emacs-lisp
+(add-hook 'skewer-mode 'js2-minor-mode)
+(defun choose-js-mode () (if (y-or-n-p "Frontend (y) or backend (n)")
+    (skewer-mode 1)
+    (js2-mode)))
+(add-hook 'js2-mode 'choose-js-mode)
+#+END_SRC
 
 ** Ansi-color
 #+BEGIN_SRC emacs-lisp
@@ -315,7 +320,6 @@
    
    #+END_SRC
 
-   
 ** Sauron
 
 #+BEGIN_SRC emacs-lisp
