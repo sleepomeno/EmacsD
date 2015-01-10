@@ -76,6 +76,7 @@
 
 (setq ido-enable-flex-matching t)
 (setq ido-use-faces nil)
+#+end_src
 ** js-commint
 #+BEGIN_SRC emacs-lisp
 (require 'js-comint)
@@ -286,8 +287,8 @@
                
    #+END_SRC
 
+** w3m
 
-** Sauron
 ** Load-Path
    #+begin_src emacs-lisp 
    (add-to-list 'load-path (concat user-emacs-directory "custom/emacs-w3m"))
@@ -315,6 +316,7 @@
    #+END_SRC
 
    
+** Sauron
 
 #+BEGIN_SRC emacs-lisp
 
