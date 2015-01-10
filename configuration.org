@@ -256,6 +256,8 @@
 ** Sauron
 
 #+BEGIN_SRC emacs-lisp
+
+(add-to-list 'load-path (concat user-emacs-directory "custom/sauron"))
 (require 'sauron)
 (global-set-key (kbd "C-c s") 'sauron-toggle-hide-show)
 (setq sauron-dbus-cookie t)
@@ -265,10 +267,12 @@
 (setq sauron-separate-frame nil)
 (sauron-start-hidden)
 (setq sauron-watch-nicks '("hvr" "edwardk"))
+(setq sauron-watch-patterns '("lens" "parsec"))
 (add-hook 'sauron-event-added-functions
   (lambda (origin prio msg &optional props)
     (if (string/starts-with msg "Mail")
-      (shell-command (concat "notify-send -i " "/usr/share/icons/gnome/48x48/emblems/emblem-mail.png '" msg "'")))))
+        (progn (shell-command (concat "notify-send -i " "/usr/share/icons/gnome/48x48/emblems/emblem-mail.png '" (replace-regexp-in-string "\\([^|]* | \\)" "Mail von " msg nil nil 1) "'"))
+               (sauron-fx-sox "/usr/share/sounds/ubuntu/stereo/message.ogg")))))
 #+END_SRC
 ** Drag-Stuff
 #+BEGIN_SRC emacs-lisp
@@ -279,7 +283,7 @@
 #+BEGIN_SRC emacs-lisp
 (require 'erc)
 (load-file (concat user-emacs-directory "custom/erc-scrolltobottom-patch.el"))
-(setq erc-autojoin-channels-alist '(("freenode.net" "#emacs" "#haskell")))
+(setq erc-autojoin-channels-alist '(("freenode.net" "#haskell")))
 (setq erc-hide-list '("JOIN" "PART" "QUIT" "NICK"))
 (setq erc-track-exclude-types '("JOIN" "NICK" "PART" "QUIT" "MODE" "324" "329" "332" "333" "353" "477"))
 (setq erc-auto-discard-away t)
