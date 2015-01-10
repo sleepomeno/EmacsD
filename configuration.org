@@ -286,9 +286,21 @@
 (setq erc-modules (quote (autoaway autojoin button completion fill irccontrols list match menu move-to-prompt netsplit networks noncommands notifications readonly ring scrolltobottom stamp track)))
 (setq erc-fill-static-center 15)
 (setq erc-fill-function 'erc-fill-static)
+(add-hook 'window-configuration-change-hook 
+     '(lambda ()
+        (setq erc-fill-column (- (window-width) 2))))
+ (setq erc-timestamp-format "[%H:%M] ")
+ (setq erc-fill-prefix "      + ")
+(add-to-list 'erc-mode-hook (lambda ()
+                              (set (make-local-variable 'scroll-conservatively) 100)))
+(setq erc-prompt-for-password nil)
+(setq erc-interpret-mirc-color t)
 
-;; (Erc :server "irc.freenode.net" :port 6667 :nick "sleepomeno")
+(add-hook 'erc-mode-hook '(lambda () (setq line-spacing 10)))
 
+(defun start-erc () 
+       (interactive)
+       (erc :server "irc.freenode.net" :port 6667 :nick "sleepomeno"))
 #+END_SRC
 ** Use-package
    #+begin_src emacs-lisp 
