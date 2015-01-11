@@ -90,15 +90,14 @@
 ;;           (local-set-key "\C-cl" 'js-load-file-and-go)
 ;;           ))
 (eval-after-load "js2-mode"
-  (define-key js2-mode-map (kbd "C-x C-e") 'js-send-last-sexp) ;
+  '(progn  (define-key js2-mode-map (kbd "C-x C-e") 'js-send-last-sexp) ;
 (define-key js2-mode-map (kbd "C-M-x") 'js-send-last-sexp-and-go)
 (define-key js2-mode-map (kbd "C-c C-k") 'js-send-buffer)
 (define-key js2-mode-map (kbd "C-c C-l") 'js-send-buffer-and-go)
 (define-key js2-mode-map (kbd "C-c l") 'js-load-file-and-go)
 
-(add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode)))
-
-(require 'skewer-setup)
+(add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))))
+;; (add-to-list 'auto-mode-alist '("\\.cabal\\'" . fundamental-mode))
 #+END_SRC
 ** manage js-mode
 #+BEGIN_SRC emacs-lisp
@@ -951,7 +950,7 @@
     #+end_src
 *** Hooks
    #+begin_src emacs-lisp 
-   
+
           (eval-after-load "haskell-mode"
             '(progn
               ;; (define-key haskell-mode-map (kbd "C-x C-d") nil)
@@ -982,12 +981,15 @@
             (define-key haskell-cabal-mode-map (kbd "C-c C-l") 'save-buffer)
             (define-key haskell-cabal-mode-map (kbd "C-#") 'haskell-interactive-bring)
             (define-key haskell-cabal-mode-map [?\C-c ?\C-z] 'haskell-interactive-switch))
+   (defun no-evil-leader ()
+     (setq-local evil-leader/in-all-states nil))
           (add-hook 'haskell-cabal-mode-hook 'haskell-cabal-hook)
+          (add-hook 'haskell-cabal-mode-hook 'no-evil-leader)
           (add-hook 'haskell-mode-hook 'haskell-hook)
    #+end_src
 *** Aligments
 #+BEGIN_SRC emacs-lisp
-(eval-after-load "align" (progn
+(eval-after-load "align" '(progn
 (add-to-list 'align-rules-list
              '(haskell-types
                (regexp . "\\(\\s-+\\)\\(::\\|∷\\)\\s-+")

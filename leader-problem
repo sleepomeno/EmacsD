@@ -1,0 +1,1 @@
+"evil-leader-mode: To bind the key C-SPC, use [?\C- ], not [C-SPC] . Error in post-command-hook (evil-mode-check-buffers): (error "To bind the key C-SPC, use [?\\C- ], not [C-SPC]")"
