@@ -66,6 +66,10 @@
 #+BEGIN_SRC emacs-lisp
 (winner-mode 1)
 #+END_SRC
+** eldoc
+#+BEGIN_SRC emacs-lisp
+(add-hook 'emacs-lisp-mode-hook 'turn-on-eldoc-mode)
+#+END_SRC
 ** Ido
 #+begin_src emacs-lisp 
 (require 'flx-ido)
