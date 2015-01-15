@@ -21,4 +21,4 @@
 	url = https://github.com/legoscia/emacs-jabber-otr.git
 [submodule "custom/sauron"]
 	path = custom/sauron
-	url = https://github.com/djcb/sauron.git
+	url = https://github.com/sleepomeno/sauron.git
