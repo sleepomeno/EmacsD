@@ -568,6 +568,22 @@
     (require 'evil-matchit)
     (global-evil-matchit-mode 1)
     #+end_src
+*** Evil-Jumper
+#+BEGIN_SRC emacs-lisp
+(require 'evil-jumper)
+
+(global-evil-jumper-mode)
+
+#+END_SRC
+** Guide-Key
+#+BEGIN_SRC emacs-lisp
+(use-package guide-key
+  :diminish guide-key-mode
+  :init
+  (progn
+  (setq guide-key/guide-key-sequence '("C-x r" "C-x 4" "C-c"))
+  (guide-key-mode 1)))  ; Enable guide-key-mode
+#+END_SRC
 ** Forth
     #+begin_src emacs-lisp 
     (load (concat user-emacs-directory "custom/gforth.el"))
