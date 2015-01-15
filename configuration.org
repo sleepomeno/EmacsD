@@ -443,6 +443,15 @@
                ))     
      #+end_src
 ** Miscellaneous
+*** Backups
+   #+BEGIN_SRC emacs-lisp
+   (setq backup-directory-alist '(("." . "~/.emacs.d/backups")))
+   #+END_SRC
+*** y-or-n
+#+BEGIN_SRC emacs-lisp
+(fset 'yes-or-no-p 'y-or-n-p)
+
+#+END_SRC
 *** Set initial buffer
     #+begin_src emacs-lisp 
        (setq initial-buffer-choice "~/org/home.org")
