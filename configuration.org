@@ -101,7 +101,6 @@
 (define-key js2-mode-map (kbd "C-c l") 'js-load-file-and-go)
 
 (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))))
-;; (add-to-list 'auto-mode-alist '("\\.cabal\\'" . fundamental-mode))
 #+END_SRC
 ** manage js-mode
 #+BEGIN_SRC emacs-lisp
@@ -1004,6 +1003,8 @@
               ;; (define-key haskell-mode-map (kbd "C-c C-d") 'haskell-w3m-open-haddock)
               (define-key haskell-mode-map (kbd "C-c C-d") 'inferior-haskell-find-haddock)
               (define-key haskell-mode-map (kbd "C-c C-t") 'haskell-process-do-type)
+
+              (add-to-list 'auto-mode-alist '("\\.cabal\\'" . evil-mode))
               (define-key haskell-mode-map (kbd "C-c C-i") 'haskell-process-do-info)
               (define-key haskell-mode-map (kbd "SPC") 'haskell-mode-contextual-space)
               (define-key haskell-mode-map (kbd "C-c M-.") 'haskell-mode-jump-to-def-or-tag)
