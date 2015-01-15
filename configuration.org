@@ -515,6 +515,7 @@
     (setq evil-leader/in-all-states t) 
     (global-evil-leader-mode)
     (evil-leader/set-leader "<SPC>")
+    ;; (evil-leader/set-leader "-")
 
     (evil-leader/set-key
 
@@ -569,7 +570,7 @@
                  (push event unread-command-events)))))
         (define-key evil-motion-state-map (kbd "C-S-u") 'evil-scroll-up)
         (define-key evil-motion-state-map (kbd "SPC") nil)
-        (setq evil-emacs-state-modes (append evil-emacs-state-modes '(org-agenda-mode jabber-roster twittering-mode dired-mode mu4e-main-mode mu4e-headers-mode mu4e-view-mode)))
+        (setq evil-emacs-state-modes (append evil-emacs-state-modes '(ediff-mode org-agenda-mode jabber-roster twittering-mode dired-mode mu4e-main-mode mu4e-headers-mode mu4e-view-mode)))
         (evil-set-initial-state 'git-commit-mode 'insert)
         (setq evil-want-C-w-in-emacs-state t
               evilnc-hotkey-comment-operator "##")
@@ -1014,7 +1015,7 @@
           (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
           (add-hook 'haskell-mode-hook 'flymake-haskell-multi-load)
           (defun haskell-hook ()
-            (define-key evil-normal-state-map (kbd "M-.") 'haskell-mode-jump-to-def-or-tag)
+            ;; (define-key evil-normal-state-map (kbd "M-.") 'haskell-mode-jump-to-def-or-tag)
             (define-key haskell-mode-map (kbd "C-#") 'haskell-interactive-bring)
             )
           (defun haskell-cabal-hook ()
