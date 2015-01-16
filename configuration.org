@@ -586,7 +586,7 @@
       "es" 'start-erc
       "m" 'email
       "ff" 'find-function
-      "df" 'describe-function
+      "fd" 'describe-function
       "<SPC>" 'switch-to-buffer
       ;; go back in current window
       "b" '(lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ([32 32 return] 0 "%d")) arg))
@@ -601,6 +601,7 @@
       "l" 'ace-jump-line-mode
       "eb" 'erc-track-switch-buffer
       "jc" 'jabber-connect
+      "tw" 'twit
       ;; "h" 'evil-window-left
       ;; "h" 'evil-window-left
       ;; "l" 'evil-window-right
