@@ -602,6 +602,7 @@
       "eb" 'erc-track-switch-buffer
       "jc" 'jabber-connect
       "tw" 'twit
+      "gl" 'goto-line
       ;; "h" 'evil-window-left
       ;; "h" 'evil-window-left
       ;; "l" 'evil-window-right
