@@ -681,6 +681,7 @@
         (define-key evil-motion-state-map (kbd "SPC") nil)
         (setq evil-emacs-state-modes (append evil-emacs-state-modes '(ediff-mode org-agenda-mode jabber-roster twittering-mode dired-mode mu4e-main-mode mu4e-headers-mode mu4e-view-mode)))
         (evil-set-initial-state 'git-commit-mode 'insert)
+        (setq evil-move-cursor-back nil)
         (setq evil-want-C-w-in-emacs-state t
               evilnc-hotkey-comment-operator "##")
         (define-key evil-motion-state-map (kbd "C-S-o") 'evil-execute-in-emacs-state)))
