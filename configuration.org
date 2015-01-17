@@ -1021,6 +1021,7 @@
              (R . t)
              (haskell . t)
              (gnuplot . t)
+             (sqlite . t)
              (C . t)
              (dot . t)))))
      #+end_src
