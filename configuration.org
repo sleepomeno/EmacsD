@@ -743,9 +743,13 @@
     (define-key paredit-mode-map (kbd "C-M-h") 'paredit-backward)
     (define-key paredit-mode-map (kbd "C-M-l") 'paredit-forward)
     (define-key paredit-mode-map (kbd "C-c h") 'paredit-backward-slurp-sexp)
+    (define-key paredit-mode-map (kbd "C-(") 'paredit-backward-slurp-sexp)
     (define-key paredit-mode-map (kbd "C-c j") 'paredit-backward-barf-sexp)
+    (define-key paredit-mode-map (kbd "C-{") 'paredit-backward-barf-sexp)
     (define-key paredit-mode-map (kbd "C-c k") 'paredit-forward-barf-sexp)
+    (define-key paredit-mode-map (kbd "C-}") 'paredit-forward-barf-sexp)
     (define-key paredit-mode-map (kbd "C-c l") 'paredit-forward-slurp-sexp)
+    (define-key paredit-mode-map (kbd "C-)") 'paredit-forward-slurp-sexp)
     (define-key paredit-mode-map (kbd "C-M-j") 'paredit-splice-sexp-killing-forward)
     (define-key paredit-mode-map (kbd "C-M-k") 'paredit-splice-sexp-killing-backward)
     (define-key paredit-mode-map (kbd "C-c C-s") 'paredit-split-sexp )
@@ -761,19 +765,8 @@
     (define-key paredit-mode-map (kbd "C-c [") 'paredit-wrap-square)
     ))
 
-;; idea: wenn point am ende der zeile ist ad-do-it zweimal machen
-;; (defadvice paredit-forward (around evil-paredit-forward)
-;;   (let ((insert-state (evil-insert-state-p)))
-;;     (if (not insert-state) (evil-insert-state))
-;;     ad-do-it
-;;     ))
-
-;; (ad-activate 'paredit-forward)
-
 (add-hook 'emacs-lisp-mode-hook 'evil-paredit-mode)
 #+end_src
-
-#+RESULTS:
 
 ** Gnuplot
     #+begin_src emacs-lisp 
