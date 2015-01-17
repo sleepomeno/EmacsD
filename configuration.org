@@ -438,6 +438,20 @@
      (require 'use-package)
      (require 'bind-key)
    #+end_src
+** ediff
+#+BEGIN_SRC emacs-lisp
+(defun ora-ediff-hook ()
+  (ediff-setup-keymap)
+  (define-key ediff-mode-map "j" 'ediff-next-difference)
+  (define-key ediff-mode-map "k" 'ediff-previous-difference))
+
+(add-hook 'ediff-mode-hook 'ora-ediff-hook)
+
+(winner-mode)
+(add-hook 'ediff-after-quit-hook-internal 'winner-undo)
+
+#+END_SRC
+
 ** General
 #+BEGIN_SRC emacs-lisp
 ;; General
