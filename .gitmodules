@@ -22,3 +22,6 @@
 [submodule "custom/sauron"]
 	path = custom/sauron
 	url = https://github.com/sleepomeno/sauron.git
+[submodule "custom/caldav"]
+	path = custom/caldav
+	url = https://github.com/dengste/org-caldav.git
