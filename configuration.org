@@ -887,7 +887,7 @@
 #+end_src
 *** Agenda
 #+begin_src emacs-lisp 
-(setq org-agenda-files (list "~/org/cal.org" "~/org/bookmarks.org" "~/org/projects.org" "~/org/home.org" "~/org/uni.org" "~/org/french.org"))
+(setq org-agenda-files (list "~/org/thesis.org" "~/org/cal.org" "~/org/bookmarks.org" "~/org/projects.org" "~/org/home.org" "~/org/uni.org" "~/org/french.org"))
 (setq org-agenda-custom-commands
       '(("u" todo "UTODO|UTOLEARN|UTOIMPLEMENT")
         ("l" todo "TOLOOKAT")
