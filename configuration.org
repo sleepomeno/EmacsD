@@ -636,6 +636,8 @@
 
       "ef" 'find-file
       "sa" 'sauron-toggle-hide-show
+      "so" 'org-save-all-org-buffers
+
       "sh" 'shell
       "es" 'start-erc
       "m" 'email
@@ -658,14 +660,7 @@
       "tw" 'twit
       "gl" 'goto-line
       "ob" 'org-iswitchb
-      "cs" 'org-caldav-sync
-
-      ;; "h" 'evil-window-left
-      ;; "h" 'evil-window-left
-      ;; "l" 'evil-window-right
-      ;; "k" 'evil-window-up
-      ;; "j" 'evil-window-down
-      )
+      "cs" 'org-caldav-sync)
 
     (evil-leader/set-key-for-mode 'haskell-mode "fh" 'inferior-haskell-find-haddock)
     (evil-leader/set-key-for-mode 'haskell-mode "ca" 'haskell-cabal-visit-file)
