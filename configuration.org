@@ -176,34 +176,34 @@
 ** mu4e
    #+BEGIN_SRC emacs-lisp
             ;; taken and adapted from http://www.brool.com/index.php/using-mu4e
-               
-            
+
+
             (defun email () 
               (interactive)
               (when (not (featurep 'mu4e))
                 (add-to-list 'load-path "/usr/local/share/emacs/site-lisp/mu4e/")
-             
+
                 (require 'mu4e)
                 (require 'org-mu4e)
-             
+
                 (setq mu4e-update-mail-and-index t)
                 ;; defaults
-             
+
                 (setq mu4e-maildir "~/Maildir")
                 (setq mu4e-drafts-folder "/[Gmail].Entw&APw-rfe")
                 (setq mu4e-sent-folder   "/[Gmail].Gesendet")
                 (setq mu4e-trash-folder  "/[Gmail].Papierkorb")
-             
+
                 ;; don't save message to Sent Messages, Gmail/IMAP takes care of this
                 (setq mu4e-update-interval 300 mu4e-sent-messages-behavior 'delete)
-             
+
                 ;; setup some handy shortcuts
                 ;; you can quickly switch to your Inbox -- press ``ji''
                 ;; then, when you want archive some messages, move them to
                 ;; the 'All Mail' folder by pressing ``ma''.
-            
+
                 (setq mu4e-attachment-dir  "~/Downloads")
-             
+
                 (setq mu4e-maildir-shortcuts
                       '( ("/INBOX"               . ?i)
                          ("/[Gmail].Wichtig"   . ?!)
@@ -211,7 +211,7 @@
                          ("/[Gmail].Papierkorb"   . ?p)
                          ("/[Gmail].Spam"   . ?s)
                          ("/[Gmail].Alle Nachrichten"    . ?a)))
-            
+
                 (setq mu4e-bookmarks '(
              ("maildir:\"/INBOX\" date:7d..now AND NOT maildir:\"/[Gmail].Spam\"" "INBOX without Spam last 7" ?i)
              ("maildir:\"/INBOX\" AND NOT maildir:\"/[Gmail].Spam\"" "INBOX without Spam" ?j)
@@ -219,41 +219,41 @@
              ;; ("date:today..now" "Today's messages" 116)
              ;; ("date:7d..now" "Last 7 days" 119)
             ))
-             
+
                 ;; allow for updating mail using 'U' in the main view:
                 ;; I have this running in the background anyway
                 (setq mu4e-get-mail-command "offlineimap")
-             
+
                 ;; sending mail -- replace USERNAME with your gmail username
                 ;; also, make sure the gnutls command line utils are installed
                 ;; package 'gnutls-bin' in Debian/Ubuntu
-             
+
                 (require 'smtpmail)
-             
+
                  ;; alternatively, for emacs-24 you can use:
                  (setq message-send-mail-function 'smtpmail-send-it
                        smtpmail-stream-type 'starttls
                        smtpmail-default-smtp-server "smtp.gmail.com"
                        smtpmail-smtp-server "smtp.gmail.com"
                        smtpmail-smtp-service 587)
-             
-             
+
+
                  ;; don't include message signature
                  (setq mu4e-compose-signature-auto-include nil)
-            
+
                  ;; set date format (does not overwrite the settings for some reaso)
                  ;; (setq mu4e-headers-date-format "%d.%m.%y")
-                 
+
                 ;; don't keep message buffers around
                 (setq message-kill-buffer-on-exit t)
-             
+
                 ;; show images
                 (setq mu4e-show-images t)
-             
+
                 ;; use imagemagick, if available
                 (when (fboundp 'imagemagick-register-types)
                   (imagemagick-register-types))
-             
+
                 ;;; message view action
                 (defun mu4e-msgv-action-view-in-browser (msg)
                   "View the body of the message in a web browser."
@@ -268,20 +268,22 @@
                        "content=\"text/html;charset=UTF-8\">"
                        html))
                     (browse-url (concat "file://" tmpfile))))
-             
+
                 (add-to-list 'mu4e-view-actions
                              '("View in browser" . mu4e-msgv-action-view-in-browser) t)
-             
+
+
                 ;; convert org mode to HTML automatically
                 (setq org-mu4e-convert-to-html t)
-             
+
                 ;; need this to convert some e-mails properly
                 ;; (setq mu4e-html2text-command "html2text -utf8 -style pretty -width 72")
-                (setq mu4e-html2text-command "w3m -cols 72 -dump -T text/html")
+   (setq mu4e-html2text-command "html2markdown | grep -v '&nbsp_place_holder;'")
+                ;; (setq mu4e-html2text-command "w3m -cols 72 -dump -T text/html")
             )
               (mu4e)
          )
-             
+
             (defalias 'org-mail 'org-mu4e-compose-org-mode)
       (email)
    (add-hook 'mu4e-compose-mode-hook
@@ -290,9 +292,9 @@
    (add-hook 'mu4e-view-mode-hook
      (defun my-view-mode-hook ()
       (epa-mail-mode)))
-   
+
    (require 'smtpmail)
-   
+
    (setq message-send-mail-function 'smtpmail-send-it
          starttls-use-gnutls t
          smtpmail-starttls-credentials
@@ -303,7 +305,7 @@
          smtpmail-smtp-server "smtp.gmail.com"
          smtpmail-smtp-service 587
          smtpmail-debug-info t)
-               
+
    #+END_SRC
 
 ** w3m
@@ -522,25 +524,12 @@
 *** Cider
 #+BEGIN_SRC emacs-lisp
 (require 'cider)
-(require 'ob-clojure)
 
 (setq nrepl-hide-special-buffers t
       cider-repl-pop-to-buffer-on-connect nil
       cider-popup-stacktraces nil
       cider-repl-popup-stacktraces t)
 
-     ;; Use cider as the clojure execution backend
-     (setq org-babel-clojure-backend 'cider) ;
-     
-     ;; Let's have pretty source code blocks
-     (setq org-edit-src-content-indentation 0
-           org-src-tab-acts-natively t
-           org-src-fontify-natively t
-           org-confirm-babel-evaluate nil)
-     
-    (eval-after-load 'org
-      '(progn (add-to-list 'org-structure-template-alist '("k" "#+BEGIN_SRC haskell :results silent\n?\n#+END_SRC" "<src lang='haskell'>\n?\n</src>")) (add-to-list 'org-structure-template-alist
-                           '("c" "#+begin_src clojure :tangle src/\n?\n#+end_src", "<src lang='clojure'>\n?\n</src>"))))
 #+END_SRC 
 
 **** integration with ac-nrepl
@@ -609,13 +598,14 @@
        (global-set-key (kbd "ö") 'other-window)
      #+end_src
 
-*** Markdown
+*** Markdown                                                         :ATTACH:
     #+begin_src emacs-lisp 
     (add-to-list 'auto-mode-alist '("\\.text\\'" . markdown-mode))
     (add-to-list 'auto-mode-alist '("\\.markdown\\'" . markdown-mode))
     (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
     (add-to-list 'auto-mode-alist '("README\\.md\\'" . gfm-mode))
-    (setq markdown-open-command "google-chrome")
+    (setq markdown-open-command "conkeror")
+    (setq markdown-command "flavor.rb")
     #+end_src
 
 *** Global-auto-complete-mode
@@ -697,6 +687,7 @@
                  (push event unread-command-events)))))
         (define-key evil-motion-state-map (kbd "C-S-u") 'evil-scroll-up)
         (define-key evil-motion-state-map (kbd "SPC") nil)
+        (define-key evil-normal-state-map (kbd "U") 'evil-goto-first-line)
         (setq evil-emacs-state-modes (append evil-emacs-state-modes '(sauron-mode ediff-mode org-agenda-mode jabber-roster twittering-mode dired-mode mu4e-main-mode mu4e-headers-mode mu4e-view-mode)))
         (evil-set-initial-state 'git-commit-mode 'insert)
         (setq evil-move-cursor-back nil)
@@ -722,7 +713,7 @@
   :diminish guide-key-mode
   :init
   (progn
-  (setq guide-key/guide-key-sequence '("C-x r" "C-x 4" "C-c"))
+  (setq guide-key/guide-key-sequence '("C-x r" "C-x 4" "C-c p" "C-c p s"))
   (guide-key-mode 1)))  ; Enable guide-key-mode
 #+END_SRC
 ** Forth
@@ -839,21 +830,21 @@ org-completion-use-ido is used by org-iswitchb
     #+end_src
 *** Keywords
     #+begin_src emacs-lisp 
-      (setq org-todo-keywords (quote ((sequence "TOREAD" "READ") (sequence "TODO" "DONE"))))
-      (setq org-todo-keyword-faces
-            '(
-              ("UTODO"  . (:foreground "#b70101" :weight bold :slant italic))
-              ("UTOLEARN"  . (:foreground "#b70101" :weight bold :slant italic))
-              ("UTOIMPLEMENT"  . (:foreground "#b70101" :weight bold :slant italic))
-              ;; ("STARTED"  . (:foreground "#b70101" :weight bold))
-              ;; ("APPT"  . (:foreground "sienna" :weight bold))
-              ;; ("PROJ"  . (:foreground "blue" :weight bold))
-              ;; ("ZKTO"  . (:foreground "orange" :weight bold))
-              ;; ("WAITING"  . (:foreground "orange" :weight bold))
-              ;; ("DONE"  . (:foreground "forestgreen" :weight bold))
-              ;; ("DELEGATED"  . (:foreground "forestgreen" :weight bold))
-              ;; ("CANCELED"  . shadow)
-              ))
+    (setq org-todo-keywords (quote ((sequence "TOREAD" "READ") (sequence "TODO" "DONE"))))
+    (setq org-todo-keyword-faces
+          '(
+            ("UTODO"  . (:foreground "#b70101" :weight bold :slant italic))
+            ("UTOLEARN"  . (:foreground "#b70101" :weight bold :slant italic))
+            ("UTOIMPLEMENT"  . (:foreground "#b70101" :weight bold :slant italic))
+            ;; ("STARTED"  . (:foreground "#b70101" :weight bold))
+            ;; ("APPT"  . (:foreground "sienna" :weight bold))
+            ;; ("PROJ"  . (:foreground "blue" :weight bold))
+            ;; ("ZKTO"  . (:foreground "orange" :weight bold))
+            ;; ("WAITING"  . (:foreground "orange" :weight bold))
+            ;; ("DONE"  . (:foreground "forestgreen" :weight bold))
+            ;; ("DELEGATED"  . (:foreground "forestgreen" :weight bold))
+            ;; ("CANCELED"  . shadow)
+            ))
     #+end_src
 *** Captures
 #+begin_src emacs-lisp 
@@ -1002,21 +993,36 @@ org-completion-use-ido is used by org-iswitchb
     #+begin_src emacs-lisp 
       (setq org-src-fontify-natively t)
       (setq org-confirm-babel-evaluate nil)
-      (setq org-src-window-setup 'current-window)
-    #+end_src
-**** Emacs-lisp
-     #+begin_src emacs-lisp 
-     (eval-after-load 'org
-       '(add-to-list 'org-structure-template-alist
-                     '("x" "#+begin_src emacs-lisp \n?\n#+end_src", "<src lang='emacs-lisp'>\n?\n</src>")))
+      (setq org-src-window-setup 'other-window)
+     ;; Let's have pretty source code blocks
+     (setq org-edit-src-content-indentation 0
+           org-src-tab-acts-natively t
+           org-confirm-babel-evaluate nil)
      
-     #+end_src
-**** R
+    #+end_src
+**** Structure-template-alist
+#+BEGIN_SRC emacs-lisp
+(eval-after-load 'org
+  '(progn (add-to-list 'org-structure-template-alist
+                       '("k" "#+BEGIN_SRC haskell :results silent\n?\n#+END_SRC"
+                         "<src lang='haskell'>\n?\n</src>"))
+          (add-to-list 'org-structure-template-alist
+                       '("c" "#+begin_src clojure :tangle src/\n?\n#+end_src"
+                         "<src lang='clojure'>\n?\n</src>"))
+
+          (add-to-list 'org-structure-template-alist
+                        '("r"
+                          "#+begin_src R :results silent :session sess1\n?\n#+end_src"
+                          "<src lang='R'>\n?\n</src>"))
+          (add-to-list 'org-structure-template-alist
+                        '("x" 
+                          "#+begin_src emacs-lisp \n?\n#+end_src"
+                          "<src lang='emacs-lisp'>\n?\n</src>"))))
+#+END_SRC
+**** Babel Languages
      #+begin_src emacs-lisp 
      (eval-after-load 'org
        (progn
-         '(add-to-list 'org-structure-template-alist
-                       '("r"  "#+begin_src R :results silent :session sess1\n?\n#+end_src", "<src lang='R'>\n?\n</src>"))
          '(org-babel-do-load-languages
            'org-babel-load-languages
            '((emacs-lisp . t)
@@ -1024,25 +1030,33 @@ org-completion-use-ido is used by org-iswitchb
              (haskell . t)
              (gnuplot . t)
              (sqlite . t)
+             (js . t)
              (C . t)
              (dot . t)))))
      #+end_src
            
-    #+begin_src emacs-lisp 
+**** R 
+#+BEGIN_SRC emacs-lisp
       (require 'ess)
-    #+end_src
+#+END_SRC
 **** Clojure
-     #+begin_src emacs-lisp 
-                  (add-to-list 'org-babel-tangle-lang-exts '("clojure" . "clj"))
-                  
-                  (defvar org-babel-default-header-args:clojure 
-                    '((:results . "silent")))
-     #+end_src
+#+begin_src emacs-lisp 
+
+(require 'ob-clojure)
+(add-to-list 'org-babel-tangle-lang-exts '("clojure" . "clj"))
+
+     ;; Use cider as the clojure execution backend
+     (setq org-babel-clojure-backend 'cider) ;
+     
+
+(defvar org-babel-default-header-args:clojure 
+'((:results . "silent")))
+#+end_src
 **** Haskell
-     #+begin_src emacs-lisp 
-     (load-file "~/.emacs.d/custom/ob-haskell.el")
-     (require 'ob-haskell)
-     #+end_src
+#+begin_src emacs-lisp 
+;; (load-file "~/.emacs.d/custom/ob-haskell.el")
+(require 'ob-haskell)
+#+end_src
 *** Org-attach
     #+begin_src emacs-lisp 
       (require 'org-attach)
@@ -1081,6 +1095,8 @@ org-completion-use-ido is used by org-iswitchb
 (use-package ox-beamer)
 (setq org-beamer-outline-frame-options "")
 #+end_src
+*** Org-rss
+
 ** Haskell
 *** Loading
 #+BEGIN_SRC emacs-lisp
@@ -1116,44 +1132,46 @@ org-completion-use-ido is used by org-iswitchb
     #+end_src
 *** Hooks
    #+begin_src emacs-lisp 
+   (eval-after-load "haskell-mode"
+     '(progn
+        ;; (define-key haskell-mode-map (kbd "C-x C-d") nil)
+        (define-key haskell-mode-map (kbd "C-,") 'haskell-move-nested-left)
+        (define-key haskell-mode-map (kbd "C-.") 'haskell-move-nested-right)
+        (define-key haskell-mode-map "\C-ch" 'haskell-hoogle)
+        (define-key haskell-mode-map (kbd "C-c C-z") 'haskell-interactive-switch)
+        (define-key haskell-mode-map (kbd "C-c C-l") 'haskell-process-load-file)
+        (define-key haskell-mode-map (kbd "C-c C-b") 'haskell-interactive-switch)
+        ;; (define-key haskell-mode-map (kbd "C-c C-d") 'haskell-w3m-open-haddock)
+        (define-key haskell-mode-map (kbd "C-c C-d") 'inferior-haskell-find-haddock)
+        (define-key haskell-mode-map (kbd "C-c C-t") 'haskell-process-do-type)
 
-          (eval-after-load "haskell-mode"
-            '(progn
-              ;; (define-key haskell-mode-map (kbd "C-x C-d") nil)
-   (define-key haskell-mode-map (kbd "C-,") 'haskell-move-nested-left)
-       (define-key haskell-mode-map (kbd "C-.") 'haskell-move-nested-right)
-              (define-key haskell-mode-map "\C-ch" 'haskell-hoogle)
-              (define-key haskell-mode-map (kbd "C-c C-z") 'haskell-interactive-switch)
-              (define-key haskell-mode-map (kbd "C-c C-l") 'haskell-process-load-file)
-              (define-key haskell-mode-map (kbd "C-c C-b") 'haskell-interactive-switch)
-              ;; (define-key haskell-mode-map (kbd "C-c C-d") 'haskell-w3m-open-haddock)
-              (define-key haskell-mode-map (kbd "C-c C-d") 'inferior-haskell-find-haddock)
-              (define-key haskell-mode-map (kbd "C-c C-t") 'haskell-process-do-type)
+        (add-to-list 'auto-mode-alist '("\\.cabal\\'" . evil-mode))
+        (define-key haskell-mode-map (kbd "C-c C-i") 'haskell-process-do-info)
+        (define-key haskell-mode-map (kbd "SPC") 'haskell-mode-contextual-space)
+        (define-key haskell-mode-map (kbd "C-c M-.") 'haskell-mode-jump-to-def-or-tag)
+        ;; (define-key haskell-mode-map (kbd "C-c C-d") nil)
+        ))
+   (add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
+   (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
+   (add-hook 'haskell-mode-hook 'flymake-haskell-multi-load)
 
-              (add-to-list 'auto-mode-alist '("\\.cabal\\'" . evil-mode))
-              (define-key haskell-mode-map (kbd "C-c C-i") 'haskell-process-do-info)
-              (define-key haskell-mode-map (kbd "SPC") 'haskell-mode-contextual-space)
-              (define-key haskell-mode-map (kbd "C-c M-.") 'haskell-mode-jump-to-def-or-tag)
-   ;; (define-key haskell-mode-map (kbd "C-c C-d") nil)
-   ))
-          (add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
-          (add-hook 'haskell-mode-hook 'turn-on-haskell-indentation)
-          (add-hook 'haskell-mode-hook 'flymake-haskell-multi-load)
-          (defun haskell-hook ()
-            ;; (define-key evil-normal-state-map (kbd "M-.") 'haskell-mode-jump-to-def-or-tag)
-            (define-key haskell-mode-map (kbd "C-#") 'haskell-interactive-bring)
-            )
-          (defun haskell-cabal-hook ()
-            (define-key haskell-cabal-mode-map (kbd "C-c C-c") 'haskell-process-cabal-build)
-            (define-key haskell-cabal-mode-map (kbd "C-c c") 'haskell-process-cabal)
-            (define-key haskell-cabal-mode-map (kbd "C-c C-l") 'save-buffer)
-            (define-key haskell-cabal-mode-map (kbd "C-#") 'haskell-interactive-bring)
-            (define-key haskell-cabal-mode-map [?\C-c ?\C-z] 'haskell-interactive-switch))
+   (defun haskell-hook ()
+     ;; (define-key evil-normal-state-map (kbd "M-.") 'haskell-mode-jump-to-def-or-tag)
+     (define-key haskell-mode-map (kbd "C-#") 'haskell-interactive-bring))
+
+   (defun haskell-cabal-hook ()
+     (define-key haskell-cabal-mode-map (kbd "C-c C-c") 'haskell-process-cabal-build)
+     (define-key haskell-cabal-mode-map (kbd "C-c c") 'haskell-process-cabal)
+     (define-key haskell-cabal-mode-map (kbd "C-c C-l") 'save-buffer)
+     (define-key haskell-cabal-mode-map (kbd "C-#") 'haskell-interactive-bring)
+     (define-key haskell-cabal-mode-map [?\C-c ?\C-z] 'haskell-interactive-switch))
+
    (defun no-evil-leader ()
      (setq-local evil-leader/in-all-states nil))
-          (add-hook 'haskell-cabal-mode-hook 'haskell-cabal-hook)
-          (add-hook 'haskell-cabal-mode-hook 'no-evil-leader)
-          (add-hook 'haskell-mode-hook 'haskell-hook)
+
+   (add-hook 'haskell-cabal-mode-hook 'haskell-cabal-hook)
+   (add-hook 'haskell-cabal-mode-hook 'no-evil-leader)
+   (add-hook 'haskell-mode-hook 'haskell-hook)
    #+end_src
 *** Aligments
 #+BEGIN_SRC emacs-lisp
