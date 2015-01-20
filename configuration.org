@@ -829,12 +829,21 @@ org-completion-use-ido is used by org-iswitchb
     #+end_src
 *** Keywords
     #+begin_src emacs-lisp 
-    (setq org-todo-keywords (quote ((sequence "TOREAD" "READ") (sequence "TODO" "DONE"))))
+    (setq org-todo-keywords (quote
+                             (
+                              (sequence "TOREAD(!)" "READING(!)" "WAIT(!)" "|" "READ(!)" "NOREAD(!)")
+                              (sequence "TOHABIT" "|" "HABITDONE(!)")
+                              (type "BOOKMARK" "PAY" "DIARY" "|" "NOTHING") ;
+                              (sequence "TOBUY(!)" "|" "BOUGHT(b!)" "NOBUY(nb!)")
+                              (sequence "TODO(!)" "|" "DONE(d@!)" "NODO(nd@!)")
+                              (sequence "TOLOOKAT(!)" "|" "LOOKEDAT(!)" "NOLOOK(@!)")
+                              (sequence "TOBLOG(!)" "|" "BLOGGED(!)" "NOBLOG(!@)")
+                              )))
     (setq org-todo-keyword-faces
           '(
-            ("UTODO"  . (:foreground "#b70101" :weight bold :slant italic))
-            ("UTOLEARN"  . (:foreground "#b70101" :weight bold :slant italic))
-            ("UTOIMPLEMENT"  . (:foreground "#b70101" :weight bold :slant italic))
+            ;; ("UTODO"  . (:foreground "#b70101" :weight bold :slant italic))
+            ;; ("UTOLEARN"  . (:foreground "#b70101" :weight bold :slant italic))
+            ;; ("UTOIMPLEMENT"  . (:foreground "#b70101" :weight bold :slant italic))
             ;; ("STARTED"  . (:foreground "#b70101" :weight bold))
             ;; ("APPT"  . (:foreground "sienna" :weight bold))
             ;; ("PROJ"  . (:foreground "blue" :weight bold))
@@ -842,7 +851,11 @@ org-completion-use-ido is used by org-iswitchb
             ;; ("WAITING"  . (:foreground "orange" :weight bold))
             ;; ("DONE"  . (:foreground "forestgreen" :weight bold))
             ;; ("DELEGATED"  . (:foreground "forestgreen" :weight bold))
-            ;; ("CANCELED"  . shadow)
+            ("NODO"  . shadow)
+            ("NOBLOG"  . shadow)
+            ("NOLOOK"  . shadow)
+            ("NOREAD"  . shadow)
+            ("NOBUY"  . shadow)
             ))
     #+end_src
 *** Captures
@@ -883,11 +896,12 @@ org-completion-use-ido is used by org-iswitchb
 #+end_src
 *** Agenda
 #+begin_src emacs-lisp 
-(setq org-agenda-files (list "~/org/thesis.org" "~/org/cal.org" "~/org/bookmarks.org" "~/org/projects.org" "~/org/home.org" "~/org/uni.org" "~/org/french.org"))
+(setq org-agenda-files (list "~/org/thesis.org" "~/org/wiki" "~/org/cal.org" "~/org/bookmarks.org" "~/org/projects.org" "~/org/home.org" "~/org/french.org"))
 (setq org-agenda-custom-commands
-      '(("u" todo "UTODO|UTOLEARN|UTOIMPLEMENT")
+      '(
         ("l" todo "TOLOOKAT")
-        ("d" todo "TODO")))
+        ("d" todo "TODO")
+))
 
 (setq org-agenda-skip-deadline-if-done t)
 (setq org-agenda-skip-scheduled-if-done t)
