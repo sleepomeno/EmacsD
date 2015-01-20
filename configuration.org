@@ -924,20 +924,22 @@ org-completion-use-ido is used by org-iswitchb
     #+end_src
 *** Calendar
     #+begin_src emacs-lisp 
-        (load-file "~/.emacs.d/custom/caldav/org-caldav.el")
-        (use-package org-caldav
-          :init (progn 
-                  (setq org-icalendar-exclude-tags (quote ("training" "habit")))
-                  (setq org-icalendar-include-body nil)
-                  (setq org-icalendar-use-scheduled (quote nil))
-                  (setq org-caldav-calendar-id "lm94as0bqk7f5f6kmluf0k655c@group.calendar.google.com")
-                  (setq org-icalendar-timezone "Europe/Berlin")
-                  (setq org-caldav-inbox "~/org/cal.org")
-                  (setq org-caldav-files (list "~/org/home.org" "~/org/uni.org"))
-                  (setq org-caldav-sync-changes-to-org 'title-only)
-                  (setq org-icalendar-include-todo nil)
-                  (setq org-icalendar-store-UID t)
-                  ))
+    (load-file "~/.emacs.d/custom/caldav/org-caldav.el")
+    (use-package org-caldav
+      :init (progn 
+              (setq org-icalendar-exclude-tags (quote ("training" "habit")))
+              (setq org-caldav-select-tags '("cal"))
+
+              (setq org-icalendar-include-body nil)
+              (setq org-icalendar-use-scheduled (quote nil))
+              (setq org-caldav-calendar-id "lm94as0bqk7f5f6kmluf0k655c@group.calendar.google.com")
+              (setq org-icalendar-timezone "Europe/Berlin")
+              (setq org-caldav-inbox "~/org/cal.org")
+              (setq org-caldav-files (list "~/org/home.org"))
+              (setq org-caldav-sync-changes-to-org 'title-only)
+              (setq org-icalendar-include-todo nil)
+              (setq org-icalendar-store-UID t)
+              ))
 
     #+end_src
 *** General
