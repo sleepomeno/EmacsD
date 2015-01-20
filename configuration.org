@@ -1003,12 +1003,16 @@ org-completion-use-ido is used by org-iswitchb
     (add-hook 'kill-emacs-hook 'org-mobile-push)
     (setq org-mobile-inbox-for-pull "~/org/notes.org")
     (setq org-mobile-directory "~/Dropbox/Apps/MobileOrg")
+    (setq org-mobile-files (list "thesis.org" "bookmarks.org" "projects.org" "wiki" "home.org" "french.org"))
+
+    (global-set-key [f12] 'org-mobile-push)
+    (global-set-key [f11] 'org-mobile-pull)
     #+end_src
 *** Org-Babel
     #+begin_src emacs-lisp 
       (setq org-src-fontify-natively t)
       (setq org-confirm-babel-evaluate nil)
-      (setq org-src-window-setup 'other-window)
+      (setq org-src-window-setup 'current-window)
      ;; Let's have pretty source code blocks
      (setq org-edit-src-content-indentation 0
            org-src-tab-acts-natively t
