@@ -186,6 +186,10 @@
                 (require 'mu4e)
                 (require 'org-mu4e)
 
+                (define-key mu4e-main-mode-map (kbd "<SPC>") 'ido-switch-buffer)
+                (define-key mu4e-headers-mode-map (kbd "q") 'ido-switch-buffer)
+
+
                 (setq mu4e-update-mail-and-index t)
                 ;; defaults
 
