@@ -1049,6 +1049,7 @@ org-completion-use-ido is used by org-iswitchb
              (haskell . t)
              (gnuplot . t)
              (sqlite . t)
+             (sh . t)
              (js . t)
              (C . t)
              (dot . t)))))
