@@ -146,31 +146,35 @@
 (require 'dired-details+)
 ;; (toggle-diredp-find-file-reuse-dir 1)
 
-    (defun my-dired-init ()
-       "Bunch of stuff to run for dired, either immediately or when it's
+(defun my-dired-init ()
+  "Bunch of stuff to run for dired, either immediately or when it's
         loaded."
-       ;; <add other stuff here>
-       (define-key dired-mode-map [return] 'dired-single-buffer)
-       (define-key dired-mode-map [mouse-1] 'dired-single-buffer-mouse)
-       (define-key dired-mode-map "^"
-      (function
-       (lambda nil (interactive) (dired-single-buffer "..")))))
+  ;; <add other stuff here>
+  (define-key dired-mode-map [return] 'dired-single-buffer)
+  (define-key dired-mode-map [mouse-1] 'dired-single-buffer-mouse)
+  (define-key dired-mode-map (kbd "/") 'dired-isearch-filenames)
+  (define-key dired-mode-map "^"
+    (function
+     (lambda nil (interactive) (dired-single-buffer "..")))))
 
-     ;; if dired's already loaded, then the keymap will be bound
-     (if (boundp 'dired-mode-map)
-      ;; we're good to go; just add our bindings
-      (my-dired-init)
-       ;; it's not loaded yet, so add our bindings to the load-hook
-       (add-hook 'dired-load-hook 'my-dired-init))
+;; if dired's already loaded, then the keymap will be bound
+(if (boundp 'dired-mode-map)
+    ;; we're good to go; just add our bindings
+    (my-dired-init)
+  ;; it's not loaded yet, so add our bindings to the load-hook
+  (add-hook 'dired-load-hook 'my-dired-init))
 
- (global-set-key [(f5)] 'dired-single-magic-buffer)
-     (global-set-key [(control f5)] (function
-      (lambda nil (interactive)
-             (dired-single-magic-buffer default-directory))))
-     (global-set-key [(shift f5)] (function
-          (lambda nil (interactive)
-             (message "Current directory is: %s" default-directory))))
-     (global-set-key [(meta f5)] 'dired-single-toggle-buffer-name)
+(global-set-key [(f5)] 'dired-single-magic-buffer)
+(global-set-key [(control f5)] (function
+                                (lambda nil (interactive)
+                                  (dired-single-magic-buffer default-directory))))
+(global-set-key [(shift f5)] (function
+                              (lambda nil (interactive)
+                                (message "Current directory is: %s" default-directory))))
+(global-set-key [(meta f5)] 'dired-single-toggle-buffer-name)
+
+
+(eval-after-load "dired-aux" '(add-to-list 'dired-compress-file-suffixes '("\\.zip\\'" ".zip" "unzip")))
 #+end_src
 
 ** mu4e
@@ -416,7 +420,7 @@
 #+BEGIN_SRC emacs-lisp
 (require 'erc)
 (load-file (concat user-emacs-directory "custom/erc-scrolltobottom-patch.el"))
-(setq erc-autojoin-channels-alist '(("freenode.net" "#haskell")))
+(setq erc-autojoin-channels-alist '(("freenode.net" "#haskell" "#org-mode")))
 (setq erc-hide-list '("JOIN" "PART" "QUIT" "NICK"))
 (setq erc-track-exclude-types '("JOIN" "NICK" "PART" "QUIT" "MODE" "324" "329" "332" "333" "353" "477"))
 (setq erc-auto-discard-away t)
@@ -503,6 +507,9 @@
             (define-key ido-completion-map (kbd "C-n") 'ido-next-match)
             (define-key ido-completion-map (kbd "C-p") 'ido-prev-match)))
 
+;; (global-set-key (kbd "C-M-x") 'eval-defun) ;; does not work, enters debugger
+
+
 
 #+END_SRC
 ** Clojure
@@ -567,7 +574,7 @@
 #+END_SRC
 *** Set initial buffer
     #+begin_src emacs-lisp 
-       (setq initial-buffer-choice "~/org/home.org")
+    (setq initial-buffer-choice "~/org/home.org")
     #+end_src
 *** Set PATH
     #+begin_src emacs-lisp 
@@ -611,11 +618,22 @@
     (setq markdown-open-command "conkeror")
     (setq markdown-command "flavor.rb")
     #+end_src
+*** Yasnippet
+ Should be called before global-auto-complete-mode!
+ #+begin_src emacs-lisp 
+ (add-to-list 'load-path (concat user-emacs-directory "custom/yasnippet"))
+ (require 'yasnippet)
+ (yas-global-mode 1)
+ #+end_src
 
 *** Global-auto-complete-mode
     #+begin_src emacs-lisp 
     (require 'auto-complete)
     (global-auto-complete-mode t)
+    (ac-config-default)
+    (ac-set-trigger-key "TAB")
+    (ac-set-trigger-key "<tab>")
+
     #+end_src
 
 *** Open pdfs mit envince
@@ -627,46 +645,47 @@
 ** Evil
 *** Evil-Leader
     #+begin_src emacs-lisp 
-    (setq evil-leader/in-all-states t) 
-    (global-evil-leader-mode)
-    (evil-leader/set-leader "<SPC>")
-    ;; (evil-leader/set-leader "-")
+        (setq evil-leader/in-all-states t) 
+        (global-evil-leader-mode)
+        (evil-leader/set-leader "<SPC>")
+        ;; (evil-leader/set-leader "-")
 
-    (evil-leader/set-key
+        (evil-leader/set-key
 
-      "ef" 'find-file
-      "sa" 'sauron-toggle-hide-show
-      "so" 'org-save-all-org-buffers
+          "ef" 'find-file
+          "sa" 'sauron-toggle-hide-show
+          "so" 'org-save-all-org-buffers
 
-      "sh" 'shell
-      "es" 'start-erc
-      "m" 'email
-      "ff" 'find-function
-      "fd" 'describe-function
-      "<SPC>" 'switch-to-buffer
-      ;; go back in current window
-      "b" '(lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ([32 32 return] 0 "%d")) arg))
-      ;; go back in other window
-      "z" '(lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ([246 32 98 return 246] 0 "%d")) arg))
-      "w" 'save-buffer
-      "ci" 'evilnc-comment-or-uncomment-lines
-      "cl" 'evilnc-comment-or-uncomment-to-the-line
-      "x" 'smex
-      "d" 'ido-dired
-      "k" 'kill-buffer
-      "l" 'ace-jump-line-mode
-      "eb" 'erc-track-switch-buffer
-      "jc" 'jabber-connect
-      "tw" 'twit
-      "gl" 'goto-line
-      "ob" 'org-iswitchb
-      "cs" 'org-caldav-sync)
-
-    (evil-leader/set-key-for-mode 'haskell-mode "fh" 'inferior-haskell-find-haddock)
-    (evil-leader/set-key-for-mode 'haskell-mode "ca" 'haskell-cabal-visit-file)
-    (evil-leader/set-key-for-mode 'haskell-mode "jd" 'haskell-mode-jump-to-def-or-tag)
+          "sh" 'shell
+          "es" 'start-erc
+          "em" 'email
+          "ff" 'find-function
+          "fd" 'describe-function
+          "<SPC>" 'switch-to-buffer
+          ;; go back in current window
+          "b" '(lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ([32 32 return] 0 "%d")) arg))
+          ;; go back in other window
+          "z" '(lambda (&optional arg) "Keyboard macro." (interactive "p") (kmacro-exec-ring-item (quote ([246 32 98 return 246] 0 "%d")) arg))
+          "ww" 'save-buffer
+          "wl" 'enlarge-window-horizontally
+          "ws" 'shrink-window-horizontally
+          "ci" 'evilnc-comment-or-uncomment-lines
+          "cl" 'evilnc-comment-or-uncomment-to-the-line
+          "x" 'smex
+          "d" 'ido-dired
+          "k" 'kill-buffer
+          "l" 'ace-jump-line-mode
+          "eb" 'erc-track-switch-buffer
+          "jc" 'jabber-connect
+          "tw" 'twit
+          "gl" 'goto-line
+          "ob" 'org-iswitchb
+          "cs" 'org-caldav-sync
+          "rm" 'bookmark-set
+          "rb" 'bookmark-jump
+          "ma" 'evil-record-macro
+    )
     #+end_src
-*** 
 *** Activate Evil
     #+begin_src emacs-lisp 
     (use-package evil
@@ -687,7 +706,7 @@
         (define-key evil-motion-state-map (kbd "C-S-u") 'evil-scroll-up)
         (define-key evil-motion-state-map (kbd "SPC") nil)
         (define-key evil-normal-state-map (kbd "U") 'evil-goto-first-line)
-        (setq evil-emacs-state-modes (append evil-emacs-state-modes '(sauron-mode ediff-mode org-agenda-mode jabber-roster twittering-mode dired-mode mu4e-main-mode mu4e-headers-mode mu4e-view-mode)))
+        (setq evil-emacs-state-modes (append evil-emacs-state-modes '(artist-mode sauron-mode ediff-mode org-agenda-mode jabber-roster twittering-mode dired-mode mu4e-main-mode mu4e-headers-mode mu4e-view-mode)))
         (evil-set-initial-state 'git-commit-mode 'insert)
         (setq evil-move-cursor-back nil)
         (setq evil-want-C-w-in-emacs-state t
@@ -798,6 +817,10 @@
       (message "Copied buffer file name '%s' to the clipboard." filename))))
 #+END_SRC
 ** Org
+*** Images
+#+begin_src emacs-lisp 
+(setq org-startup-with-inline-images t)
+#+end_src
 *** Org-directory
     #+begin_src emacs-lisp 
       (setq org-directory "~/org")
@@ -816,6 +839,7 @@ org-completion-use-ido is used by org-iswitchb
 #+BEGIN_SRC emacs-lisp
 ;;; Cu Cu Cu Cc Cx Ci 
 (setq org-clock-continuously nil)
+(bind-key "C-c j" 'org-clock-goto)
 #+END_SRC
 *** Refiling
     #+begin_src emacs-lisp 
@@ -833,12 +857,14 @@ org-completion-use-ido is used by org-iswitchb
                              (
                               (sequence "TOREAD(!)" "READING(!)" "WAIT(!)" "|" "READ(!)" "NOREAD(!)")
                               (sequence "TOHABIT" "|" "HABITDONE(!)")
-                              (type "BOOKMARK" "PAY" "DIARY" "|" "NOTHING") ;
-                              (sequence "TOBUY(!)" "|" "BOUGHT(b!)" "NOBUY(nb!)")
-                              (sequence "TODO(!)" "|" "DONE(d@!)" "NODO(nd@!)")
-                              (sequence "TOLOOKAT(!)" "|" "LOOKEDAT(!)" "NOLOOK(@!)")
+                              (type "BOOKMARK" "PAY" "DIARY" "VOC" "|" "NOTHING") ;
+                              (sequence "TOBUY(!)" "|" "BOUGHT(!)" "NOBUY(!)")
+                              (sequence "TODO(@!)" "DOING(!)" "WAIT(!@)" "|" "DONE(@!)" "NODO(@!)")
+                              (sequence "TOLOOKAT(!)" "WAIT(!)" "|" "LOOKEDAT(!)" "NOLOOK(@!)")
                               (sequence "TOBLOG(!)" "|" "BLOGGED(!)" "NOBLOG(!@)")
                               )))
+    (setq org-log-into-drawer nil)
+    (setq org-log-done 'note)
     (setq org-todo-keyword-faces
           '(
             ;; ("UTODO"  . (:foreground "#b70101" :weight bold :slant italic))
@@ -851,13 +877,54 @@ org-completion-use-ido is used by org-iswitchb
             ;; ("WAITING"  . (:foreground "orange" :weight bold))
             ;; ("DONE"  . (:foreground "forestgreen" :weight bold))
             ;; ("DELEGATED"  . (:foreground "forestgreen" :weight bold))
+            ("TODO"  . (:foreground "green" :weight bold))
+            ("TOLOOKAT"  . (:foreground "green" :weight bold))
+            ("TOREAD"  . (:foreground "green" :weight bold))
+            ("TOBUY"  . (:foreground "green" :weight bold))
+            ("DONE" . (:foreground "cyan" :weight bold))
+            ("LOOKEDAT" . (:foreground "cyan" :weight bold))
+            ("BLOGGED" . (:foreground "cyan" :weight bold))
+            ("BOUGHT" . (:foreground "cyan" :weight bold))
+            ("READ" . (:foreground "cyan" :weight bold))
+            ("WAIT" . (:foreground "red" :weight bold))
+            ;; ("SOMEDAY" . (:foreground "gray" :weight bold))
             ("NODO"  . shadow)
             ("NOBLOG"  . shadow)
             ("NOLOOK"  . shadow)
             ("NOREAD"  . shadow)
             ("NOBUY"  . shadow)
             ))
+
+    (setq org-fontify-done-headline t)
+    (custom-set-faces
+     '(org-done ((t (:foreground "PaleGreen"   
+                     :weight normal
+                     :strike-through t))))
+     '(org-headline-done 
+                ((((class color) (min-colors 16) (background dark)) 
+                   (:foreground "LightSalmon" :strike-through t)))))
     #+end_src
+*** Refiling to datatree
+#+begin_src emacs-lisp 
+(require 'org-datetree)
+(defun pc/org-refile-to-datetree (journal)
+  "Refile an entry to journal file's date-tree"
+  (interactive "fRefile to: ")
+  (let* ((journal (expand-file-name journal org-directory))
+         (date-string (or (org-entry-get (point) "TIMESTAMP_IA")
+                          (org-entry-get (point) "TIMESTAMP")))
+         (dct (decode-time (or (and date-string (org-time-string-to-time date-string))
+                               (current-time))))
+         (date (list (nth 4 dct) (nth 3 dct) (nth 5 dct))))
+    (org-cut-subtree)
+    (with-current-buffer (or (find-buffer-visiting journal)
+                             (find-file-noselect journal))
+      (org-mode)
+      (save-excursion
+        (org-datetree-file-entry-under (current-kill 0) date)
+        (bookmark-set "org-refile-last-stored")))
+    (message "Refiled to %s" journal)))
+#+end_src
 *** Captures
 #+begin_src emacs-lisp 
 (use-package org-protocol
@@ -954,10 +1021,26 @@ org-completion-use-ido is used by org-iswitchb
     (global-set-key (kbd "M-o") 'imenu)
 
     (setq org-log-done 'time)
-    (setq org-clock-persist 'history)
+    (setq org-clock-persist t)
+(setq org-clock-report-include-clocking-task t)
     (org-clock-persistence-insinuate)
     (setq org-return-follows-link t)
     #+end_src
+*** Estimating Tasks
+#+begin_src emacs-lisp 
+(add-hook 'org-clock-in-prepare-hook
+          'sacha/org-mode-ask-effort)
+
+(defun sacha/org-mode-ask-effort ()
+  "Ask for an effort estimate when clocking in."
+  (unless (org-entry-get (point) "Effort")
+    (let ((effort
+           (completing-read
+            "Effort: "
+            (org-entry-get-multivalued-property (point) "Effort"))))
+      (unless (equal effort "")
+        (org-set-property "Effort" effort)))))
+#+end_src
 
 *** Export
 #+begin_src emacs-lisp 
@@ -999,12 +1082,17 @@ org-completion-use-ido is used by org-iswitchb
     #+end_src
 *** Org-mobile
     #+begin_src emacs-lisp 
-    (add-hook 'after-init-hook 'org-mobile-pull)
+    ;; (add-hook 'after-init-hook 'org-mobile-pull)
+    ;; (add-hook 'after-init-hook '(lambda () (
+    ;;                                    (org-agenda-list)
+    ;;                                    (switch-to-buffer "*Org Agenda*")
+    ;;                                    )))
     (add-hook 'kill-emacs-hook 'org-mobile-push)
     (setq org-mobile-inbox-for-pull "~/org/notes.org")
     (setq org-mobile-directory "~/Dropbox/Apps/MobileOrg")
     (setq org-mobile-files (list "thesis.org" "bookmarks.org" "projects.org" "wiki" "home.org" "french.org"))
 
+    (global-set-key [f2] 'org-agenda-list)
     (global-set-key [f12] 'org-mobile-push)
     (global-set-key [f11] 'org-mobile-pull)
     #+end_src
@@ -1030,13 +1118,16 @@ org-completion-use-ido is used by org-iswitchb
                          "<src lang='clojure'>\n?\n</src>"))
 
           (add-to-list 'org-structure-template-alist
-                        '("r"
-                          "#+begin_src R :results silent :session sess1\n?\n#+end_src"
-                          "<src lang='R'>\n?\n</src>"))
+                       '("r"
+                         "#+begin_src R :results silent :session sess1\n?\n#+end_src"
+                         "<src lang='R'>\n?\n</src>"))
           (add-to-list 'org-structure-template-alist
-                        '("x" 
-                          "#+begin_src emacs-lisp \n?\n#+end_src"
-                          "<src lang='emacs-lisp'>\n?\n</src>"))))
+                       '("x" 
+                         "#+begin_src emacs-lisp \n?\n#+end_src"
+                         "<src lang='emacs-lisp'>\n?\n</src>"))
+          (org-agenda-list)
+          (switch-to-buffer "*Org Agenda*")
+          ))
 #+END_SRC
 **** Babel Languages
      #+begin_src emacs-lisp 
@@ -1116,7 +1207,26 @@ org-completion-use-ido is used by org-iswitchb
 (setq org-beamer-outline-frame-options "")
 #+end_src
 *** Org-rss
+#+begin_src emacs-lisp 
 
+(setq org-feed-alist
+      '(("Noetic Nought"
+         "http://punchagan.muse-amuse.in/rss.xml"
+         "~/org/feeds.org" "Noetic Nought")))
+#+end_src
+
+*** Start agenda
+#+begin_src emacs-lisp 
+(org-agenda-list)
+(switch-to-buffer "*Org Agenda*")
+
+(defun show-agenda (theFrame)
+  "Show the agenda"
+  (org-agenda-list)
+  (switch-to-buffer "*Org Agenda*"))
+
+(add-hook 'after-make-frame-functions 'show-agenda)
+#+end_src
 ** Haskell
 *** Loading
 #+BEGIN_SRC emacs-lisp
@@ -1145,11 +1255,18 @@ org-completion-use-ido is used by org-iswitchb
     (setq haskell-stylish-on-save nil)
     (setq haskell-process-log t)
     (setq haskell-process-args-cabal-repl '("--ghc-option=-ferror-spans" "--ghc-option=+RTS" "--ghc-option=-M1.5g")) 
-        
+
     (setq haskell-tags-on-save nil)
     (setq inferior-haskell-web-docs-base "http://hackage.haskell.org/package/")
     (setq ghc-core-program-args '("-O0" "-dsuppress-all"))
     #+end_src
+*** Evil leader
+#+begin_src emacs-lisp 
+
+(evil-leader/set-key-for-mode 'haskell-mode "fh" 'inferior-haskell-find-haddock)
+(evil-leader/set-key-for-mode 'haskell-mode "ca" 'haskell-cabal-visit-file)
+(evil-leader/set-key-for-mode 'haskell-mode "jd" 'haskell-mode-jump-to-def-or-tag)
+#+end_src
 *** Hooks
    #+begin_src emacs-lisp 
    (eval-after-load "haskell-mode"
@@ -1238,8 +1355,131 @@ org-completion-use-ido is used by org-iswitchb
    #+begin_src emacs-lisp 
      (setq projectile-use-native-indexing t)
    #+end_src
+** Artist mode
+#+begin_src emacs-lisp 
+(eval-after-load "artist"
+   '(define-key artist-mode-map [(down-mouse-3)] 'artist-mouse-choose-operation)
+   ) 
+
+    ;;; integrate ido with artist-mode
+   (defun artist-ido-select-operation (type)
+     "Use ido to select a drawing operation in artist-mode"
+     (interactive (list (ido-completing-read "Drawing operation: " 
+                                             (list "Pen" "Pen Line" "line" "straight line" "rectangle" 
+                                                   "square" "poly-line" "straight poly-line" "ellipse" 
+                                                   "circle" "text see-thru" "text-overwrite" "spray-can" 
+                                                   "erase char" "erase rectangle" "vaporize line" "vaporize lines" 
+                                                   "cut rectangle" "cut square" "copy rectangle" "copy square" 
+                                                   "paste" "flood-fill"))))
+     (artist-select-operation type))
+
+ (defun artist-ido-select-settings (type)
+     "Use ido to select a setting to change in artist-mode"
+     (interactive (list (ido-completing-read "Setting: " 
+                                             (list "Set Fill" "Set Line" "Set Erase" "Spray-size" "Spray-chars" 
+                                                   "Rubber-banding" "Trimming" "Borders"))))
+     (if (equal type "Spray-size") 
+       (artist-select-operation "spray set size")
+       (call-interactively (artist-fc-get-fn-from-symbol 
+          (cdr (assoc type '(("Set Fill" . set-fill)
+                 ("Set Line" . set-line)
+                 ("Set Erase" . set-erase)
+                 ("Rubber-banding" . rubber-band)
+                 ("Trimming" . trimming)
+                 ("Borders" . borders)
+                 ("Spray-chars" . spray-chars))))))))
+
+(add-hook 'artist-mode-init-hook 
+       (lambda ()
+         (define-key artist-mode-map (kbd "C-c C-a C-o") 'artist-ido-select-operation)
+         (define-key artist-mode-map (kbd "C-c C-a C-g") 'djcb-ditaa-generate)
+         (define-key artist-mode-map (kbd "C-c C-a C-c") 'artist-ido-select-settings)))
+
+(setq ditaa-cmd "java -jar ~/bin/ditaa.jar")
+(defun djcb-ditaa-generate ()
+  (interactive)
+  (shell-command
+    (concat ditaa-cmd " " buffer-file-name)))
+#+end_src
 ** Common Lisp
    #+begin_src emacs-lisp 
      (setq inferior-lisp-program "/usr/bin/clisp")
    #+end_src
-*** 
+** Ignore Running Processes
+#+begin_src emacs-lisp 
+;; add `flet'
+(require 'cl)
+
+(defadvice save-buffers-kill-emacs
+  (around no-query-kill-emacs activate)
+  "Prevent \"Active processes exist\" query on exit."
+  (flet ((process-list ())) ad-do-it))
+
+#+end_src
+** Guess programs by file extension
+ #+begin_src emacs-lisp 
+ (require 'dired-x)
+
+ (setq dired-guess-shell-alist-user
+       '(("\\.pdf\\'" "evince" "okular")
+         ("\\.\\(?:djvu\\|eps\\)\\'" "evince")
+         ("\\.\\(?:jpg\\|jpeg\\|png\\|gif\\|xpm\\)\\'" "eog")
+         ("\\.\\(?:xcf\\)\\'" "gimp")
+         ("\\.csv\\'" "libreoffice")
+         ("\\.tex\\'" "pdflatex" "latex")
+         ("\\.\\(?:mp4\\|mkv\\|avi\\|flv\\|ogv\\)\\(?:\\.part\\)?\\'"
+          "vlc")
+         ("\\.\\(?:mp3\\|flac\\)\\'" "rhythmbox")
+         ("\\.html?\\'" "conkeror")
+         ("\\.cue?\\'" "audacious")))
+
+ #+end_src
+** Remove Garbage files in dired
+#+begin_src emacs-lisp 
+(setq dired-garbage-files-regexp
+      "\\.idx\\|\\.run\\.xml$\\|\\.bbl$\\|\\.bcf$\\|.blg$\\|-blx.bib$\\|.nav$\\|.snm$\\|.out$\\|.synctex.gz$\\|\\(?:\\.\\(?:aux\\|bak\\|dvi\\|log\\|orig\\|rej\\|toc\\|pyg\\)\\)\\'")
+
+(define-key dired-mode-map (kbd "%^") 'dired-flag-garbage-files)
+
+
+#+end_src
+** Ignore unimportant files in dired
+#+begin_src emacs-lisp 
+(define-key dired-mode-map (kbd "M-o") 'dired-omit-mode)
+(setq dired-omit-files "\\(?:.*\\.\\(?:aux\\|log\\|synctex\\.gz\\|run\\.xml\\|bcf\\|am\\|in\\)\\'\\)\\|^\\.\\|-blx\\.bib")
+
+#+end_src
+** Shell name
+#+begin_src emacs-lisp 
+(setq explicit-shell-file-name "/bin/bash")
+#+end_src
+** Bookmarks
+#+begin_src emacs-lisp 
+(setq 
+  bookmark-default-file "~/.emacs.d/bookmarks" ;; keep my ~/ clean
+  bookmark-save-flag t)                        ;; autosave each change)
+#+end_src
+** 2048
+#+begin_src emacs-lisp 
+(defface 2048-face-2    '((t . (:background "khaki" :foreground "black"))) "Face for the tile 2" :group '2048-faces)
+(defface 2048-face-4    '((t . (:background "burlywood" :foreground "black"))) "Face for the tile 4" :group '2048-faces)
+(defface 2048-face-8    '((t . (:background "orange3" :foreground "black"))) "Face for the tile 8" :group '2048-faces)
+(defface 2048-face-16   '((t . (:background "orange" :foreground "black"))) "Face for the tile 16" :group '2048-faces)
+(defface 2048-face-32   '((t . (:background "orange red" :foreground "black"))) "Face for the tile 32" :group '2048-faces)
+(defface 2048-face-64   '((t . (:background "firebrick" :foreground "white"))) "Face for the tile 64" :group '2048-faces)
+(defface 2048-face-128  '((t . (:background "dark red" :foreground "white"))) "Face for the tile 128" :group '2048-faces)
+(defface 2048-face-256  '((t . (:background "dark magenta" :foreground "white"))) "Face for the tile 256" :group '2048-faces)
+(defface 2048-face-512  '((t . (:background "magenta" :foreground "black"))) "Face for the tile 512" :group '2048-faces)
+(defface 2048-face-1024 '((t . (:background "gold" :foreground "black"))) "Face for the tile 1024" :group '2048-faces)
+(defface 2048-face-2048 '((t . (:background "yellow" :foreground "black"))) "Face for the tile 2048" :group '2048-faces)
+
+
+  (defun sacha/2048-set-font-size ()
+    (text-scale-set 5)
+    (goto-char (point-min)))
+
+  (use-package 2048-game
+    :config
+    (progn
+     (add-hook '2048-mode-hook 'sacha/2048-set-font-size)))
+#+end_src
