@@ -25,3 +25,6 @@
 [submodule "custom/caldav"]
 	path = custom/caldav
 	url = https://github.com/dengste/org-caldav.git
+[submodule "custom/yasnippet"]
+	path = custom/yasnippet
+	url = https://github.com/sleepomeno/yasnippet.git
