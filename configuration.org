@@ -868,25 +868,18 @@ org-completion-use-ido is used by org-iswitchb
                               (sequence "TOHABIT" "|" "HABITDONE(!)")
                               (type "BOOKMARK" "PAY" "DIARY" "VOC" "|" "NOTHING") ;
                               (sequence "TOBUY(!)" "|" "BOUGHT(!)" "NOBUY(!)")
-                              (sequence "TODO(@!)" "DOING(!)" "WAIT(!@)" "|" "DONE(@!)" "NODO(@!)")
-                              (sequence "TOLOOKAT(!)" "WAIT(!)" "|" "LOOKEDAT(!)" "NOLOOK(@!)")
+                              (sequence "TODO(@!)" "STARTED(!)" "WAIT(!@)" "|" "DONE(@!)" "NODO(@!)")
+                              (sequence "TOLOOKAT(!)" "STARTED(!)" "WAIT(!)" "|" "LOOKEDAT(!)" "NOLOOK(@!)")
                               (sequence "TOBLOG(!)" "|" "BLOGGED(!)" "NOBLOG(!@)")
                               )))
     (setq org-log-into-drawer nil)
     (setq org-log-done 'note)
     (setq org-todo-keyword-faces
           '(
-            ;; ("UTODO"  . (:foreground "#b70101" :weight bold :slant italic))
-            ;; ("UTOLEARN"  . (:foreground "#b70101" :weight bold :slant italic))
-            ;; ("UTOIMPLEMENT"  . (:foreground "#b70101" :weight bold :slant italic))
-            ;; ("STARTED"  . (:foreground "#b70101" :weight bold))
-            ;; ("APPT"  . (:foreground "sienna" :weight bold))
-            ;; ("PROJ"  . (:foreground "blue" :weight bold))
-            ;; ("ZKTO"  . (:foreground "orange" :weight bold))
-            ;; ("WAITING"  . (:foreground "orange" :weight bold))
-            ;; ("DONE"  . (:foreground "forestgreen" :weight bold))
-            ;; ("DELEGATED"  . (:foreground "forestgreen" :weight bold))
             ("TODO"  . (:foreground "green" :weight bold))
+            ("STARTED"  . (:foreground "orange" :weight bold))
+            ("TOBLOG"  . (:foreground "green" :weight bold))
+            ("TOHABIT"  . (:foreground "green" :weight bold))
             ("TOLOOKAT"  . (:foreground "green" :weight bold))
             ("TOREAD"  . (:foreground "green" :weight bold))
             ("TOBUY"  . (:foreground "green" :weight bold))
@@ -896,7 +889,6 @@ org-completion-use-ido is used by org-iswitchb
             ("BOUGHT" . (:foreground "cyan" :weight bold))
             ("READ" . (:foreground "cyan" :weight bold))
             ("WAIT" . (:foreground "red" :weight bold))
-            ;; ("SOMEDAY" . (:foreground "gray" :weight bold))
             ("NODO"  . shadow)
             ("NOBLOG"  . shadow)
             ("NOLOOK"  . shadow)
@@ -1030,11 +1022,37 @@ org-completion-use-ido is used by org-iswitchb
     (global-set-key (kbd "M-o") 'imenu)
 
     (setq org-log-done 'time)
+    (setq org-return-follows-link t)
+    #+end_src
+*** Clocking
+#+begin_src emacs-lisp 
     (setq org-clock-persist t)
 (setq org-clock-report-include-clocking-task t)
     (org-clock-persistence-insinuate)
-    (setq org-return-follows-link t)
-    #+end_src
+(defun sacha/org-clock-in-set-state-to-started ()
+  "Mark STARTED when clocked in."
+  (save-excursion
+    (catch 'exit
+      (cond
+       ((derived-mode-p 'org-agenda-mode)
+        (let* ((marker (or (org-get-at-bol 'org-marker)
+                           (org-agenda-error)))
+               (hdmarker (or (org-get-at-bol 'org-hd-marker) marker))
+               (pos (marker-position marker))
+               (col (current-column))
+               newhead)
+          (org-with-remote-undo (marker-buffer marker)
+            (with-current-buffer (marker-buffer marker)
+              (widen)
+              (goto-char pos)
+              (org-back-to-heading t)
+              (if (org-get-todo-state)
+                  (org-todo "STARTED"))))))
+       (t (if (or (equal "TODO" (org-get-todo-state))
+                  (equal "TOLOOKAT" (org-get-todo-state)))
+                  (org-todo "STARTED")))))))
+(add-hook 'org-clock-in-hook 'sacha/org-clock-in-set-state-to-started)
+#+end_src
 *** Estimating Tasks
 #+begin_src emacs-lisp 
 (add-hook 'org-clock-in-prepare-hook
