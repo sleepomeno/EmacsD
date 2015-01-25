@@ -512,6 +512,12 @@
 
 
 #+END_SRC
+*** Theme
+#+begin_src emacs-lisp 
+;; (add-to-list 'custom-theme-load-path (concat user-emacs-directory "custom/cyberbunk"))
+
+;; (add-hook 'after-init-hook (lambda () (load-theme 'cyberpunk t)))
+#+end_src
 ** Clojure
 *** Load the provided Clojure start kit configurations
     #+begin_src emacs-lisp 
