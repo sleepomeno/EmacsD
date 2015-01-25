@@ -1457,7 +1457,7 @@ org-completion-use-ido is used by org-iswitchb
 #+begin_src emacs-lisp 
 (setq 
   bookmark-default-file "~/.emacs.d/bookmarks" ;; keep my ~/ clean
-  bookmark-save-flag t)                        ;; autosave each change)
+  bookmark-save-flag 1)                        ;; autosave each change)
 #+end_src
 ** 2048
 #+begin_src emacs-lisp 

@@ -28,3 +28,6 @@
 [submodule "custom/yasnippet"]
 	path = custom/yasnippet
 	url = https://github.com/sleepomeno/yasnippet.git
+[submodule "custom/cyperbunk"]
+	path = custom/cyperbunk
+	url = https://github.com/sleepomeno/cyberpunk-theme.el.git

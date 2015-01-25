@@ -1,0 +1,35 @@
+;;;; Emacs Bookmark Format Version 1 ;;;;
+;;; This format is meant to be slightly human-readable;
+;;; nevertheless, you probably don't want to edit it.
+;;; -*- End Of Bookmark File Format Version Stamp -*-
+(("conkerorrc.org"
+ (filename . "~/.conkerorrc/conkerorrc.org")
+ (front-context-string . "require(\"session")
+ (rear-context-string . "_SRC javascript\n")
+ (position . 783))
+("Checker.hs"
+ (filename . "~/diparbeit/impl/src/TF/Checker.hs")
+ (front-context-string . "applyRule2 :: St")
+ (rear-context-string . "- Rule 2 ------\n")
+ (position . 2063))
+("conf"
+ (filename . "~/org/configuration.org")
+ (front-context-string . "** Ignore Runnin")
+ (rear-context-string . "\")\n   #+end_src\n")
+ (position . 55947))
+("org-capture-last-stored"
+ (filename . "~/org/bookmarks.org")
+ (front-context-string . "** [[https://www")
+ (rear-context-string . "spanisch:learn:\n")
+ (position . 34462))
+("org-capture-last-stored-marker"
+ (filename . "~/org/wiki/emacs.org")
+ (front-context-string . "** TODO fullfram")
+ (rear-context-string . "8:40]\n   :END:\n\n")
+ (position . 10419))
+("org-refile-last-stored"
+ (filename . "~/org/bookmarks.org")
+ (front-context-string . "*** [[https://ww")
+ (rear-context-string . "] :oremacs:\n  \n\n")
+ (position . 18305))
+)
