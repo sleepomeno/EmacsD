@@ -61,6 +61,7 @@
     (package-install p)))
 
 (load-file "~/.emacs.d/custom/org-dotemacs/org-dotemacs.el")
+;;(setq org-dotemacs-error-handling nil)
 (setq org-dotemacs-default-file (concat user-emacs-directory "configuration.org"))
 (org-dotemacs-load-default)
 

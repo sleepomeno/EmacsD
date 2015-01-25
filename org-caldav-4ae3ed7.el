@@ -3,7 +3,7 @@
 ;; Do not modify this file.
 
 (setq org-caldav-event-list
-'(("6437a852-f96b-4279-91e7-d6b881c40bc5" "23367a0a88d0f26894be3b4ed5a5076b" "63557456275" 3 synced) 
+'(("6437a852-f96b-4279-91e7-d6b881c40bc5" "dc001d51a0b38e38c1b05e00b8cbf8e1" "63557705101" 4 changed-in-org) 
 ("65654dbd-407b-4fd0-8089-4e58c543c9d3" "35c32b3c9e6dfe658beb7ec2f1a78a5d" "63523775337" 1 synced) 
 ("0de399ed-e54b-44ce-98e8-a12539c327a8" "61739f1d22aee1f5dd8fe2378585f8da" "63523775339" 1 synced) 
 ("5a85d2fa-53df-4dd5-ac58-25ebe1341074" "25da879a28dda7e3ae6d0ecaefc7356e" "63523675849" nil synced) 
@@ -14,5 +14,6 @@
 ("c1cddcf7-ed9a-415a-a19e-2225f2cd64ab" "b1756188eea3ef2d1b3bd9e8515f4de9" "63540714856" nil synced) 
 ("9vi640n3p0h0c7c01kl2k3rk9o@google.com" "db4b81d65c15decc55f6e67b4a769066" "63556134704" 0 synced) 
 ("ovl96vnn435av9amrv0ncphi44@google.com" "f2f57ea29fb653b1fa6ee68a24e1defa" "63556097642" 0 synced) 
-("o60nl8l7nd1v2u2588epa20rlk@google.com" "948c536a6ab918805031b1502a2b672d" "63556097692" 0 synced)))
+("o60nl8l7nd1v2u2588epa20rlk@google.com" "948c536a6ab918805031b1502a2b672d" "63556097692" 0 synced) 
+("dbj4fa8q8gn743imnml6ka9j3o@google.com" "d8930c94149a36d1b3b2e4992311ff2b" "63557701863" 0 synced)))
 
