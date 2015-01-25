@@ -846,9 +846,10 @@ org-completion-use-ido is used by org-iswitchb
 *** Org clocking
 [[info:org#Resolving%20idle%20time][info:org#Resolving idle time]]
 #+BEGIN_SRC emacs-lisp
-;;; Cu Cu Cu Cc Cx Ci 
+;;; Clock Continuously with: Cu Cu Cu Cc Cx Ci 
 (setq org-clock-continuously nil)
 (bind-key "C-c j" 'org-clock-goto)
+(setq org-clock-idle-time t)
 #+END_SRC
 *** Refiling
     #+begin_src emacs-lisp 
@@ -860,7 +861,7 @@ org-completion-use-ido is used by org-iswitchb
       
       (global-set-key (kbd "C-c C-S-w") 'my/org-refile-within-current-buffer)
     #+end_src
-*** Keywords
+*** TODO-Items
     #+begin_src emacs-lisp 
     (setq org-todo-keywords (quote
                              (
@@ -896,6 +897,8 @@ org-completion-use-ido is used by org-iswitchb
             ("NOBUY"  . shadow)
             ))
 
+    (setq org-global-properties '(("Effort_ALL". "0 0:10 0:30 1:00 2:00 3:00 4:00")))
+
     (setq org-fontify-done-headline t)
     (custom-set-faces
      '(org-done ((t (:foreground "PaleGreen"   
@@ -927,18 +930,13 @@ org-completion-use-ido is used by org-iswitchb
     (message "Refiled to %s" journal)))
 #+end_src
 *** Captures
-#+begin_src emacs-lisp 
+#+begin_src emacs-lisp  :name captures
 (use-package org-protocol
              :init (progn
                      (setq org-protocol-default-template-key "l")
                      (setq org-capture-templates
                            '(("t" "Todo" entry (file+olp "~/org/home.org" "Tasks")
                               "* TODO %?")
-                             ;; ("w" "TOTWEET" entry (file+olp "~/org/home.org" "Tasks")
-                             ;;  "* TOTWEET %?")
-                             ;; ("b" "starting with b...")
-                             ;; ("bu" "Tobuy" entry (file+olp "~/org/home.org" "Tasks")
-                             ;;  "* TOBUY %?")
                              ("l" "TOBLOG" entry (file+olp "~/org/home.org" "Blog")
                               "* TOBLOG %^{Heading}\n\t%?")
                              ;; ("l" "starting with l... ")
@@ -964,24 +962,33 @@ org-completion-use-ido is used by org-iswitchb
 #+end_src
 *** Agenda
 #+begin_src emacs-lisp 
-(setq org-agenda-files (list "~/org/thesis.org" "~/org/wiki" "~/org/cal.org" "~/org/bookmarks.org" "~/org/projects.org" "~/org/home.org" "~/org/french.org"))
-(setq org-agenda-custom-commands
-      '(
-        ("l" todo "TOLOOKAT")
-        ("d" todo "TODO")
-))
+  (setq org-agenda-files (list "~/org/thesis.org" "~/org/wiki" "~/org/cal.org" "~/org/bookmarks.org" "~/org/projects.org" "~/org/home.org" "~/org/french.org"))
+  (setq org-agenda-custom-commands
+        '(("d" "Show stuff from diverse files" (
+            (agenda "")
+            (todo "" ((org-agenda-files '("~/org/thesis.org"))))
+            (tags-todo "-TODO=\"TOBLOG\"-TODO=\"TOHABIT\"" ((org-agenda-files '("~/org/home.org"))))
+            (todo "" ((org-agenda-files '("~/org/wiki/orgstuff.org"))))
+            (todo "" ((org-agenda-files '("~/org/wiki/emacs.org"))))
+            ))))
 
-(setq org-agenda-skip-deadline-if-done t)
-(setq org-agenda-skip-scheduled-if-done t)
 
-;; (defun org-my-auto-exclude-function (tag)
-;;   (and (or (string= tag "keys") (string= tag "drill"))
-;;        (concat "-" tag)))
+  (setq org-agenda-sorting-strategy '((agenda habit-down time-up priority-down category-up)
+   (todo category-down priority-down)
+   (tags priority-down category-up)
+   (search category-up)))
 
-(defun org-my-auto-exclude-function (tag)
-  (and (string= tag "keys") (concat "-" tag)))
+  (setq org-agenda-skip-deadline-if-done t)
+  (setq org-agenda-skip-scheduled-if-done t)
 
-(setq org-agenda-auto-exclude-function 'org-my-auto-exclude-function)
+  ;; (defun org-my-auto-exclude-function (tag)
+  ;;   (and (or (string= tag "keys") (string= tag "drill"))
+  ;;        (concat "-" tag)))
+
+  (defun org-my-auto-exclude-function (tag)
+    (and (string= tag "keys") (concat "-" tag)))
+
+  (setq org-agenda-auto-exclude-function 'org-my-auto-exclude-function)
 #+end_src
 
 **** Sometimes Agenda doesn't work
