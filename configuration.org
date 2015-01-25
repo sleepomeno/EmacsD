@@ -1510,3 +1510,16 @@ org-completion-use-ido is used by org-iswitchb
     (progn
      (add-hook '2048-mode-hook 'sacha/2048-set-font-size)))
 #+end_src
+** Youtube Download
+#+begin_src emacs-lisp 
+(defun youtube-dl ()
+  (interactive)
+  (let* ((str (current-kill 0))
+         (default-directory "~/Downloads")
+         (proc (get-buffer-process (ansi-term "/bin/bash"))))
+    (term-send-string
+    ;; (shell-command
+     proc
+     (concat "cd ~/Downloads/youtube && youtube-dl " str "\n"))))
+
+#+end_src
