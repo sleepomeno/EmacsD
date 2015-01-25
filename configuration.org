@@ -678,7 +678,8 @@
           "ci" 'evilnc-comment-or-uncomment-lines
           "cl" 'evilnc-comment-or-uncomment-to-the-line
           "x" 'smex
-          "d" 'ido-dired
+          "dd" 'ido-dired
+          "dr" 'org-drill-directory
           "k" 'kill-buffer
           "l" 'ace-jump-line-mode
           "eb" 'erc-track-switch-buffer
@@ -689,6 +690,8 @@
           "cs" 'org-caldav-sync
           "rm" 'bookmark-set
           "rb" 'bookmark-jump
+          "rl" 'bookmark-bmenu-list
+          "rs" 'bookmark-save
           "ma" 'evil-record-macro
     )
     #+end_src
