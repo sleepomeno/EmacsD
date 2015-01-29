@@ -1,0 +1,14 @@
+# -*- mode: snippet; require-final-newline: nil -*-
+# name: major
+# key: maj
+# binding: direct-keybinding
+# --
+*** X          :drill:
+    :PROPERTIES:
+    :DRILL_CARD_TYPE: twosided
+    :END:
+**** Bild
+${1:bild}
+**** Zahl
+${2:0}
+$0

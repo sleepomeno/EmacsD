@@ -2,7 +2,33 @@
 ;;; This format is meant to be slightly human-readable;
 ;;; nevertheless, you probably don't want to edit it.
 ;;; -*- End Of Bookmark File Format Version Stamp -*-
-(("conkerorrc.org"
+(("dolist"
+ (front-context-string . "     define the ")
+ (rear-context-string . "use `dolist' to\n")
+ (position . 408898)
+ (filename . "/usr/share/info/emacs-24/elisp")
+ (info-node . "Iteration")
+ (handler . Info-bookmark-jump))
+("confparedit"
+ (filename . "~/.emacs.d/configuration.org")
+ (front-context-string . "ne-key paredit-m")
+ (rear-context-string . "kward)\n    (defi")
+ (position . 29003))
+("alist"
+ (front-context-string . "each key can occ")
+ (rear-context-string . "n list in which\n")
+ (position . 289861)
+ (filename . "/usr/share/info/emacs-24/elisp")
+ (info-node . "Association Lists")
+ (handler . Info-bookmark-jump))
+("property api"
+ (front-context-string . "\nA.9 Using the p")
+ (rear-context-string . "n,  Up: Hacking\n")
+ (position . 644939)
+ (filename . "/usr/share/info/emacs-24/org")
+ (info-node . "Using the property API")
+ (handler . Info-bookmark-jump))
+("conkerorrc.org"
  (filename . "~/.conkerorrc/conkerorrc.org")
  (front-context-string . "require(\"session")
  (rear-context-string . "_SRC javascript\n")
@@ -12,24 +38,24 @@
  (front-context-string . "applyRule2 :: St")
  (rear-context-string . "- Rule 2 ------\n")
  (position . 2063))
-("conf"
+("configuration"
  (filename . "~/org/configuration.org")
  (front-context-string . "** Ignore Runnin")
  (rear-context-string . "\")\n   #+end_src\n")
  (position . 55947))
 ("org-capture-last-stored"
- (filename . "~/org/bookmarks.org")
- (front-context-string . "** [[https://www")
- (rear-context-string . "spanisch:learn:\n")
- (position . 34462))
+ (filename . "~/org/home.org")
+ (front-context-string . "* Blog\n  :PROPER")
+ (rear-context-string . "  0:06\n   :END:\n")
+ (position . 7323))
 ("org-capture-last-stored-marker"
- (filename . "~/org/wiki/emacs.org")
- (front-context-string . "** TODO fullfram")
- (rear-context-string . "8:40]\n   :END:\n\n")
- (position . 10419))
+ (filename . "~/org/wiki/mnemo.org")
+ (front-context-string . "** TODO mnemo ma")
+ (rear-context-string . "0a1f\n   :END:\n\n\n")
+ (position . 534))
 ("org-refile-last-stored"
- (filename . "~/org/bookmarks.org")
- (front-context-string . "*** [[https://ww")
- (rear-context-string . "] :oremacs:\n  \n\n")
- (position . 18305))
+ (filename . "~/org/wiki/mnemo.org")
+ (front-context-string . "** TODO mnemo ma")
+ (rear-context-string . "0a1f\n   :END:\n\n\n")
+ (position . 534))
 )
