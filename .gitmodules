@@ -31,3 +31,6 @@
 [submodule "custom/cyperbunk"]
 	path = custom/cyperbunk
 	url = https://github.com/sleepomeno/cyberpunk-theme.el.git
+[submodule "custom/emacs-psci.git"]
+	path = custom/emacs-psci.git
+	url = https://github.com/ardumont/emacs-psci.git

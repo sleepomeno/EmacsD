@@ -2,7 +2,29 @@
 ;;; This format is meant to be slightly human-readable;
 ;;; nevertheless, you probably don't want to edit it.
 ;;; -*- End Of Bookmark File Format Version Stamp -*-
-(("dolist"
+(("thesis_new.tex"
+ (filename . "~/diparbeit/MasterThesisTemplate/thesis_new.tex")
+ (front-context-string . "\\usepackage{amsm")
+ (rear-context-string . "ors in LaTeX2e.\n")
+ (position . 326))
+("thesis.tex"
+ (filename . "~/diparbeit/MasterThesisTemplate/thesis.tex")
+ (front-context-string . "\\usepackage{algo")
+ (rear-context-string . "ode]{algorithm}\n")
+ (position . 326))
+("Main.hs"
+ (filename . "~/diparbeit/impl/test/TF/Main.hs")
+ (front-context-string . "import qualified")
+ (rear-context-string . " (before,after)\n")
+ (position . 91))
+("mu4e headers view"
+ (front-context-string . "\n4 The headers v")
+ (rear-context-string . " view,  Up: Top\n")
+ (position . 26733)
+ (filename . "/usr/local/share/info/mu4e")
+ (info-node . "Headers view")
+ (handler . Info-bookmark-jump))
+("dolist"
  (front-context-string . "     define the ")
  (rear-context-string . "use `dolist' to\n")
  (position . 408898)
@@ -33,29 +55,24 @@
  (front-context-string . "require(\"session")
  (rear-context-string . "_SRC javascript\n")
  (position . 783))
-("Checker.hs"
- (filename . "~/diparbeit/impl/src/TF/Checker.hs")
- (front-context-string . "applyRule2 :: St")
- (rear-context-string . "- Rule 2 ------\n")
- (position . 2063))
 ("configuration"
  (filename . "~/org/configuration.org")
  (front-context-string . "** Ignore Runnin")
  (rear-context-string . "\")\n   #+end_src\n")
  (position . 55947))
 ("org-capture-last-stored"
- (filename . "~/org/home.org")
- (front-context-string . "* Blog\n  :PROPER")
- (rear-context-string . "  0:06\n   :END:\n")
- (position . 7323))
+ (filename . "~/org/journal.org.gpg")
+ (front-context-string . "    - GSOC propo")
+ (rear-context-string . "bei Lubinger ;)\n")
+ (position . 31901))
 ("org-capture-last-stored-marker"
- (filename . "~/org/wiki/mnemo.org")
- (front-context-string . "** TODO mnemo ma")
- (rear-context-string . "0a1f\n   :END:\n\n\n")
- (position . 534))
+ (filename . "~/org/wiki/emacs.org")
+ (front-context-string . "** TODO [[http:/")
+ (rear-context-string . "l-to-bottom t)\n\n")
+ (position . 2495))
 ("org-refile-last-stored"
- (filename . "~/org/wiki/mnemo.org")
- (front-context-string . "** TODO mnemo ma")
- (rear-context-string . "0a1f\n   :END:\n\n\n")
- (position . 534))
+ (filename . "~/org/journal.org.gpg")
+ (front-context-string . "**** PAY 6      ")
+ (rear-context-string . "-03-25 Mittwoch\n")
+ (position . 31445))
 )

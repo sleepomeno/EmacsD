@@ -1,4 +1,5 @@
 * Configuration
+
   
 ** Personal Information  
    
@@ -1511,7 +1512,7 @@
 *** Estimating Tasks                                                   :skip:
     stoert mit bh workflow
     #+begin_src emacs-lisp :name effort-hookk
-    (add-hook 'org-clock-in-prepare-hook 'sacha/org-mode-ask-effort)
+    ;; (add-hook 'org-clock-in-prepare-hook 'sacha/org-mode-ask-effort)
 
     (defun sacha/org-mode-ask-effort ()
       "Ask for an effort estimate when clocking in."
@@ -1576,7 +1577,7 @@
     ;;                                    (org-agenda-list)
     ;;                                    (switch-to-buffer "*Org Agenda*")
     ;;                                    )))
-    (add-hook 'kill-emacs-hook 'org-mobile-push)
+    ;; (add-hook 'kill-emacs-hook 'org-mobile-push) ;
     (setq org-mobile-inbox-for-pull "~/org/notes.org")
     (setq org-mobile-directory "~/Dropbox/Apps/MobileOrg")
     (setq org-mobile-files (list "thesis.org" "bookmarks.org" "projects.org" "wiki" "home.org" "french.org"))
@@ -1585,6 +1586,52 @@
     (global-set-key [f12] 'org-mobile-push)
     (global-set-key [f11] 'org-mobile-pull)
     #+end_src
+**** Org-Mobile-Refile
+#+begin_src emacs-lisp 
+
+;; (defun refile-pay ()
+;;   "Refile the PAY todos to my journal file"
+;;   (let* ((pros (org-entry-properties))
+;;         (item (assoc "ITEM" pros))
+;;         (tags (assoc "TAGS" pros)))
+;;     (string-match "^\\([\*]+\\) \\(\[0123456789.\]*\\)" (cdr item))
+;;     (match-string 2 (cdr item))
+;;     (save-excursion
+;;       (next-line)
+;;       (pc/org-refile-to-datetree "~/org/journal.org.gpg"))))
+(defun refileto-datetree-file (journal)
+  "Refile the TODO at point to a date tree file"
+  (save-excursion
+    (next-line)
+    (pc/org-refile-to-datetree journal)))
+
+(defun refile-pay ()
+  "Refile the PAY todos to my journal file"
+  (refileto-datetree-file "~/org/journal.org.gpg"))
+
+
+(defun refile-diary ()
+  "Refile the DIARY todos to my journal file"
+  (refileto-datetree-file "~/org/journal.org.gpg"))
+
+(defun refile-bookmark ()
+  "Refile the BOOKMARK todo to my bookmarks file"
+  (let (target '#("bookmarks.org/Bookmarks" 14 23 (face org-level-1 org-category "bookmarks" fontified t)))
+    (org-todo "")
+    (org-refile nil nil target)))
+
+(defun gr/refile-mobile ()
+  "Refile the TODOs in notes.org"
+  (interactive)
+  (org-map-entries 'refile-pay "TODO=\"PAY\"" 'file)
+  (org-map-entries 'refile-diary "TODO=\"DIARY\"" 'file)
+  (org-map-entries 'refile-bookmark "TODO=\"BOOKMARK\"" 'file)
+
+  )
+
+(global-set-key [f10] 'gr/refile-mobile)
+
+#+end_src
 *** Org-Babel
     #+begin_src emacs-lisp 
     (setq org-src-fontify-natively t)
@@ -1638,6 +1685,12 @@
 **** R 
      #+BEGIN_SRC emacs-lisp
      (require 'ess)
+     (require 'ess-site)
+
+     (setq ess-help-own-frame nil)
+     (setq inferior-ess-own-frame t)
+     (setq inferior-ess-same-window t)
+     (setq inferior-R-args "--no-restore --no-save")
      #+END_SRC
 **** Clojure
      #+begin_src emacs-lisp 
@@ -1706,15 +1759,15 @@
 
 *** Start agenda
     #+begin_src emacs-lisp 
-    (org-agenda-list)
-    (switch-to-buffer "*Org Agenda*")
+    ;; (org-agenda-list)
+    ;; (switch-to-buffer "*Org Agenda*")
 
-    (defun show-agenda (theFrame)
-      "Show the agenda"
-      (org-agenda-list)
-      (switch-to-buffer "*Org Agenda*"))
+    ;; (defun show-agenda (theFrame)
+    ;;   "Show the agenda"
+    ;;   (org-agenda-list)
+    ;;   (switch-to-buffer "*Org Agenda*"))
 
-    (add-hook 'after-make-frame-functions 'show-agenda)
+    ;; (add-hook 'after-make-frame-functions 'show-agenda)
     #+end_src
 ** Haskell
 *** Loading
@@ -1765,7 +1818,7 @@
          (define-key haskell-mode-map (kbd "C-.") 'haskell-move-nested-right)
          (define-key haskell-mode-map "\C-ch" 'haskell-hoogle)
          (define-key haskell-mode-map (kbd "C-c C-z") 'haskell-interactive-switch)
-         (define-key haskell-mode-map (kbd "C-c C-l") 'haskell-process-load-file)
+         (define-key haskell-mode-map (kbd "C-c C-l") 'haskell-process-load-or-reload)
          (define-key haskell-mode-map (kbd "C-c C-b") 'haskell-interactive-switch)
          ;; (define-key haskell-mode-map (kbd "C-c C-d") 'haskell-w3m-open-haddock)
          (define-key haskell-mode-map (kbd "C-c C-d") 'inferior-haskell-find-haddock)
