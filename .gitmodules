@@ -31,3 +31,6 @@
 [submodule "custom/emacs-psci.git"]
 	path = custom/emacs-psci.git
 	url = https://github.com/ardumont/emacs-psci.git
+[submodule "custom/purscheck"]
+	path = custom/purscheck
+	url = https://github.com/spion/purscheck.git
