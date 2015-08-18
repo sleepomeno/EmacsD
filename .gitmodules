@@ -34,3 +34,12 @@
 [submodule "custom/purscheck"]
 	path = custom/purscheck
 	url = https://github.com/spion/purscheck.git
+[submodule "custom/zenburn"]
+	path = custom/zenburn
+	url = https://github.com/sleepomeno/zenburn.git
+[submodule "custom/haskell-flycheck"]
+	path = custom/haskell-flycheck
+	url = https://github.com/chrisdone/haskell-flycheck.git
+[submodule "custom/org-present"]
+	path = custom/org-present
+	url = https://github.com/rlister/org-present.git
