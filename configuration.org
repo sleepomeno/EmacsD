@@ -665,7 +665,7 @@
     #+end_src
 *** Set PATH
     #+begin_src emacs-lisp 
-    (setenv "PATH" (concat (getenv "PATH") ":/home/greg/.cabal/bin:/home/greg/.cask/bin"))
+    (setenv "PATH" (concat (getenv "PATH") ":/home/greg/.cabal/bin:/home/greg/.cask/bin:/usr/bin"))
     (setq exec-path (append exec-path '("/home/greg/.cabal/bin")))
     #+end_src
 *** Don't fire up another backtrace when an error happens in debug mode
@@ -1779,28 +1779,27 @@
 
 *** Loading
     #+BEGIN_SRC emacs-lisp :name loadinghaskell
-        (quelpa-use-package-activate-advice)
+    (quelpa-use-package-activate-advice)
     (use-package flymake)
-    
+
     (use-package flymake-cursor)
     (use-package flymake-hlint)
     (use-package flymake-easy)
-                (use-package flymake-haskell-multi
-         :quelpa (flymake-haskell-multi :fetcher github :repo "sleepomeno/flymake-haskell-multi")
-        )
+    (use-package flymake-haskell-multi
+      :quelpa (flymake-haskell-multi :fetcher github :repo "sleepomeno/flymake-haskell-multi")
+      )
 
-        ;; (quelpa '(haskell-mode :fetcher github :repo "haskell/haskell-mode")) ;
+    ;; (quelpa '(haskell-mode :fetcher github :repo "haskell/haskell-mode")) ;
 
-            (use-package haskell-mode 
-         :quelpa (haskell-mode :fetcher github :repo "haskell/haskell-mode")
-        )
-            ;; (add-to-list 'load-path (concat user-emacs-directory "custom/haskell-mode")) ;
-            ;;(load "haskell-mode-autoloads")
-            ;;(require 'haskell-mode-autoloads)
-            ;; (add-to-list 'Info-default-directory-list "custom/haskell-mode/") 
+    (use-package haskell-mode 
+      :quelpa (haskell-mode :fetcher github :repo "haskell/haskell-mode" :stable t :upgrade t))
+    ;; (add-to-list 'load-path (concat user-emacs-directory "custom/haskell-mode")) ;
+    ;;(load "haskell-mode-autoloads")
+    ;;(require 'haskell-mode-autoloads)
+    ;; (add-to-list 'Info-default-directory-list "custom/haskell-mode/") 
 
-            ;; (require 'w3m-haddock)
-            ;; (add-hook 'w3m-display-hook 'w3m-haddock-display)
+    ;; (require 'w3m-haddock)
+    ;; (add-hook 'w3m-display-hook 'w3m-haddock-display)
     #+END_SRC
 *** Settings
     #+begin_src emacs-lisp 
@@ -1816,9 +1815,11 @@
     (setq haskell-process-auto-import-loaded-modules t)
     (setq haskell-process-prompt-restart-on-cabal-change t)
     (setq haskell-process-suggest-language-pragmas nil)
-    (setq haskell-process-type (quote cabal-repl))
+    ;; (setq haskell-process-type (quote cabal-repl))
+    (setq haskell-process-type (quote stack-ghci))
     (setq haskell-process-args-ghci '("-package-conf" ".cabal-sandbox/x86_64-linux-ghc-7.8.4-packages.conf.d" "-i../dist/build/autogen" "-idist/build/autogen" "-isrc" "-i../src" "-fno-warn-unused-binds"))
-    (setq haskell-program-name "cabal repl")
+    ;; (setq haskell-program-name "cabal repl")
+    (setq haskell-program-name "stack ghci")
     (setq haskell-stylish-on-save nil)
     (setq haskell-process-log t)
     ;; (setq haskell-process-args-cabal-repl '("--ghc-option=-ferror-spans" "--ghc-option=-fno-warn-missing-fields" "--ghc-option=+RTS" "--ghc-option=-M1.5g")) 
@@ -1847,15 +1848,15 @@
     (evil-leader/set-key-for-mode 'haskell-mode "jd" 'haskell-mode-jump-to-def-or-tag)
     ;; (evil-leader/set-key-for-mode 'haskell-mode "jb" 'pop-tag-mark)
     ;; (evil-leader/set-key-for-mode 'haskell-mode "cs" 'shm/case-split)
-    (evil-leader/set-key-for-mode 'haskell-mode "hl" 'haskell-mode-goto-loc)
-    (evil-leader/set-key-for-mode 'haskell-mode "st" 'haskell-mode-show-type-at)
-    (evil-leader/set-key-for-mode 'haskell-mode "hu" 'haskell-mode-find-uses)
-    (evil-leader/set-key-for-mode 'haskell-mode "hn" 'highlight-uses-mode-next)
-    (evil-leader/set-key-for-mode 'haskell-mode "hp" 'highlight-uses-mode-prev)
-    ;; (evil-leader/set-key-for-mode 'haskell-mode "n" 'flycheck-next-error)
-    ;; (evil-leader/set-key-for-mode 'haskell-mode "p" 'flycheck-previous-error)
-    (evil-leader/set-key-for-mode 'haskell-mode "n" 'flymake-goto-next-error)
-    (evil-leader/set-key-for-mode 'haskell-mode "p" 'flymake-goto-prev-error)
+    ;; (evil-leader/set-key-for-mode 'haskell-mode "hl" 'haskell-mode-goto-loc)
+    ;; (evil-leader/set-key-for-mode 'haskell-mode "st" 'haskell-mode-show-type-at)
+    ;; (evil-leader/set-key-for-mode 'haskell-mode "hu" 'haskell-mode-find-uses)
+    ;; (evil-leader/set-key-for-mode 'haskell-mode "hn" 'highlight-uses-mode-next)
+    ;; (evil-leader/set-key-for-mode 'haskell-mode "hp" 'highlight-uses-mode-prev)
+    (evil-leader/set-key-for-mode 'haskell-mode "n" 'flycheck-next-error)
+    (evil-leader/set-key-for-mode 'haskell-mode "p" 'flycheck-previous-error)
+    ;; (evil-leader/set-key-for-mode 'haskell-mode "n" 'flymake-goto-next-error)
+    ;; (evil-leader/set-key-for-mode 'haskell-mode "p" 'flymake-goto-prev-error)
 
     #+end_src
 *** Hooks
@@ -1883,16 +1884,15 @@
           ;;(evil-define-key 'insert haskell-mode-map (kbd "C-y") 'shm/yank)
           ;; (define-key haskell-mode-map (kbd "C-c C-d") nil)
           ))
- 
+
     (use-package hi2 :quelpa)
      (add-hook 'haskell-mode-hook 'turn-on-haskell-doc-mode)
      ;;(add-hook 'haskell-mode-hook 'structured-haskell-mode)
      (add-hook 'haskell-mode-hook 'turn-on-hi2)
 
 
-     (require 'flymake-haskell-multi)
-     (add-hook 'haskell-mode-hook 'flymake-haskell-multi-load)
-
+     ;; (require 'flymake-haskell-multi)
+     ;; (add-hook 'haskell-mode-hook 'flymake-haskell-multi-load)
      (defun haskell-hook ()
        (define-key evil-normal-state-map (kbd "M-.") 'find-tag)
        (define-key evil-normal-state-map (kbd "M-,") 'pop-tag-mark)
@@ -2112,7 +2112,12 @@
    #+end_src
 ** PureScript
 #+begin_src emacs-lisp 
-(use-package flycheck)
+(use-package flycheck :ensure)
+(use-package flycheck-haskell :ensure)
+
+    (eval-after-load 'flycheck
+      '(add-hook 'flycheck-mode-hook #'flycheck-haskell-setup))
+
 ;;(require 'flycheck)                     ;
 
 ;; connect purscheck to emacs, parsing errors and warnings
@@ -2142,6 +2147,7 @@
 (use-package purescript-mode)
 (require 'purescript-mode-autoloads)
 (load "purescript-mode-autoloads")
+;; (add-to-list 'Info-default-directory-list "~/lib/emacs/purescript-mode/") ;
 (add-hook 'purescript-mode-hook 'inferior-psci-mode)
 ;; (add-hook 'purescript-mode-hook 'turn-on-purescript-simple-indent)
 ;; (require 'repl-toggle)                  ;
