@@ -10,22 +10,23 @@
 (add-to-list 'package-archives
              '("melpa" . "http://melpa.org/packages/") t)
 
-(add-to-list 'load-path "/home/greg/.emacs.d/custom/org-mode/lisp")
+;; (add-to-list 'load-path "/home/greg/.emacs.d/custom/org-mode/lisp")
 (require 'org)
 
 (when (not package-archive-contents)
   (package-refresh-contents))
 
 ;; Add in your own as you wish:
-(defvar my-packages '(starter-kit
-                      starter-kit-bindings
-                      starter-kit-js
-                      starter-kit-lisp
+(defvar my-packages '(
+                      ;; starter-kit
+                      ;; starter-kit-bindings
+                      ;; starter-kit-js
+                      ;; starter-kit-lisp
 
                       ;; Clojure & friends
                       cider
                       rainbow-delimiters
-                      ac-nrepl
+                      ;; ac-nrepl
                       paredit
                       ;; Project navigation
                       projectile
@@ -35,17 +36,17 @@
 											;;
                       guide-key
                       markdown-mode
-                      graphviz-dot-mode
+                      ;; graphviz-dot-mode
                       twilight-theme
                       auto-complete
                       ace-jump-mode
                       drag-stuff
-                      jabber
+                      ;; jabber
                       js-comint
                       js2-mode
                       js2-refactor
                       skewer-mode
-                      twittering-mode
+                      ;; twittering-mode
 											quelpa-use-package
                       ;; Evil
 											;;
@@ -79,7 +80,7 @@
 ;;(setq org-dotemacs-error-handling nil)
 (setq org-dotemacs-default-file (concat user-emacs-directory "configuration.org"))
 (setq org-dotemacs-tag-match "-skip")
-(org-dotemacs-load-default )
+(org-dotemacs-load-default "-skip" )
 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.

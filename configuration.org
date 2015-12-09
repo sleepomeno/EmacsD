@@ -11,8 +11,13 @@
 ** Load-Path
    #+begin_src emacs-lisp 
    (add-to-list 'load-path (concat user-emacs-directory "custom"))
-   ;;(add-to-list 'load-path (concat user-emacs-directory "custom/use-package"))
    #+end_src
+** Toolbar
+#+BEGIN_SRC emacs-lisp
+(menu-bar-mode -1) 
+(toggle-scroll-bar -1) 
+(tool-bar-mode -1) 
+#+END_SRC
 ** Use-package
    #+begin_src emacs-lisp 
    (require 'use-package)
@@ -127,23 +132,6 @@
 
    (add-hook 'css-mode-hook 'skewer-css-mode)
    (add-hook 'html-mode-hook 'skewer-html-mode)
-   ;; (require 'js-comint)
-   ;; (setq inferior-js-program-command (concat user-emacs-directory "nodei.sh"))
-   ;; (add-hook 'js2-mode-hook '(lambda () 
-   ;;           (local-set-key "\C-x\C-e" 'js-send-last-sexp)
-   ;;           (local-set-key "\C-\M-x" 'js-send-last-sexp-and-go)
-   ;;           (local-set-key "\C-cb" 'js-send-buffer)
-   ;;           (local-set-key "\C-c\C-b" 'js-send-buffer-and-go)
-   ;;           (local-set-key "\C-cl" 'js-load-file-and-go)
-   ;;           ))
-   ;; (eval-after-load "js2-mode"
-   ;;   '(progn  (define-key js2-mode-map (kbd "C-x C-e") 'js-send-last-sexp) ;
-   ;;            (define-key js2-mode-map (kbd "C-M-x") 'js-send-last-sexp-and-go)
-   ;;            (define-key js2-mode-map (kbd "C-c C-k") 'js-send-buffer)
-   ;;            (define-key js2-mode-map (kbd "C-c C-l") 'js-send-buffer-and-go)
-   ;;            (define-key js2-mode-map (kbd "C-c l") 'js-load-file-and-go)
-
-   ;;            (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))))
    #+END_SRC
 
 ** angular
@@ -471,16 +459,8 @@
                (define-key ido-completion-map (kbd "C-n") 'ido-next-match)
                (define-key ido-completion-map (kbd "C-p") 'ido-prev-match)))
 
-   (use-package color-theme)
-   (use-package zenburn
-     :load-path "custom/zenburn"
-     :config
-     (zenburn))
-    ;; (load-file (concat user-emacs-directory "custom/zenburn/zenburn.el"))
-    ;; ;; (load-file (concat user-emacs-directory "custom/zenburn/sunburn.el"))
-    ;; (require 'zenburn)
-    ;; ;; (require 'sunburn)
-    ;; (zenburn)
+   (use-package color-theme :quelpa)
+   (use-package zenburn-theme :quelpa)
    #+END_SRC
 ** Evil
 *** Activate Evil
@@ -536,12 +516,12 @@
     (evil-leader/set-key
 
       "ef" 'find-file
-      "sa" 'sauron-toggle-hide-show
-      "so" 'org-save-all-org-buffers
+      ;; "sa" 'sauron-toggle-hide-show
+      ;; "so" 'org-save-all-org-buffers
 
-      "sh" 'shell
-      "es" 'start-erc
-      "em" 'mu4e
+      "s" 'shell
+      ;; "es" 'start-erc
+      ;; "em" 'mu4e
       "ff" 'find-function
       "fd" 'describe-function
       "<SPC>" 'switch-to-buffer
@@ -556,17 +536,18 @@
       "cl" 'evilnc-comment-or-uncomment-to-the-line
       "x" 'smex
       "dd" 'ido-dired
-      "dr" 'org-drill-directory
+      ;; "dr" 'org-drill-directory
       "k" 'kill-buffer
       "l" 'ace-jump-line-mode
-      "eb" 'erc-track-switch-buffer
-      "jc" 'jabber-connect
-      "tw" 'twit
+      ;; "eb" 'erc-track-switch-buffer
+      ;; "jc" 'jabber-connect
+      "m" 'magit-status
+      ;; "tw" 'twit
       ;; "n" 'org-present-next
       ;; "p" 'org-present-prev
       "gl" 'goto-line
-      "ob" 'org-iswitchb
-      "cs" 'org-caldav-sync
+      ;; "ob" 'org-iswitchb
+      ;; "cs" 'org-caldav-sync
       "rm" 'bookmark-set
       "rb" 'bookmark-jump
       "rl" 'bookmark-bmenu-list
@@ -584,6 +565,15 @@
     (use-package evil-jumper)
 
     (global-evil-jumper-mode)
+
+    #+END_SRC
+   
+*** Evil-Surround
+    #+BEGIN_SRC emacs-lisp
+    (use-package evil-surround :quelpa)
+
+    (global-evil-surround-mode)
+
 
     #+END_SRC
    
@@ -635,21 +625,21 @@
 **** integration with ac-nrepl                                         :skip:
      #+begin_src emacs-lisp 
 
-     (use-package ac-nrepl
-       :init (progn
-               (add-hook 'cider-repl-mode-hook 'ac-nrepl-setup)
-               (add-hook 'cider-mode-hook 'ac-nrepl-setup)
-               (eval-after-load "auto-complete"
-                 '(add-to-list 'ac-modes 'cider-repl-mode))
-               (defun set-auto-complete-as-completion-at-point-function ()
-                 (setq completion-at-point-functions '(auto-complete)))
-               (add-hook 'auto-complete-mode-hook 'set-auto-complete-as-completion-at-point-function)
+     ;; (use-package ac-nrepl
+     ;;   :init (progn
+     ;;           (add-hook 'cider-repl-mode-hook 'ac-nrepl-setup)
+     ;;           (add-hook 'cider-mode-hook 'ac-nrepl-setup)
+     ;;           (eval-after-load "auto-complete"
+     ;;             '(add-to-list 'ac-modes 'cider-repl-mode))
+     ;;           (defun set-auto-complete-as-completion-at-point-function ()
+     ;;             (setq completion-at-point-functions '(auto-complete)))
+     ;;           (add-hook 'auto-complete-mode-hook 'set-auto-complete-as-completion-at-point-function)
 
-               (add-hook 'cider-repl-mode-hook 'set-auto-complete-as-completion-at-point-function)
-               (add-hook 'cider-mode-hook 'set-auto-complete-as-completion-at-point-function)
-               (eval-after-load "cider"
-                 '(define-key cider-mode-map (kbd "C-c C-d") 'ac-nrepl-popup-doc))
-               ))     
+     ;;           (add-hook 'cider-repl-mode-hook 'set-auto-complete-as-completion-at-point-function)
+     ;;           (add-hook 'cider-mode-hook 'set-auto-complete-as-completion-at-point-function)
+     ;;           (eval-after-load "cider"
+     ;;             '(define-key cider-mode-map (kbd "C-c C-d") 'ac-nrepl-popup-doc))
+     ;;           ))     
      #+end_src
 ** Rainbow-mode
      #+begin_src emacs-lisp 
@@ -747,14 +737,14 @@
        (setq guide-key/guide-key-sequence '("C-x r" "C-x 4" "C-c p" "C-c p s"))
        (guide-key-mode 1)))  ; Enable guide-key-mode
    #+END_SRC
-** Forth
+** Forth                                                               :skip:
    #+begin_src emacs-lisp 
    ;; (use-package forth
    ;;   :load-path "custom/gforth"
    ;;   :mode "\\.fs\\'")
-   (load (concat user-emacs-directory "custom/gforth/gforth.el"))
-   (autoload 'forth-mode "gforth.el")
-   (setq auto-mode-alist (cons '("\\.fs\\'" . forth-mode) auto-mode-alist))
+   ;; (load (concat user-emacs-directory "custom/gforth/gforth.el"))
+   ;; (autoload 'forth-mode "gforth.el")
+   ;; (setq auto-mode-alist (cons '("\\.fs\\'" . forth-mode) auto-mode-alist))
    ;; need to run run-forth in your forth file buffer
    #+end_src
 ** Octorgopress
@@ -1513,61 +1503,61 @@
     #+begin_src emacs-lisp :name effort-hookk
     ;; (add-hook 'org-clock-in-prepare-hook 'sacha/org-mode-ask-effort)
 
-    (defun sacha/org-mode-ask-effort ()
-      "Ask for an effort estimate when clocking in."
-      (unless (org-entry-get (point) "Effort")
-        (let ((effort
-               (completing-read
-                "Effort: "
-                (org-entry-get-multivalued-property (point) "Effort"))))
-          (unless (equal effort "")
-            (org-set-property "Effort" effort)))))
+    ;; (defun sacha/org-mode-ask-effort ()
+    ;;   "Ask for an effort estimate when clocking in."
+    ;;   (unless (org-entry-get (point) "Effort")
+    ;;     (let ((effort
+    ;;            (completing-read
+    ;;             "Effort: "
+    ;;             (org-entry-get-multivalued-property (point) "Effort"))))
+    ;;       (unless (equal effort "")
+    ;;         (org-set-property "Effort" effort)))))
     #+end_src
 
 *** Export
     #+begin_src emacs-lisp 
     (setq org-export-with-toc nil)
     #+end_src
-*** Org-learn
+*** Org-learn                                                          :skip:
     #+begin_src emacs-lisp 
-    (load-file (concat user-emacs-directory "custom/org-mode/contrib/lisp/org-learn.el"))
-    (require 'org-learn)
+    ;; (load-file (concat user-emacs-directory "custom/org-mode/contrib/lisp/org-learn.el"))
+    ;; (require 'org-learn)
     #+end_src
 *** Org-freemind                                                       :skip:
     #+begin_src emacs-lisp 
-    (require 'org-freemind)
-    (load-file (concat user-emacs-directory "custom/org-mode/contrib/lisp/ox-freemind.el"))
-    (require 'ox-freemind)
+    ;; (require 'org-freemind)
+    ;; (load-file (concat user-emacs-directory "custom/org-mode/contrib/lisp/ox-freemind.el"))
+    ;; (require 'ox-freemind)
     #+end_src
-*** Org-effectiveness
+*** Org-effectiveness                                                  :skip:
     #+begin_src emacs-lisp 
-    (load-file (concat user-emacs-directory "custom/org-mode/contrib/lisp/org-effectiveness.el"))
-    (require 'org-effectiveness)
+    ;; (load-file (concat user-emacs-directory "custom/org-mode/contrib/lisp/org-effectiveness.el"))
+    ;; (require 'org-effectiveness)
     #+end_src
-*** Org-velocity
+*** Org-velocity                                                       :skip:
     #+begin_src emacs-lisp 
-    (load-file (concat user-emacs-directory "custom/org-mode/contrib/lisp/org-velocity.el"))
-    (require 'org-velocity)
+    ;; (load-file (concat user-emacs-directory "custom/org-mode/contrib/lisp/org-velocity.el"))
+    ;; (require 'org-velocity)
     #+end_src
 *** Org-habit
     #+begin_src emacs-lisp 
-    (require 'org-habit)
-    (setq org-habit-show-habits-only-for-today t)
+    ;; (require 'org-habit)
+    ;; (setq org-habit-show-habits-only-for-today t)
     #+end_src
 
-*** Org-drill
+*** Org-drill :skip:
     #+begin_src emacs-lisp 
-    (load-file (concat user-emacs-directory "custom/org-mode/contrib/lisp/org-drill.el"))
-    (use-package org-drill
-      :init (progn (setq org-drill-learn-fraction 0.45)
-                   (setq org-drill-match "-nodrill")))
+    ;; (load-file (concat user-emacs-directory "custom/org-mode/contrib/lisp/org-drill.el"))
+    ;; (use-package org-drill
+    ;;   :init (progn (setq org-drill-learn-fraction 0.45)
+    ;;                (setq org-drill-match "-nodrill")))
     #+end_src
-*** Org-contacts
+*** Org-contacts :skip:
     #+begin_src emacs-lisp 
-    (load-file (concat user-emacs-directory "custom/org-mode/contrib/lisp/org-contacts.el"))
-    (require 'org-contacts)
+    ;; (load-file (concat user-emacs-directory "custom/org-mode/contrib/lisp/org-contacts.el"))
+    ;; (require 'org-contacts)
 
-    (setq org-contacts-files '("~/org/contacts.org"))
+    ;; (setq org-contacts-files '("~/org/contacts.org"))
     #+end_src
 *** Org-mobile
     #+begin_src emacs-lisp 
@@ -1577,16 +1567,16 @@
     ;;                                    (switch-to-buffer "*Org Agenda*")
     ;;                                    )))
     ;; (add-hook 'kill-emacs-hook 'org-mobile-push) ;
-    (setq org-mobile-inbox-for-pull "~/org/notes.org")
-    (setq org-mobile-directory "~/Dropbox/Apps/MobileOrgSleepo")
-    (setq org-mobile-files (list "thesis.org" "bookmarks.org" "projects.org" "wiki" "home.org" "french.org"))
-    (setq org-mobile-force-mobile-change t)
+    ;; (setq org-mobile-inbox-for-pull "~/org/notes.org")
+    ;; (setq org-mobile-directory "~/Dropbox/Apps/MobileOrgSleepo")
+    ;; (setq org-mobile-files (list "thesis.org" "bookmarks.org" "projects.org" "wiki" "home.org" "french.org"))
+    ;; (setq org-mobile-force-mobile-change t)
 
-    (global-set-key [f2] 'org-agenda-list)
-    (global-set-key [f12] 'org-mobile-push)
-    (global-set-key [f11] 'org-mobile-pull)
+    ;; (global-set-key [f2] 'org-agenda-list)
+    ;; (global-set-key [f12] 'org-mobile-push)
+    ;; (global-set-key [f11] 'org-mobile-pull)
     #+end_src
-**** Org-Mobile-Refile
+**** Org-Mobile-Refile                                                 :skip:
 #+begin_src emacs-lisp 
 
 ;; (defun refile-pay ()
@@ -1694,16 +1684,16 @@
              (dot . t)))))
      #+end_src
            
-**** R 
+**** R                                                                 :skip:
      #+BEGIN_SRC emacs-lisp
-     (use-package ess)
-     (require 'ess)
-     (require 'ess-site)
+     ;; (use-package ess)
+     ;; (require 'ess)
+     ;; (require 'ess-site)
 
-     (setq ess-help-own-frame nil)
-     (setq inferior-ess-own-frame t)
-     (setq inferior-ess-same-window t)
-     (setq inferior-R-args "--no-restore --no-save")
+     ;; (setq ess-help-own-frame nil)
+     ;; (setq inferior-ess-own-frame t)
+     ;; (setq inferior-ess-same-window t)
+     ;; (setq inferior-R-args "--no-restore --no-save")
      #+END_SRC
 **** Clojure
      #+begin_src emacs-lisp 
@@ -1925,9 +1915,9 @@
      ;; (add-hook 'haskell-mode-hook 'flycheck-mode)
      ;;(require 'shm-case-split)
     #+end_src
-*** Speedbar
+*** Speedbar                                                           :skip:
 #+begin_src emacs-lisp 
-(speedbar-add-supported-extension ".hs")
+;; (speedbar-add-supported-extension ".hs")
 #+end_src
 *** Aligments
     #+BEGIN_SRC emacs-lisp
@@ -2082,29 +2072,29 @@
     bookmark-default-file "~/.emacs.d/bookmarks" ;; keep my ~/ clean
     bookmark-save-flag 1)                        ;; autosave each change)
    #+end_src
-** 2048
+** 2048 :skip:
    #+begin_src emacs-lisp 
-   (defface 2048-face-2    '((t . (:background "khaki" :foreground "black"))) "Face for the tile 2" :group '2048-faces)
-   (defface 2048-face-4    '((t . (:background "burlywood" :foreground "black"))) "Face for the tile 4" :group '2048-faces)
-   (defface 2048-face-8    '((t . (:background "orange3" :foreground "black"))) "Face for the tile 8" :group '2048-faces)
-   (defface 2048-face-16   '((t . (:background "orange" :foreground "black"))) "Face for the tile 16" :group '2048-faces)
-   (defface 2048-face-32   '((t . (:background "orange red" :foreground "black"))) "Face for the tile 32" :group '2048-faces)
-   (defface 2048-face-64   '((t . (:background "firebrick" :foreground "white"))) "Face for the tile 64" :group '2048-faces)
-   (defface 2048-face-128  '((t . (:background "dark red" :foreground "white"))) "Face for the tile 128" :group '2048-faces)
-   (defface 2048-face-256  '((t . (:background "dark magenta" :foreground "white"))) "Face for the tile 256" :group '2048-faces)
-   (defface 2048-face-512  '((t . (:background "magenta" :foreground "black"))) "Face for the tile 512" :group '2048-faces)
-   (defface 2048-face-1024 '((t . (:background "gold" :foreground "black"))) "Face for the tile 1024" :group '2048-faces)
-   (defface 2048-face-2048 '((t . (:background "yellow" :foreground "black"))) "Face for the tile 2048" :group '2048-faces)
+   ;; (defface 2048-face-2    '((t . (:background "khaki" :foreground "black"))) "Face for the tile 2" :group '2048-faces)
+   ;; (defface 2048-face-4    '((t . (:background "burlywood" :foreground "black"))) "Face for the tile 4" :group '2048-faces)
+   ;; (defface 2048-face-8    '((t . (:background "orange3" :foreground "black"))) "Face for the tile 8" :group '2048-faces)
+   ;; (defface 2048-face-16   '((t . (:background "orange" :foreground "black"))) "Face for the tile 16" :group '2048-faces)
+   ;; (defface 2048-face-32   '((t . (:background "orange red" :foreground "black"))) "Face for the tile 32" :group '2048-faces)
+   ;; (defface 2048-face-64   '((t . (:background "firebrick" :foreground "white"))) "Face for the tile 64" :group '2048-faces)
+   ;; (defface 2048-face-128  '((t . (:background "dark red" :foreground "white"))) "Face for the tile 128" :group '2048-faces)
+   ;; (defface 2048-face-256  '((t . (:background "dark magenta" :foreground "white"))) "Face for the tile 256" :group '2048-faces)
+   ;; (defface 2048-face-512  '((t . (:background "magenta" :foreground "black"))) "Face for the tile 512" :group '2048-faces)
+   ;; (defface 2048-face-1024 '((t . (:background "gold" :foreground "black"))) "Face for the tile 1024" :group '2048-faces)
+   ;; (defface 2048-face-2048 '((t . (:background "yellow" :foreground "black"))) "Face for the tile 2048" :group '2048-faces)
 
 
-   (defun sacha/2048-set-font-size ()
-     (text-scale-set 5)
-     (goto-char (point-min)))
+   ;; (defun sacha/2048-set-font-size ()
+   ;;   (text-scale-set 5)
+   ;;   (goto-char (point-min)))
 
-   (use-package 2048-game
-     :config
-     (progn
-       (add-hook '2048-mode-hook 'sacha/2048-set-font-size)))
+   ;; (use-package 2048-game
+   ;;   :config
+   ;;   (progn
+   ;;     (add-hook '2048-mode-hook 'sacha/2048-set-font-size)))
    #+end_src
 ** Youtube Download
    #+begin_src emacs-lisp 
@@ -2119,83 +2109,50 @@
         (concat "cd ~/Downloads/youtube && youtube-dl " str "\n"))))
 
    #+end_src
-** PureScript
+** PureScript :skip:
+
 #+begin_src emacs-lisp 
-(use-package flycheck :ensure)
-(use-package flycheck-haskell :ensure)
+;; (use-package flycheck :ensure)
+;; (use-package flycheck-haskell :ensure)
 
-    ;; (eval-after-load 'flycheck
-    ;;   '(add-hook 'flycheck-mode-hook #'flycheck-haskell-setup))
+;;     ;; (eval-after-load 'flycheck
+;;     ;;   '(add-hook 'flycheck-mode-hook #'flycheck-haskell-setup))
 
-;;(require 'flycheck)                     ;
+;; ;;(require 'flycheck)                     ;
 
-;; connect purscheck to emacs, parsing errors and warnings
-(add-to-list 'load-path (concat user-emacs-directory "custom/purscheck"))
-;; (flycheck-define-checker purs-check
-;;                          "Use purscheck to flycheck PureScript code."
-;;                          :command ("purscheck" source source-original temporary-file-name)
-;;                          :error-patterns
-;;                          ((error line-start
-;;                                  (or (and "Error at " (file-name) " line " line ", column " column ":" (zero-or-more " "))
-;;                                      (and "\"" (file-name) "\" (line " line ", column " column "):"))
-;;                                  (or (message (one-or-more not-newline))
-;;                                      (and "\n"
-;;                                           (message
-;;                                            (zero-or-more " ") (one-or-more not-newline)
-;;                                            (zero-or-more "\n"
-;;                                                          (zero-or-more " ")
-;;                                                          (one-or-more not-newline)))))
-;;                                  line-end))
-;;                          :modes purescript-mode)
+;; ;; connect purscheck to emacs, parsing errors and warnings
+;; (add-to-list 'load-path (concat user-emacs-directory "custom/purscheck"))
 
-;; connect flycheck with purscheck
-;; (add-to-list 'flycheck-checkers 'purs-check) ;
-(require 'purscheck)
+;; (require 'purscheck)
 
 
-(use-package purescript-mode)
-(require 'purescript-mode-autoloads)
-(load "purescript-mode-autoloads")
-;; (add-to-list 'Info-default-directory-list "~/lib/emacs/purescript-mode/") ;
-;; (add-hook 'purescript-mode-hook 'inferior-psci-mode)
-;; (add-hook 'purescript-mode-hook 'turn-on-purescript-simple-indent)
-;; (require 'repl-toggle)                  ;
-(use-package psci :ensure)
-;; (add-to-list 'rtog/mode-repl-alist '(purescript-mode . psci))
+;; (use-package purescript-mode)
+;; (require 'purescript-mode-autoloads)
+;; (load "purescript-mode-autoloads")
 
-(eval-after-load "purescript-mode"
-       '(progn
-          (define-key purescript-mode-map (kbd "C-,") 'purescript-move-nested-left)
-          (define-key purescript-mode-map (kbd "C-.") 'purescript-move-nested-right)
-
-    (evil-leader/set-key-for-mode 'purescript-mode "n" 'flycheck-next-error)
-    (evil-leader/set-key-for-mode 'purescript-mode "p" 'flycheck-previous-error)
-
-          ))
-
-(add-hook 'purescript-mode-hook 'flycheck-mode)
-(add-hook 'purescript-mode-hook 'turn-on-purescript-decl-scan)
-(evil-leader/set-key-for-mode 'purescript-mode "n" 'flycheck-next-error)
-(evil-leader/set-key-for-mode 'purescript-mode "p" 'flycheck-previous-error)
+;; (use-package psci :ensure)
 
 ;; (eval-after-load "purescript-mode"
 ;;        '(progn
-;;          (define-key purescript-mode-map (kbd "C-x C-d") nil)
-;;          (define-key purescript-mode-map (kbd "C-c C-z") 'purescript-interactive-switch)
-;;          (define-key purescript-mode-map (kbd "C-c C-l") 'purescript-process-load-file)
-;;          (define-key purescript-mode-map (kbd "C-c C-b") 'purescript-interactive-switch)
-;;          (define-key purescript-mode-map (kbd "C-c C-t") 'purescript-process-do-type)
-;;          (define-key purescript-mode-map (kbd "C-c C-i") 'purescript-process-do-info)
-;;          (define-key purescript-mode-map (kbd "C-c M-.") nil)
-;;          (define-key purescript-mode-map (kbd "C-c C-d") nil)))
+;;           (define-key purescript-mode-map (kbd "C-,") 'purescript-move-nested-left)
+;;           (define-key purescript-mode-map (kbd "C-.") 'purescript-move-nested-right)
+
+;;     (evil-leader/set-key-for-mode 'purescript-mode "n" 'flycheck-next-error)
+;;     (evil-leader/set-key-for-mode 'purescript-mode "p" 'flycheck-previous-error)
+
+;;           ))
+
+;; (add-hook 'purescript-mode-hook 'flycheck-mode)
+;; (add-hook 'purescript-mode-hook 'turn-on-purescript-decl-scan)
+;; (evil-leader/set-key-for-mode 'purescript-mode "n" 'flycheck-next-error)
+;; (evil-leader/set-key-for-mode 'purescript-mode "p" 'flycheck-previous-error)
 #+end_src
 
-
-** Ledger-mode
+** Ledger-mode                                                         :skip:
 #+begin_src emacs-lisp 
-(use-package ledger-mode
-  :load-path "/home/greg/repos/ledger/lisp"
-  :mode "\\.dat$")
+;; (use-package ledger-mode
+;;   :load-path "/home/greg/repos/ledger/lisp"
+;;   :mode "\\.dat$")
 #+end_src
 *** Org to ledger                                                      :skip:
 #+begin_src emacs-lisp 
@@ -2325,7 +2282,7 @@
   )
 
 
-(global-set-key [f8] 'gr/toledger)
+;; (global-set-key [f8] 'gr/toledger)
 #+end_src
 
 *** Raiffeisen to ledger                                               :skip:
@@ -2379,7 +2336,7 @@
 
 
 
-(global-set-key [f7] 'gr/csv-to-ledger)
+;; (global-set-key [f7] 'gr/csv-to-ledger)
 
 (defun gr/line-to-ledger (line)
   (interactive)
@@ -2421,23 +2378,23 @@
 
 #+RESULTS:
 
-** Org-Present
+** Org-Present                                                         :skip:
 #+begin_src emacs-lisp 
-(use-package org-present
-  :load-path "custom/org-present"
-  :config
-  (add-hook 'org-present-mode-hook
-            (lambda ()
-              (org-present-big)
-              (org-display-inline-images)
-              (org-present-hide-cursor)
-              (org-present-read-only)))
-  (add-hook 'org-present-mode-quit-hook
-            (lambda ()
-              (org-present-small)
-              (org-remove-inline-images)
-              (org-present-show-cursor)
-              (org-present-read-write))))
+;; (use-package org-present
+;;   :load-path "custom/org-present"
+;;   :config
+;;   (add-hook 'org-present-mode-hook
+;;             (lambda ()
+;;               (org-present-big)
+;;               (org-display-inline-images)
+;;               (org-present-hide-cursor)
+;;               (org-present-read-only)))
+;;   (add-hook 'org-present-mode-quit-hook
+;;             (lambda ()
+;;               (org-present-small)
+;;               (org-remove-inline-images)
+;;               (org-present-show-cursor)
+;;               (org-present-read-write))))
 
 #+end_src
 ** Hide mode line

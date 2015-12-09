@@ -56,7 +56,9 @@
  (rear-context-string . "_SRC javascript\n")
  (position . 783))
 ("configuration"
- (filename . "~/org/configuration.org")
+ (filename .
+					 #("~/.emacs.d/configuration.org" 2 11
+						 (face flx-highlight-face)))
  (front-context-string . "** Ignore Runnin")
  (rear-context-string . "\")\n   #+end_src\n")
  (position . 55947))
